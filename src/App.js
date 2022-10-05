@@ -35,7 +35,7 @@ function App() {
     Axios({
       method: "GET",
       withCredentials: true,
-      url: "http://localhost:3001/user",
+      url: "http://localhost:3001/users",
     }).then((res) => {
       setData(res.data);
       console.log(res.data);
@@ -73,7 +73,9 @@ function App() {
         <div>
           <h1>Get User</h1>
           <button onClick={getUser}>Submit</button>
-          {data ? <h1>Welcome Back {data.username}</h1> : null}
+          {data ? (
+            <h1>Welcome Back {data.map((item) => item.username)}</h1>
+          ) : null}
         </div>
       </header>
     </div>
