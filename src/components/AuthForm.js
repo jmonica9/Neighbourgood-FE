@@ -1,6 +1,7 @@
 import React from "react";
-import "./App.css";
+import "../App.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 
 function AuthForm() {
@@ -9,6 +10,9 @@ function AuthForm() {
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [data, setData] = useState(null);
+
+  const navigate = useNavigate();
+
   const register = () => {
     Axios({
       method: "POST",
@@ -77,6 +81,14 @@ function AuthForm() {
             <h1>Welcome Back {data.map((item) => item.username)}</h1>
           ) : null}
         </div>
+        <button
+          onClick={() => {
+            console.log("clicked");
+            navigate("dashboard");
+          }}
+        >
+          Dashboard
+        </button>
       </header>
     </div>
   );
