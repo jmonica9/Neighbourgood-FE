@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Navbar, Text } from "@mantine/core";
 import SideDrawer from "./SideDrawer";
+import { neighbourgoodTheme } from "../styles/Theme";
 
 export default function Sidebar(props) {
   const [user, setUser] = useState("placeholder");
@@ -19,7 +20,11 @@ export default function Sidebar(props) {
         height={"100rem"}
         p="xs"
         width={{ base: 50 }}
-        sx={{ background: "black", border: 0, float: "left" }}
+        sx={{
+          background: neighbourgoodTheme.colors.darkGray,
+          border: 0,
+          float: "left",
+        }}
       >
         <Navbar.Section grow>
           <Text
