@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 //import styling
 import { Card, Grid, Paper, Text } from "@mantine/core";
+import { neighbourgoodTheme } from "../styles/Theme";
 
 export default function Dashboard(props) {
   const drawerOpen = props.drawerOpen;
@@ -11,7 +12,7 @@ export default function Dashboard(props) {
         <Card
           sx={{
             width: drawerOpen ? "70vw" : "90vw",
-            backgroundColor: "#d9d9d9",
+            backgroundColor: neighbourgoodTheme.colors.lightGray,
             height: "30vh",
             display: "flex",
             borderRadius: 25,
@@ -26,7 +27,7 @@ export default function Dashboard(props) {
         <Card
           sx={{
             width: drawerOpen ? "70vw" : "90vw",
-            backgroundColor: "#d9d9d9",
+            backgroundColor: neighbourgoodTheme.colors.lightGray,
             height: "65vh",
             display: "block",
             borderRadius: 25,
