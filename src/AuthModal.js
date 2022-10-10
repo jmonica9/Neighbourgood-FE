@@ -1,4 +1,4 @@
-import AuthForm from "./AuthForm";
+// import AuthForm from "./AuthForm";
 import { Authentication } from "./Authentication";
 import { useState } from "react";
 import { Modal, Button, Group, useMantineTheme } from "@mantine/core";
