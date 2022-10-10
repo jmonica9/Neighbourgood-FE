@@ -7,6 +7,7 @@ import LandingPageCarousel from "./LandingPageCarousel";
 import { neighbourgoodTheme } from "../styles/Theme";
 import Listing from "./Listing";
 import Lobby from "./Lobby";
+import LandingPageListings from "./LandingPageListings";
 
 function LandingPage(props) {
   const [showSharing, setShowSharing] = useState(false);
@@ -40,7 +41,7 @@ function LandingPage(props) {
       }}
       align="flex-start"
     >
-      <Grid.Col className="carousel-container" p={0}>
+      <Grid.Col className="carousel-container" pl={"3.1rem"} pr={"0"} pt={"0"}>
         <LandingPageCarousel />
       </Grid.Col>
 
@@ -52,12 +53,12 @@ function LandingPage(props) {
           width: "100%",
           height: "80vh",
         }}
-        mt={5}
+        pl={"3.1rem"}
       >
         <Grid.Col
           span={6}
           className="sharing-container"
-          style={{ height: "100%" }}
+          style={{ height: "80vh" }}
           p={0}
         >
           <Grid.Col
@@ -69,7 +70,7 @@ function LandingPage(props) {
               backgroundRepeat: "no-repeat",
             }}
             p={0}
-            mr={3}
+            mr={"0.1rem"}
           >
             <Grid.Col
               sx={{
@@ -77,18 +78,17 @@ function LandingPage(props) {
                 height: "100%",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
               }}
-              p={"5em"}
+              p={"5rem"}
             >
               <Grid>
                 <Grid.Col>
-                  <Title size="h2" underline mb={"2em"}>
+                  <Title size="h2" underline mb={"2rem"}>
                     Sharing
                   </Title>
                 </Grid.Col>
                 <Grid.Col>
-                  <Text size="md" mb={"2em"}>
+                  <Text size="md" mb={"2rem"}>
                     Have stuff that's still in a good working condition that
                     you're looking to throw or give away? <br />
                     <br />
@@ -133,18 +133,17 @@ function LandingPage(props) {
                   height: "100%",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
                 }}
-                p={"3em"}
+                p={"3rem"}
               >
                 <Grid>
                   <Grid.Col>
-                    <Title size="h2" underline mb={"1em"}>
+                    <Title size="h2" underline mb={"1rem"}>
                       Helping
                     </Title>
                   </Grid.Col>
                   <Grid.Col>
-                    <Text size="md" mb={"1em"}>
+                    <Text size="md" mb={"1rem"}>
                       <i>
                         "Love your neighbour as you love yourself" - Mark 12:31
                       </i>
@@ -183,18 +182,17 @@ function LandingPage(props) {
                   height: "100%",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
                 }}
-                p={"3em"}
+                p={"3rem"}
               >
                 <Grid>
                   <Grid.Col>
-                    <Title size="h2" underline mb={"1em"}>
+                    <Title size="h2" underline mb={"1rem"}>
                       Lending
                     </Title>
                   </Grid.Col>
                   <Grid.Col>
-                    <Text size="md" mb={"1em"}>
+                    <Text size="md" mb={"1rem"}>
                       Loan out items to your neighbours or borrow their stuff
                       with our lending listings platform
                       <br />
@@ -216,25 +214,33 @@ function LandingPage(props) {
             </Grid.Col>
           </Group>
         </Grid.Col>
+        <Grid.Col
+          className="listings-container"
+          sx={{
+            alignContent: "center",
+            justifyContent: "center",
+            alignItems: "center",
+            justifyItems: "center",
+          }}
+          pl={"4rem"}
+        >
+          {showSharing && (
+            <Grid.Col mt={"2rem"}>
+              <LandingPageListings title="Sharing" />
+            </Grid.Col>
+          )}
+          {showHelping && (
+            <Grid.Col mt={"2rem"}>
+              <LandingPageListings title="Helping" />
+            </Grid.Col>
+          )}
+          {showLending && (
+            <Grid.Col mt={"2rem"}>
+              <LandingPageListings title="Lending" />
+            </Grid.Col>
+          )}
+        </Grid.Col>
       </Grid>
-
-      {showSharing && (
-        <Grid.Col mt={"1em"} mr={40}>
-          <Card>
-            <Lobby title="Sharing" />
-          </Card>
-        </Grid.Col>
-      )}
-      {showHelping && (
-        <Grid.Col mt={"1.9em"} mr={40}>
-          <Lobby title="Helping" />
-        </Grid.Col>
-      )}
-      {showLending && (
-        <Grid.Col mt={"1.9em"} mr={40}>
-          <Lobby title="Lending" />
-        </Grid.Col>
-      )}
     </Grid>
   );
 }
