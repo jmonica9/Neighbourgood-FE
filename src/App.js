@@ -23,6 +23,7 @@ import AuthModal from "./AuthModal";
 import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
+import LandingPage from "./components/LandingPage";
 function App() {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -37,8 +38,7 @@ function App() {
         <header className="App-header">
           <Sidebar drawerOpen={() => setDrawerOpen(!drawerOpen)} />
           <Routes>
-            {/* darren here */}
-            {/* <Route path="/" element={<Landing />} /> */}
+            <Route path="/" element={<LandingPage />} />
             <Route
               path="/dashboard"
               element={<Dashboard drawerOpen={drawerOpen} />}
