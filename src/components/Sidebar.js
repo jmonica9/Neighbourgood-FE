@@ -28,7 +28,7 @@ export default function Sidebar(props) {
           <Text
             mt={"6.5rem"}
             ml={"-7rem"}
-            sx={{ position: "fixed", top: 0 }}
+            sx={{ position: "fixed", top: 0, left: 40 }}
             className="sidebar-neighbourgood"
           >
             neighbourgood

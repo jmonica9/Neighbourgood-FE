@@ -2,7 +2,7 @@ import React, { useState, createContext, useEffect } from "react";
 import { useNavigate, Route, Routes } from "react-router-dom";
 
 //import child components
-import AuthForm from "./components/AuthForm";
+// import AuthForm from "./components/AuthForm";
 import Dashboard from "./components/Dashboard";
 
 //import styling
@@ -17,9 +17,13 @@ import {
 import { neighbourgoodTheme } from "./styles/Theme";
 
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
+import AuthModal from "./AuthModal";
+
 import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
+import LandingPage from "./components/LandingPage";
 
 export const UserContext = createContext();
 
@@ -52,7 +56,7 @@ export default function App() {
               }}
             />
             <Routes>
-              <Route path="/" element={<AuthForm signIn={signInUser} />} />
+              <Route path="/" element={<LandingPage signIn={signInUser} />} />
               <Route
                 path="/dashboard"
                 element={<Dashboard drawerOpen={drawerOpen} />}

@@ -44,3 +44,9 @@
 .drawer-toggle {
   bottom: 10px;
 }
+
+.carousel-control-next,
+.carousel-control-prev {
+  background-color: rgba(17, 5, 5, 0.2) !important;
+  border-radius: 0.2em;
+}

@@ -1,15 +1,22 @@
+import {
+  TextInput,
+  PasswordInput,
+  Checkbox,
+  Anchor,
+  Paper,
+  Title,
+  Text,
+  Container,
+  Group,
+  Button,
+} from "@mantine/core";
 import React, { useEffect } from "react";
 import "./App.css";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-//import styling
-import { neighbourgoodTheme } from "../styles/Theme";
-import { Header, Text } from "@mantine/core";
-
-function AuthForm(props) {
+export function Authentication(props) {
   const [registerUsername, setRegisterUsername] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [loginUsername, setLoginUsername] = useState("");
@@ -18,7 +25,9 @@ function AuthForm(props) {
   const [myUser, setMyUser] = useState(null);
   const [jwtUser, setJwtUser] = useState(null);
   const [welcomeMsg, setWelcomeMsg] = useState(null);
-
+  const REGISTER_MODE = "Register";
+  const LOGIN_MODE = "Login";
+  const [authMode, setAuthMode] = useState(REGISTER_MODE);
   // access user info on load
   useEffect(() => {
     console.log("get my user info, useeffect!");
@@ -32,6 +41,7 @@ function AuthForm(props) {
   }, [jwtUser]);
 
   const register = () => {
+    console.log(authMode, "authmode");
     Axios({
       method: "POST",
       data: {
@@ -43,6 +53,7 @@ function AuthForm(props) {
     }).then((res) => console.log(res));
   };
   const login = () => {
+    console.log(authMode, "authmode");
     Axios({
       method: "POST",
       data: {
@@ -62,6 +73,7 @@ function AuthForm(props) {
         draggable: false,
         progress: undefined,
       });
+      props.onClose();
     });
   };
   const getAllUsers = async () => {
@@ -120,81 +132,87 @@ function AuthForm(props) {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <h1>{jwtUser !== null ? welcomeMsg : "please log in"}</h1>
-        </div>
-        <div>
-          <Text size={"xl"} color="black">
-            Register
-          </Text>
-          <input
-            placeholder="username"
-            onChange={(e) => setRegisterUsername(e.target.value)}
-          />
-          <input
-            placeholder="password"
-            onChange={(e) => setRegisterPassword(e.target.value)}
-          />
-          <button onClick={register}>Register</button>
-        </div>
+    <div>
+      <Container size={420} my={40}>
+        <Title align="center">
+          {jwtUser !== null ? welcomeMsg : "please log in"}
+        </Title>
+        <Text color="dimmed" size="sm" align="center" mt={5}>
+          Do you have an account yet?{" "}
+          <Anchor
+            href="#"
+            size="sm"
+            onClick={(event) => {
+              event.preventDefault();
+              if (authMode === REGISTER_MODE) {
+                setAuthMode(LOGIN_MODE);
+              } else if (authMode === LOGIN_MODE) {
+                setAuthMode(REGISTER_MODE);
+              }
+            }}
+          >
+            {authMode === REGISTER_MODE ? "Login" : "Register"}
+          </Anchor>
+        </Text>
+        {authMode === REGISTER_MODE ? (
+          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+            <TextInput
+              label="username"
+              value={registerUsername}
+              placeholder="username here"
+              onChange={(e) => setRegisterUsername(e.target.value)}
+              required
+            />
+            <PasswordInput
+              label="Password"
+              placeholder="Your password"
+              onChange={(e) => setRegisterPassword(e.target.value)}
+              required
+              mt="md"
+            />
 
-        <div>
-          <Text size={"xl"} color="black">
-            Login
-          </Text>
-          <input
-            placeholder="username"
-            onChange={(e) => setLoginUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="password"
-            onChange={(e) => setLoginPassword(e.target.value)}
-          />
-          <button onClick={login}>Login</button>
-        </div>
+            <Button fullWidth mt="xl" onClick={register}>
+              Register
+            </Button>
 
-        <div>
-          <h1>Get All Users</h1>
-          <button onClick={getAllUsers}>Submit</button>
-          {allUsers ? (
-            <h6>
-              All users:
-              <ul>
-                {allUsers.map((item) => (
-                  <li>{item.username}</li>
-                ))}
-              </ul>{" "}
-            </h6>
-          ) : null}
-        </div>
-        <div>
-          <h1>Get My User</h1>
-          <h6>using passport authentication methods</h6>
-          <button onClick={getMyUser}>Get</button>
-          {myUser ? <h1>Welcome Back {myUser.username}</h1> : null}
-        </div>
-        <button onClick={checkJWT}>Check JWT if authorized</button>
-        <h6>using jwt token from cookies to access protected user info</h6>
-        {jwtUser && jwtUser}
-        <br></br>
-        <button onClick={logout}>Log Out</button>
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss={false}
-          draggable={false}
-          pauseOnHover={false}
-        />
-      </header>
+            <Button onClick={logout}>Log Out</Button>
+          </Paper>
+        ) : (
+          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+            <TextInput
+              label="username"
+              value={loginUsername}
+              placeholder="username here"
+              onChange={(e) => setLoginUsername(e.target.value)}
+              required
+            />
+            <PasswordInput
+              label="Password"
+              placeholder="Your password"
+              onChange={(e) => setLoginPassword(e.target.value)}
+              required
+              mt="md"
+            />
+
+            <Button fullWidth mt="xl" onClick={login}>
+              Login
+            </Button>
+
+            <Button onClick={logout}>Log Out</Button>
+          </Paper>
+        )}
+      </Container>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover={false}
+      />
     </div>
   );
 }
-
-export default AuthForm;
