@@ -20,6 +20,7 @@ import "./App.css";
 import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
+import LandingPage from "./components/LandingPage";
 function App() {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -35,6 +36,7 @@ function App() {
           <Sidebar drawerOpen={() => setDrawerOpen(!drawerOpen)} />
           <Routes>
             <Route path="/" element={<AuthForm />} />
+            <Route path="/landing" element={<LandingPage />} />
             <Route
               path="/dashboard"
               element={<Dashboard drawerOpen={drawerOpen} />}
