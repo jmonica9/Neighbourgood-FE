@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Route, Routes } from "react-router-dom";
 
 //import child components
-import AuthForm from "./components/AuthForm";
+// import AuthForm from "./components/AuthForm";
 import Dashboard from "./components/Dashboard";
 
 //import styling
