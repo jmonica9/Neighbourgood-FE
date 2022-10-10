@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Route, Routes } from "react-router-dom";
 
 //import child components
-import AuthForm from "./components/AuthForm";
+// import AuthForm from "./components/AuthForm";
 import Dashboard from "./components/Dashboard";
 
 //import styling
@@ -17,6 +17,9 @@ import {
 import { neighbourgoodTheme } from "./styles/Theme";
 
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
+import AuthModal from "./AuthModal";
+
 import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
@@ -35,8 +38,7 @@ function App() {
         <header className="App-header">
           <Sidebar drawerOpen={() => setDrawerOpen(!drawerOpen)} />
           <Routes>
-            <Route path="/" element={<AuthForm />} />
-            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/" element={<LandingPage />} />
             <Route
               path="/dashboard"
               element={<Dashboard drawerOpen={drawerOpen} />}
