@@ -14,12 +14,12 @@ export const neighbourgoodTheme = {
 
   // fontFamily: "Didact Gothic, sans-serif",
 
-  // headings: {
-  //   fontFamily: "Poppins, sans-serif",
-  //   sizes: {
-  //     h1: { fontSize: 34 },
-  //   },
-  // },
+  headings: {
+    //   fontFamily: "Poppins, sans-serif",
+    sizes: {
+      h1: { fontSize: 34 },
+    },
+  },
 
   spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import DashboardCalendar from "./DashboardCalendar";
 //import styling
-import { Card, Grid, Paper, Text } from "@mantine/core";
+import { Card, Grid, Paper, ScrollArea, Stack, Text } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
 
 export default function Dashboard(props) {
@@ -38,8 +39,13 @@ export default function Dashboard(props) {
               Dashboard
             </Grid.Col>
             <Grid.Col span={8}>
-              <Card sx={{ height: "56vh", display: "flex", borderRadius: 25 }}>
-                Calendar
+              <Card sx={{ height: "56vh", display: "block", borderRadius: 25 }}>
+                <Stack>
+                  <ScrollArea style={{ height: "40rem" }} offsetScrollbars>
+                    <DashboardCalendar />
+                  </ScrollArea>
+                  <Text align="left">Calendar</Text>
+                </Stack>
               </Card>
             </Grid.Col>
             <Grid.Col span={4}>

@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar, Text } from "@mantine/core";
 import SideDrawer from "./SideDrawer";
 import { neighbourgoodTheme } from "../styles/Theme";
 
 export default function Sidebar(props) {
   const [user, setUser] = useState("placeholder");
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const closeDrawer = () => {
-    setDrawerOpen(false);
     props.drawerOpen();
   };
 
@@ -42,16 +40,15 @@ export default function Sidebar(props) {
             <button
               className="drawer-toggle"
               onClick={() => {
-                setDrawerOpen(!drawerOpen);
                 props.drawerOpen();
               }}
             >
-              {!drawerOpen ? `>` : `<`}
+              {!props.drawer ? `>` : `<`}
             </button>
           ) : null}
         </Navbar.Section>
       </Navbar>
-      <SideDrawer openDrawer={drawerOpen} closeDrawer={() => closeDrawer()} />
+      <SideDrawer openDrawer={props.drawer} closeDrawer={closeDrawer} />
     </div>
   );
 }

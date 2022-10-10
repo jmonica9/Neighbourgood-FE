@@ -5,7 +5,11 @@ import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-function AuthForm() {
+//import styling
+import { neighbourgoodTheme } from "../styles/Theme";
+import { Header, Text } from "@mantine/core";
+
+function AuthForm(props) {
   const [registerUsername, setRegisterUsername] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [loginUsername, setLoginUsername] = useState("");
@@ -122,7 +126,9 @@ function AuthForm() {
           <h1>{jwtUser !== null ? welcomeMsg : "please log in"}</h1>
         </div>
         <div>
-          <h1>Register</h1>
+          <Text size={"xl"} color="black">
+            Register
+          </Text>
           <input
             placeholder="username"
             onChange={(e) => setRegisterUsername(e.target.value)}
@@ -131,20 +137,23 @@ function AuthForm() {
             placeholder="password"
             onChange={(e) => setRegisterPassword(e.target.value)}
           />
-          <button onClick={register}>Submit</button>
+          <button onClick={register}>Register</button>
         </div>
 
         <div>
-          <h1>Login</h1>
+          <Text size={"xl"} color="black">
+            Login
+          </Text>
           <input
             placeholder="username"
             onChange={(e) => setLoginUsername(e.target.value)}
           />
           <input
+            type="password"
             placeholder="password"
             onChange={(e) => setLoginPassword(e.target.value)}
           />
-          <button onClick={login}>Submit</button>
+          <button onClick={login}>Login</button>
         </div>
 
         <div>
