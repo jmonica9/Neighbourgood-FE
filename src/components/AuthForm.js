@@ -3,14 +3,21 @@ import "../App.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
+import axios from "axios";
 
-function AuthForm() {
+//import styling
+import { neighbourgoodTheme } from "../styles/Theme";
+import { Header, Text } from "@mantine/core";
+
+function AuthForm(props) {
   const [registerUsername, setRegisterUsername] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [data, setData] = useState(null);
-
+  // delete this during merge
+  const [currentUser, setCurrentUser] = useState(null);
+  // end of delete portion
   const navigate = useNavigate();
 
   const register = () => {
@@ -24,16 +31,22 @@ function AuthForm() {
       url: "http://localhost:3001/register",
     }).then((res) => console.log(res));
   };
-  const login = () => {
-    Axios({
-      method: "POST",
-      data: {
-        username: loginUsername,
-        password: loginPassword,
-      },
-      withCredentials: true,
-      url: "http://localhost:3001/login",
-    }).then((res) => console.log(res));
+  const login = async () => {
+    const response = await axios.post("http://localhost:3001/login", {
+      username: loginUsername,
+      password: loginPassword,
+    });
+    await props.signIn(response.data);
+    // await Axios({
+    //   method: "POST",
+    //   data: {
+    //     username: loginUsername,
+    //     password: loginPassword,
+    //   },
+    //   withCredentials: true,
+    //   url: "http://localhost:3001/login",
+    // }).then((res) => setCurrentUser(res.data));
+    // await props.signIn(currentUser);
   };
   const getUser = () => {
     Axios({
@@ -49,7 +62,9 @@ function AuthForm() {
     <div className="App">
       <header className="App-header">
         <div>
-          <h1>Register</h1>
+          <Text size={"xl"} color="black">
+            Register
+          </Text>
           <input
             placeholder="username"
             onChange={(e) => setRegisterUsername(e.target.value)}
@@ -58,27 +73,37 @@ function AuthForm() {
             placeholder="password"
             onChange={(e) => setRegisterPassword(e.target.value)}
           />
-          <button onClick={register}>Submit</button>
+          <button onClick={register}>Register</button>
         </div>
 
         <div>
-          <h1>Login</h1>
+          <Text size={"xl"} color="black">
+            Login
+          </Text>
           <input
             placeholder="username"
             onChange={(e) => setLoginUsername(e.target.value)}
           />
           <input
+            type="password"
             placeholder="password"
             onChange={(e) => setLoginPassword(e.target.value)}
           />
-          <button onClick={login}>Submit</button>
+          <button onClick={login}>Login</button>
         </div>
 
         <div>
-          <h1>Get User</h1>
+          <Text size={"xl"} color="black">
+            Get User
+          </Text>
           <button onClick={getUser}>Submit</button>
           {data ? (
-            <h1>Welcome Back {data.map((item) => item.username)}</h1>
+            <Text color="black">
+              Welcome Back{" "}
+              {data.map((item) => {
+                return item.username;
+              })}
+            </Text>
           ) : null}
         </div>
         <button
