@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Navbar, Text } from "@mantine/core";
 import SideDrawer from "./SideDrawer";
 import { neighbourgoodTheme } from "../styles/Theme";
+import AuthModal from "../AuthModal";
 
 export default function Sidebar(props) {
   const [user, setUser] = useState("placeholder");
@@ -33,7 +34,7 @@ export default function Sidebar(props) {
           >
             neighbourgood
           </Text>
-          {/* Neighbourgood */}
+          {/* conditional rendering here */}
         </Navbar.Section>
         <Navbar.Section>
           {user ? (
