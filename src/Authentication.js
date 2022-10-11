@@ -85,7 +85,7 @@ export function Authentication(props) {
       url: `${BACKEND_URL}/auth/login`,
     }).then((res) => {
       console.log(res);
-      toast.success("You have logged in!", {
+      toast.success("You have logged in! Welcome back", {
         position: "top-right",
         autoClose: 4500,
         hideProgressBar: false,
