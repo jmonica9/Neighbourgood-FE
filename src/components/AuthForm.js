@@ -72,7 +72,7 @@ function AuthForm(props) {
       url: "http://localhost:3001/users",
     }).then((res) => {
       setAllUsers(res.data);
-      console.log(res.data);
+      // console.log(res.data);
     });
   };
 

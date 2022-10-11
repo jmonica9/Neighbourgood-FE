@@ -55,6 +55,7 @@ export function Authentication(props) {
       url: `${BACKEND_URL}/register`,
     }).then((res) => console.log(res));
   };
+
   const login = () => {
     console.log(authMode, "authmode");
     Axios({
