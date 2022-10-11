@@ -61,6 +61,7 @@ export default function DashboardCalendar() {
       type: "Lending",
     },
   ];
+
   const calendarAppointment = (appointmentData) => {
     const { startDate, endDate, type, details } = appointmentData.data;
     let color;
