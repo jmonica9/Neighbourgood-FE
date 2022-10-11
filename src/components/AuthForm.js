@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 //import styling
 import { neighbourgoodTheme } from "../styles/Theme";
 import { Header, Text } from "@mantine/core";
+import { BACKEND_URL } from "../constants";
 
 function AuthForm(props) {
   const [registerUsername, setRegisterUsername] = useState("");
@@ -39,7 +40,7 @@ function AuthForm(props) {
         password: registerPassword,
       },
       withCredentials: true,
-      url: "http://localhost:3001/register",
+      url: `${BACKEND_URL}/register`,
     }).then((res) => console.log(res));
   };
   const login = () => {
