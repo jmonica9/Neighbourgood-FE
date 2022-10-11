@@ -72,6 +72,7 @@ export function Authentication(props) {
       }
     });
   };
+
   const login = () => {
     console.log(authMode, "authmode");
     Axios({

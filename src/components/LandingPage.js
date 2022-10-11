@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import helping from "../images/helping.jpg";
 import lending from "../images/lending.jpg";
 import sharing from "../images/sharing.jpg";
@@ -10,6 +10,9 @@ import Listing from "./Listing";
 import Lobby from "./Lobby";
 import LandingPageListings from "./LandingPageListings";
 import AuthModal from "../AuthModal";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:3000");
 
 function LandingPage(props) {
   const [showSharing, setShowSharing] = useState(false);
@@ -31,6 +34,19 @@ function LandingPage(props) {
     setShowHelping(false);
     setShowSharing(false);
   };
+
+  useEffect(() => {
+    socket.emit(
+      "testing",
+      "this message comes from the front end, and was sent to the backend via socket, then backend socket sends it back and it's now picked up by another use effect in the front end which displays it as an alert"
+    );
+  }, []);
+
+  useEffect(() => {
+    socket.on("testing_received", (data) => {
+      alert(data);
+    });
+  }, [socket]);
 
   return (
     <Grid
