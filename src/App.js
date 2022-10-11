@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect } from "react";
 import { useNavigate, Route, Routes } from "react-router-dom";
-
+import { ToastContainer, toast } from "react-toastify";
 //import child components
 // import AuthForm from "./components/AuthForm";
 import Dashboard from "./components/Dashboard";
@@ -87,6 +87,17 @@ export default function App() {
               />
             </Routes>
           </UserContext.Provider>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable={false}
+            pauseOnHover={false}
+          />
         </header>
       </MantineProvider>
     </div>
