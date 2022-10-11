@@ -13,8 +13,10 @@ import {
 import React, { useEffect } from "react";
 import "./App.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { BACKEND_URL } from "./constants";
 
 export function Authentication(props) {
   const [registerUsername, setRegisterUsername] = useState("");
@@ -27,6 +29,7 @@ export function Authentication(props) {
   const [welcomeMsg, setWelcomeMsg] = useState(null);
   const REGISTER_MODE = "Register";
   const LOGIN_MODE = "Login";
+  const navigate = useNavigate();
   const [authMode, setAuthMode] = useState(REGISTER_MODE);
   // access user info on load
   useEffect(() => {
@@ -49,7 +52,7 @@ export function Authentication(props) {
         password: registerPassword,
       },
       withCredentials: true,
-      url: "http://localhost:3001/register",
+      url: `${BACKEND_URL}/register`,
     }).then((res) => console.log(res));
   };
   const login = () => {
@@ -61,7 +64,7 @@ export function Authentication(props) {
         password: loginPassword,
       },
       withCredentials: true,
-      url: "http://localhost:3001/login",
+      url: `${BACKEND_URL}/login`,
     }).then((res) => {
       console.log(res);
       toast.success("You have logged in!", {
@@ -74,13 +77,14 @@ export function Authentication(props) {
         progress: undefined,
       });
       props.onClose();
+      navigate("/dashboard");
     });
   };
   const getAllUsers = async () => {
     await Axios({
       method: "GET",
       withCredentials: true,
-      url: "http://localhost:3001/users",
+      url: `${BACKEND_URL}/users`,
     }).then((res) => {
       setAllUsers(res.data);
       console.log(res.data);
@@ -91,7 +95,7 @@ export function Authentication(props) {
     await Axios({
       method: "GET",
       withCredentials: true,
-      url: "http://localhost:3001/myUser",
+      url: `${BACKEND_URL}/myUser`,
     }).then((res) => {
       setMyUser(res.data);
       console.log(res.data);
@@ -102,7 +106,7 @@ export function Authentication(props) {
     Axios({
       method: "GET",
       withCredentials: true,
-      url: "http://localhost:3001/protectedbyjwt",
+      url: `${BACKEND_URL}/protectedbyjwt`,
     }).then((res) => {
       console.log(res.data);
       setJwtUser(res.data.username);
@@ -113,7 +117,7 @@ export function Authentication(props) {
     Axios({
       method: "GET",
       withCredentials: true,
-      url: "http://localhost:3001/logout",
+      url: `${BACKEND_URL}/logout`,
     }).then((res) => {
       console.log(res.data);
       setJwtUser(null);

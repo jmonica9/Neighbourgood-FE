@@ -8,6 +8,7 @@ import { neighbourgoodTheme } from "../styles/Theme";
 import Listing from "./Listing";
 import Lobby from "./Lobby";
 import LandingPageListings from "./LandingPageListings";
+import AuthModal from "../AuthModal";
 
 function LandingPage(props) {
   const [showSharing, setShowSharing] = useState(false);
@@ -104,6 +105,7 @@ function LandingPage(props) {
                     <Button variant="outline" onClick={toggleSharingListings}>
                       See Listings
                     </Button>
+                    {<AuthModal />}
                   </Text>
                 </Grid.Col>
               </Grid>
