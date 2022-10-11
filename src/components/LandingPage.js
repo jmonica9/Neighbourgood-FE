@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import helping from "../images/helping.jpg";
 import lending from "../images/lending.jpg";
 import sharing from "../images/sharing.jpg";
+
 import { Button, Grid, Text, Group, Title, Card } from "@mantine/core";
 import LandingPageCarousel from "./LandingPageCarousel";
 import { neighbourgoodTheme } from "../styles/Theme";
