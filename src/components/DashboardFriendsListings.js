@@ -72,7 +72,7 @@ export default function DashboardFriendsListings() {
         color = neighbourgoodTheme.colors.lightGray;
     }
     return (
-      <Grid.Col span={3}>
+      <Grid.Col span={3} key={index}>
         <Card sx={{ backgroundColor: color }}>
           <Text size={"sm"}>
             {index}: {listing.title}
