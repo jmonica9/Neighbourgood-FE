@@ -23,6 +23,7 @@ const socket = io("http://localhost:3001");
 
 export function Authentication(props) {
   const [registerUsername, setRegisterUsername] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -42,6 +43,7 @@ export function Authentication(props) {
 
   useEffect(() => {
     if (jwtUser !== null) {
+      console.log(jwtUser, "use effect jwt user");
       setWelcomeMsg(`You are logged in. Welcome back ${jwtUser} `);
     }
   }, [jwtUser]);
@@ -51,13 +53,29 @@ export function Authentication(props) {
     Axios({
       method: "POST",
       data: {
+        email: registerEmail,
         username: registerUsername,
         password: registerPassword,
       },
       withCredentials: true,
-      url: `${BACKEND_URL}/register`,
-    }).then((res) => console.log(res));
+      url: `${BACKEND_URL}/auth/register`,
+    }).then((res) => {
+      console.log(res);
+      if (res) {
+        toast.success("You have registered in!", {
+          position: "top-right",
+          autoClose: 4500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+        });
+        setAuthMode(LOGIN_MODE);
+      }
+    });
   };
+
   const login = () => {
     console.log(authMode, "authmode");
     Axios({
@@ -67,12 +85,10 @@ export function Authentication(props) {
         password: loginPassword,
       },
       withCredentials: true,
-      url: `${BACKEND_URL}/login`,
+      url: `${BACKEND_URL}/auth/login`,
     }).then((res) => {
       console.log(res);
-      socket.emit("Login Successful", res.data);
-
-      toast.success("You have logged in!", {
+      toast.success("You have logged in! Welcome back", {
         position: "top-right",
         autoClose: 4500,
         hideProgressBar: false,
@@ -85,33 +101,33 @@ export function Authentication(props) {
       navigate("/dashboard");
     });
   };
-  const getAllUsers = async () => {
-    await Axios({
-      method: "GET",
-      withCredentials: true,
-      url: `${BACKEND_URL}/users`,
-    }).then((res) => {
-      setAllUsers(res.data);
-      console.log(res.data);
-    });
-  };
+  // const getAllUsers = async () => {
+  //   await Axios({
+  //     method: "GET",
+  //     withCredentials: true,
+  //     url: `${BACKEND_URL}/auth/users`,
+  //   }).then((res) => {
+  //     setAllUsers(res.data);
+  //     console.log(res.data);
+  //   });
+  // };
 
-  const getMyUser = async () => {
-    await Axios({
-      method: "GET",
-      withCredentials: true,
-      url: `${BACKEND_URL}/myUser`,
-    }).then((res) => {
-      setMyUser(res.data);
-      console.log(res.data);
-    });
-  };
+  // const getMyUser = async () => {
+  //   await Axios({
+  //     method: "GET",
+  //     withCredentials: true,
+  //     url: `${BACKEND_URL}/auth/myUser`,
+  //   }).then((res) => {
+  //     setMyUser(res.data);
+  //     console.log(res.data);
+  //   });
+  // };
 
   const checkJWT = () => {
     Axios({
       method: "GET",
       withCredentials: true,
-      url: `${BACKEND_URL}/protectedbyjwt`,
+      url: `${BACKEND_URL}/auth/jwtUser`,
     }).then((res) => {
       console.log(res.data);
       setJwtUser(res.data.username);
@@ -122,7 +138,7 @@ export function Authentication(props) {
     Axios({
       method: "GET",
       withCredentials: true,
-      url: `${BACKEND_URL}/logout`,
+      url: `${BACKEND_URL}/auth/logout`,
     }).then((res) => {
       console.log(res.data);
       setJwtUser(null);
@@ -144,7 +160,7 @@ export function Authentication(props) {
     <div>
       <Container size={420} my={40}>
         <Title align="center">
-          {jwtUser !== null ? welcomeMsg : "please log in"}
+          {jwtUser !== undefined ? welcomeMsg : "please log in"}
         </Title>
         <Text color="dimmed" size="sm" align="center" mt={5}>
           Do you have an account yet?{" "}
@@ -168,8 +184,15 @@ export function Authentication(props) {
             <TextInput
               label="username"
               value={registerUsername}
-              placeholder="username here"
+              placeholder="register username here"
               onChange={(e) => setRegisterUsername(e.target.value)}
+              required
+            />
+            <TextInput
+              label="email"
+              value={registerEmail}
+              placeholder="register email here"
+              onChange={(e) => setRegisterEmail(e.target.value)}
               required
             />
             <PasswordInput
@@ -191,7 +214,7 @@ export function Authentication(props) {
             <TextInput
               label="username"
               value={loginUsername}
-              placeholder="username here"
+              placeholder="login username here"
               onChange={(e) => setLoginUsername(e.target.value)}
               required
             />
@@ -211,17 +234,6 @@ export function Authentication(props) {
           </Paper>
         )}
       </Container>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable={false}
-        pauseOnHover={false}
-      />
     </div>
   );
 }
