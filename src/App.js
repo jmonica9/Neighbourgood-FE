@@ -29,7 +29,7 @@ import LandingPage from "./components/LandingPage";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
-const socket = io("http://localhost:3001");
+export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
 
@@ -41,8 +41,30 @@ export default function App() {
     checkJWT();
   }, []);
 
-  const checkJWT = () => {
+  const logout = () => {
+    console.log("logout!");
     Axios({
+      method: "GET",
+      withCredentials: true,
+      url: `${BACKEND_URL}/auth/logout`,
+    }).then((res) => {
+      console.log(res.data);
+      setUserData(null);
+      toast("You have logged out!", {
+        position: "top-right",
+        autoClose: 4,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    });
+  };
+
+  const checkJWT = async () => {
+    console.log("App.js check for user!");
+    await Axios({
       method: "GET",
       withCredentials: true,
       url: `${BACKEND_URL}/auth/jwtUser`,
@@ -55,14 +77,11 @@ export default function App() {
   useEffect(() => {
     console.log("socket here");
     socket.on("testing1_recieved", () => console.log("socket emitted"));
+    socket.on("user", (data) => {
+      console.log(data, "socket user logged in DATA");
+      setUserData(data);
+    });
   }, [socket]);
-
-  useEffect(() => {
-    socketEmit();
-  }, []);
-  const socketEmit = () => {
-    socket.emit("testing1", "data string");
-  };
 
   return (
     <div className="App">
@@ -75,6 +94,7 @@ export default function App() {
           <UserContext.Provider value={userData}>
             <Sidebar
               drawer={drawerOpen}
+              logout={logout}
               drawerOpen={() => {
                 setDrawerOpen(!drawerOpen);
               }}

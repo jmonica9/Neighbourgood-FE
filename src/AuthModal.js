@@ -25,7 +25,9 @@ export default function AuthModal() {
       </Modal>
 
       <Group position="center">
-        <Button onClick={() => setOpened(true)}>Register/Login</Button>
+        <Button variant="outline" onClick={() => setOpened(true)}>
+          Register/Login
+        </Button>
       </Group>
     </>
   );

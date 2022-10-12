@@ -6,6 +6,7 @@ import { UserContext } from "../App";
 //import styling
 import { Drawer, Button, Group, Text, createStyles } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
+import AuthModal from "../AuthModal";
 
 const useStyles = createStyles((theme) => ({
   drawerPaper: {
@@ -21,11 +22,19 @@ export default function SideDrawer(props) {
 
   const navigate = useNavigate();
   const { classes } = useStyles();
-  const userData = useContext(UserContext);
+  // undefined useContext here
+  // const userData = useContext(UserContext);
 
   useEffect(() => {
     setOpened(props.openDrawer);
-    setUser(userData);
+    console.log(props.userData, "userData props from SideBar");
+    setUser(props.userData);
+  }, [props]);
+
+  useEffect(() => {
+    if (!user) {
+      setOpened(!props.openDrawer);
+    }
   }, [props]);
 
   return (
@@ -70,8 +79,29 @@ export default function SideDrawer(props) {
           >
             Lending
           </button>
+          <button onClick={props.logout}>Logout</button>
         </Drawer>
-      ) : null}
+      ) : (
+        <Drawer
+          // select classnames from above to target specific sub-components
+          classNames={{ drawer: classes.drawerPaper }}
+          sx={{
+            transform: "translateX(50px)",
+          }}
+          opened={opened}
+          onClose={() => props.closeDrawer()}
+          title="Placeholder"
+          padding="xl"
+          size="20vw"
+          closeOnClickOutside={false}
+          withOverlay={false}
+          withinPortal={false}
+          withCloseButton={false}
+        >
+          <Text>Please register or log in first!</Text>
+          <AuthModal />
+        </Drawer>
+      )}
     </>
   );
 }
