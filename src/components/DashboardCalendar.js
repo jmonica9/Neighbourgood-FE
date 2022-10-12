@@ -62,6 +62,7 @@ export default function DashboardCalendar() {
       type: "Lending",
     },
   ];
+
   const calendarAppointment = (appointmentData) => {
     const { startDate, endDate, type, details } = appointmentData.data;
     let color;
@@ -81,7 +82,7 @@ export default function DashboardCalendar() {
     const startDateParsed = Date.parse(startDate);
     const endDateParsed = Date.parse(endDate);
     const timeDifference = differenceInMinutes(endDateParsed, startDateParsed);
-    console.log(timeDifference);
+    // console.log(timeDifference);
     const cardHeight = timeDifference / 10;
     return (
       <Paper

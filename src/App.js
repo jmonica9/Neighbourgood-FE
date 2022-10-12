@@ -24,6 +24,10 @@ import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
 import LandingPage from "./components/LandingPage";
+import { Authentication } from "./Authentication";
+
+import { io } from "socket.io-client";
+const socket = io("http://localhost:3001");
 
 export const UserContext = createContext();
 
@@ -37,8 +41,16 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log(userData);
-  }, [userData]);
+    console.log("socket here");
+    socket.on("testing", () => console.log("socket emitted"));
+  }, [socket]);
+
+  useEffect(() => {
+    socketEmit();
+  }, []);
+  const socketEmit = () => {
+    socket.emit("testing");
+  };
 
   return (
     <div className="App">
@@ -57,6 +69,15 @@ export default function App() {
             />
             <Routes>
               <Route path="/" element={<LandingPage signIn={signInUser} />} />
+              <Route
+                path="/signin"
+                element={
+                  <Authentication
+                    title="Lending"
+                    onLogin={(data) => setUserData(data)}
+                  />
+                }
+              />
               <Route
                 path="/dashboard"
                 element={<Dashboard drawerOpen={drawerOpen} />}

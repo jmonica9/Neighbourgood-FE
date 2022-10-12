@@ -3,6 +3,7 @@ import DashboardCalendar from "./DashboardCalendar";
 //import styling
 import { Card, Grid, Paper, ScrollArea, Stack, Text } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
+import DashboardFriendsListings from "./DashboardFriendsListings";
 
 export default function Dashboard(props) {
   const drawerOpen = props.drawerOpen;
@@ -15,12 +16,13 @@ export default function Dashboard(props) {
             width: drawerOpen ? "70vw" : "90vw",
             backgroundColor: neighbourgoodTheme.colors.lightGray,
             height: "30vh",
-            display: "flex",
+            display: "block",
             borderRadius: 25,
           }}
         >
-          Friend's Listings
+          <Text align="left">Friend's Listings</Text>
           {/* Contents in here */}
+          <DashboardFriendsListings />
         </Card>
       </Grid>
       <br />
