@@ -18,6 +18,9 @@ import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "./constants";
 
+import { io } from "socket.io-client";
+const socket = io("http://localhost:3001");
+
 export function Authentication(props) {
   const [registerUsername, setRegisterUsername] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
@@ -67,6 +70,8 @@ export function Authentication(props) {
       url: `${BACKEND_URL}/login`,
     }).then((res) => {
       console.log(res);
+      socket.emit("Login Successful", res.data);
+
       toast.success("You have logged in!", {
         position: "top-right",
         autoClose: 4500,
