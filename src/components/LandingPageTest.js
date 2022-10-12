@@ -68,14 +68,14 @@ function LandingPage(props) {
           display: "flex",
           alignItems: "center",
           width: "100%",
-          height: "80%",
+          height: "100vh",
         }}
-        pt={"0.2rem"}
+        mt={"0.1rem"}
       >
         <Grid.Col
           span={6}
           className="sharing-container"
-          style={{ height: "80vh" }}
+          style={{ height: "100%" }}
           p={0}
         >
           <Grid.Col
@@ -85,9 +85,10 @@ function LandingPage(props) {
               backgroundSize: "cover",
               overflow: "clip",
               backgroundRepeat: "no-repeat",
+              borderTop: "1px solid #fff",
+              borderRight: "1px solid #fff",
             }}
             p={0}
-            mr={"0.1rem"}
             className="sharingimagebackground"
           >
             <Grid.Col
@@ -97,14 +98,14 @@ function LandingPage(props) {
                 display: "flex",
                 alignItems: "center",
               }}
-              mt={"0.7rem"}
               className="sharingoverlay"
             >
               <Grid
                 className="sharingdetailscontainer"
                 sx={{
-                  height: "50%",
+                  height: "80%",
                   display: "flex",
+                  alignContent: "center",
                 }}
                 px={"5vw"}
               >
@@ -138,7 +139,7 @@ function LandingPage(props) {
         <Grid.Col
           span={6}
           className="helping_lending-container"
-          style={{ height: "80vh" }}
+          style={{ height: "100%" }}
           p={0}
         >
           <Grid.Col
@@ -148,9 +149,10 @@ function LandingPage(props) {
               backgroundSize: "cover",
               overflow: "clip",
               backgroundRepeat: "no-repeat",
+              borderTop: "1px solid #fff",
             }}
             p={0}
-            className="helpingimage"
+            className="helpingimagebackground"
           >
             <Grid.Col
               sx={{
@@ -159,18 +161,16 @@ function LandingPage(props) {
                 display: "flex",
                 alignItems: "center",
               }}
-              px={"5rem"}
-              py={0}
-              mt={"0.7rem"}
               className="helpingoverlay"
             >
               <Grid
-                className="helpingdetails"
+                className="helpingdetailscontainer"
                 sx={{
-                  height: "50%",
+                  height: "80%",
                   display: "flex",
+                  alignContent: "center",
                 }}
-                px={"5vw"}
+                px={"3rem"}
               >
                 <Grid.Col className="helpingtitle">
                   <Title size="h2" underline>
@@ -178,7 +178,7 @@ function LandingPage(props) {
                   </Title>
                 </Grid.Col>
                 <Grid.Col className="helpingdesc">
-                  <Text size="1vh">
+                  <Text size="2vh">
                     <i>
                       "Love your neighbour as you love yourself" - Mark 12:31
                     </i>
@@ -186,13 +186,12 @@ function LandingPage(props) {
                     <br />
                     Spread some love by helping your neighbours with tasks that
                     are troubling them. <br />
-                    <br />
                     Or post a task that you need help with and let others show
                     their love for you instead!
                   </Text>
                 </Grid.Col>
-                <Grid.Col className="helpingbutton">
-                  <Button variant="outline" onClick={toggleHelpingListings}>
+                <Grid.Col className="sharingbutton">
+                  <Button variant="outline" onClick={toggleSharingListings}>
                     See Listings
                   </Button>
                 </Grid.Col>
@@ -206,8 +205,10 @@ function LandingPage(props) {
               backgroundSize: "cover",
               overflow: "clip",
               backgroundRepeat: "no-repeat",
+              borderTop: "1px solid #fff",
             }}
             p={0}
+            className="lendingimagebackground"
           >
             <Grid.Col
               sx={{
@@ -216,18 +217,26 @@ function LandingPage(props) {
                 display: "flex",
                 alignItems: "center",
               }}
-              px={"5rem"}
+              className="lendingoverlay"
             >
-              <Grid>
-                <Grid.Col>
+              <Grid
+                className="lendingdetailscontainer"
+                sx={{
+                  height: "80%",
+                  display: "flex",
+                  alignContent: "center",
+                }}
+                px={"3rem"}
+              >
+                <Grid.Col className="lendingtitle">
                   <Title size="h2" underline>
                     Lending
                   </Title>
                 </Grid.Col>
-                <Grid.Col>
-                  <Text size="xs">
+                <Grid.Col className="lendingdesc">
+                  <Text size="2vh">
                     Loan out items to your neighbours or borrow their stuff with
-                    our lending listings platform
+                    our lending feature.
                     <br />
                     <br />
                     Be sure to take good care of the items you're borrowing,
@@ -235,10 +244,11 @@ function LandingPage(props) {
                     care of it too!
                   </Text>
                 </Grid.Col>
-                <Grid.Col>
-                  <Button variant="outline" onClick={toggleLendingListings}>
+                <Grid.Col className="lendingbutton">
+                  <Button variant="outline" onClick={toggleSharingListings}>
                     See Listings
                   </Button>
+                  {/* {<AuthModal />} */}
                 </Grid.Col>
               </Grid>
             </Grid.Col>

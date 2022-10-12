@@ -46,8 +46,12 @@ export default function LandingPageListings(props) {
     { value: "blitz", label: "Blitz.js" },
   ];
   return (
-    <Grid>
-      {/* <Text color="black">{props.title}</Text> */}
+    <Grid
+      sx={{
+        justifyContent: "center",
+      }}
+      mt={"1rem"}
+    >
       <Grid>
         <Group>
           <Card

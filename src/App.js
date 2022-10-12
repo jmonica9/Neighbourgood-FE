@@ -23,11 +23,11 @@ import AuthModal from "./AuthModal";
 import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/LandingPageTest";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
-const socket = io("http://localhost:3001");
+export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
 
@@ -41,16 +41,10 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log("socket here");
-    socket.on("testing", () => console.log("socket emitted"));
+    socket.on("testing_received", (data) => {
+      alert("this is from app.js");
+    });
   }, [socket]);
-
-  useEffect(() => {
-    socketEmit();
-  }, []);
-  const socketEmit = () => {
-    socket.emit("testing");
-  };
 
   return (
     <div className="App">
