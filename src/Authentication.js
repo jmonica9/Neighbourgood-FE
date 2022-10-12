@@ -43,16 +43,10 @@ export function Authentication(props) {
 
   useEffect(() => {
     if (jwtUser !== null) {
-      navigate("/dashboard");
       console.log(jwtUser, "use effect jwt user");
       setWelcomeMsg(`You are logged in. Welcome back ${jwtUser} `);
     }
   }, [jwtUser]);
-
-  useEffect(() => {
-    //why it dont navigate??
-    navigate("/dashboard");
-  }, [welcomeMsg]);
 
   const register = () => {
     console.log(authMode, "authmode");

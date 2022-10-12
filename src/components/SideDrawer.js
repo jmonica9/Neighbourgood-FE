@@ -39,7 +39,7 @@ export default function SideDrawer(props) {
 
   return (
     <>
-      {user ? (
+      {user && user.username ? (
         <Drawer
           // select classnames from above to target specific sub-components
           classNames={{ drawer: classes.drawerPaper }}
