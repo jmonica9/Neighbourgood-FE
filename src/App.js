@@ -42,14 +42,14 @@ export default function App() {
 
   useEffect(() => {
     console.log("socket here");
-    socket.on("testing", () => console.log("socket emitted"));
+    socket.on("testing1_recieved", () => console.log("socket emitted"));
   }, [socket]);
 
   useEffect(() => {
     socketEmit();
   }, []);
   const socketEmit = () => {
-    socket.emit("testing");
+    socket.emit("testing1", "data string");
   };
 
   return (
