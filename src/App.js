@@ -75,8 +75,9 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log("socket here");
-    socket.on("testing1_recieved", () => console.log("socket emitted"));
+    socket.on("testing_received", (data) => {
+      alert("this is from app.js");
+    });
     socket.on("user", (data) => {
       console.log(data, "socket user logged in DATA");
       setUserData(data);
