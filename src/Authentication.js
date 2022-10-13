@@ -17,9 +17,9 @@ import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "./constants";
-
-import { io } from "socket.io-client";
-const socket = io("http://localhost:3001");
+import { socket } from "./App";
+// import { io } from "socket.io-client";
+// const socket = io("http://localhost:3001");
 
 export function Authentication(props) {
   const [registerUsername, setRegisterUsername] = useState("");
@@ -88,6 +88,8 @@ export function Authentication(props) {
       url: `${BACKEND_URL}/auth/login`,
     }).then((res) => {
       console.log(res);
+      console.log("socket emit user logged in!");
+      socket.emit("user", res);
       toast.success("You have logged in! Welcome back", {
         position: "top-right",
         autoClose: 4500,
@@ -206,8 +208,6 @@ export function Authentication(props) {
             <Button fullWidth mt="xl" onClick={register}>
               Register
             </Button>
-
-            <Button onClick={logout}>Log Out</Button>
           </Paper>
         ) : (
           <Paper withBorder shadow="md" p={30} mt={30} radius="md">

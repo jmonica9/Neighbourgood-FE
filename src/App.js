@@ -1,6 +1,8 @@
 import React, { useState, createContext, useEffect } from "react";
 import { useNavigate, Route, Routes } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import Axios from "axios";
+import { BACKEND_URL } from "./constants";
 //import child components
 // import AuthForm from "./components/AuthForm";
 import Dashboard from "./components/Dashboard";
@@ -35,14 +37,50 @@ export default function App() {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [userData, setUserData] = useState();
+  useEffect(() => {
+    checkJWT();
+  }, []);
 
-  const signInUser = (user) => {
-    setUserData(user);
+  const logout = () => {
+    console.log("logout!");
+    Axios({
+      method: "GET",
+      withCredentials: true,
+      url: `${BACKEND_URL}/auth/logout`,
+    }).then((res) => {
+      console.log(res.data);
+      setUserData(null);
+      toast("You have logged out!", {
+        position: "top-right",
+        autoClose: 4,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+      });
+    });
+  };
+
+  const checkJWT = async () => {
+    console.log("App.js check for user!");
+    await Axios({
+      method: "GET",
+      withCredentials: true,
+      url: `${BACKEND_URL}/auth/jwtUser`,
+    }).then((res) => {
+      console.log(res.data);
+      setUserData(res.data);
+    });
   };
 
   useEffect(() => {
     socket.on("testing_received", (data) => {
       alert("this is from app.js");
+    });
+    socket.on("user", (data) => {
+      console.log(data, "socket user logged in DATA");
+      setUserData(data);
     });
   }, [socket]);
 
@@ -57,12 +95,13 @@ export default function App() {
           <UserContext.Provider value={userData}>
             <Sidebar
               drawer={drawerOpen}
+              logout={logout}
               drawerOpen={() => {
                 setDrawerOpen(!drawerOpen);
               }}
             />
             <Routes>
-              <Route path="/" element={<LandingPage signIn={signInUser} />} />
+              <Route path="/" element={<LandingPage />} />
               <Route
                 path="/signin"
                 element={
