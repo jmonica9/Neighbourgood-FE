@@ -13,6 +13,7 @@ import { BACKEND_URL } from "../constants";
 import { useParams, useLocation } from "react-router-dom";
 
 export default function NewListing(props) {
+  const [userData, setUserData] = useState(props.user);
   const [opened, setOpened] = useState(false);
   const [title, setTitle] = useState("");
   const [fileInputFile, setFileInputFile] = useState();
@@ -22,9 +23,12 @@ export default function NewListing(props) {
   const location = useLocation();
 
   useEffect(() => {
+    console.log(userData);
+  });
+
+  useEffect(() => {
     setOpened(props.openModal);
-    console.log(location);
-    console.log(location.pathname.split("/")[1]);
+    setUserData(props.user);
   }, [props]);
 
   // categories
@@ -47,7 +51,8 @@ export default function NewListing(props) {
   const submitListing = async () => {
     //title, image, categories, description, type
     const response = await axios.post(`${BACKEND_URL}/listing`, {
-      userId: 1,
+      userId: userData._id,
+      username: userData.username,
       title: title,
       image:
         "https://images.unsplash.com/photo-1615486363973-f79d875780cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80",

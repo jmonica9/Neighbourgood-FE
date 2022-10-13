@@ -25,18 +25,23 @@ export default function Listing(props) {
   const [opened, setOpened] = useState(props.openModal);
 
   useEffect(() => {
-    if (props.type === "Sharing") {
+    if (props.listing.type === "sharing") {
       setThemeColor(neighbourgoodTheme.colors.lightTeal);
-    } else if (props.type === "Helping") {
+    } else if (props.listing.type === "helping") {
       setThemeColor(neighbourgoodTheme.colors.lightPurple);
-    } else if (props.type === "Lending") {
+    } else if (props.listing.type === "lending") {
       setThemeColor(neighbourgoodTheme.colors.lightBrown);
     }
-  }, [props]);
+  }, []);
 
   useEffect(() => {
     setOpened(props.openModal);
-  }, [props]);
+    console.log(props.listing);
+  });
+
+  useEffect(() => {
+    console.log(props.listing.title);
+  }, []);
   const requestAlert = () => {
     //alert problem
     return (
@@ -71,21 +76,20 @@ export default function Listing(props) {
                   <Text align="left">Listing {listingId}</Text>
                 </Grid.Col>
                 <Grid.Col span={6}>
-                  <Text align="right">By: *</Text>
+                  <Text align="right">By: {props.listing.username}</Text>
                 </Grid.Col>
               </Grid>
             </CardSection>
             <br />
             <CardSection>
-              <Image
-                src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-                height={"60vh"}
-              />
+              <Image src={`${props.listing.image}`} height={"60vh"} />
             </CardSection>
             <CardSection>
               <Stack>
-                <Text align="left">Title</Text>
-                <Text align="left">Description</Text>
+                <Text align="left">Title : {props.listing.title}</Text>
+                <Text align="left">
+                  Description : {props.listing.description}
+                </Text>
                 <Grid>
                   <Grid.Col span={9}></Grid.Col>
                   <Grid.Col span={3}>

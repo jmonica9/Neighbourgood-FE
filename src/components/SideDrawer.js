@@ -49,7 +49,7 @@ export default function SideDrawer(props) {
           }}
           opened={opened}
           onClose={() => props.closeDrawer()}
-          title="Placeholder"
+          title=""
           padding="xl"
           size="20vw"
           closeOnClickOutside={false}

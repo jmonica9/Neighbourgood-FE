@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 //import styling
 import {
@@ -16,8 +16,10 @@ import { neighbourgoodTheme } from "../styles/Theme";
 import NewListing from "./NewListing";
 import { useNavigate } from "react-router-dom";
 import Listing from "./Listing";
+import { UserContext } from "../App";
 
 export default function Lobby(props) {
+  const [user, setUser] = useState();
   const [themeColor, setThemeColor] = useState(
     neighbourgoodTheme.colors.lightGray
   );
@@ -25,6 +27,11 @@ export default function Lobby(props) {
   const [openListingModal, setOpenListingModal] = useState(false);
 
   const navigate = useNavigate();
+  const userData = useContext(UserContext);
+
+  useEffect(() => {
+    setUser(userData);
+  }, []);
 
   useEffect(() => {
     if (props.title === "Sharing") {
@@ -224,12 +231,13 @@ export default function Lobby(props) {
           openModal={openNewModal}
           closeModal={closeNewModal}
           type={props.title}
+          user={user}
         />
-        <Listing
+        {/* <Listing
           openModal={openListingModal}
           closeModal={closeListingModal}
           type={props.title}
-        />
+        /> */}
       </div>
     </div>
   );
