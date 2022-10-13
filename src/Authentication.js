@@ -87,9 +87,8 @@ export function Authentication(props) {
       url: `${BACKEND_URL}/auth/login`,
     }).then((res) => {
       console.log(res);
-      //to remove when Mon finishes lifting userData as state to App
-      socket.emit("userData", res.data);
-      //end of 'to remove'
+      console.log("socket emit user logged in!");
+      socket.emit("user", res);
       toast.success("You have logged in! Welcome back", {
         position: "top-right",
         autoClose: 4500,
@@ -191,8 +190,6 @@ export function Authentication(props) {
             <Button fullWidth mt="xl" onClick={register}>
               Register
             </Button>
-
-            <Button onClick={logout}>Log Out</Button>
           </Paper>
         ) : (
           <Paper withBorder shadow="md" p={30} mt={30} radius="md">

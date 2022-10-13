@@ -9,6 +9,7 @@ import { neighbourgoodTheme } from "../styles/Theme";
 import Listing from "./Listing";
 import Lobby from "./Lobby";
 import LandingPageListings from "./LandingPageListings";
+import AuthModal from "../AuthModal";
 import { socket } from "../App";
 
 function LandingPage(props) {
@@ -32,18 +33,18 @@ function LandingPage(props) {
     setShowSharing(false);
   };
 
-  // useEffect(() => {
-  //   socket.emit(
-  //     "testing",
-  //     "this message comes from the front end, and was sent to the backend via socket, then backend socket sends it back and it's now picked up by another use effect in the front end which displays it as an alert"
-  //   );
-  // }, []);
+  useEffect(() => {
+    socket.emit(
+      "testing",
+      "this message comes from the front end, and was sent to the backend via socket, then backend socket sends it back and it's now picked up by another use effect in the front end which displays it as an alert"
+    );
+  }, []);
 
-  // useEffect(() => {
-  //   socket.on("testing_received", (data) => {
-  //     alert(data);
-  //   });
-  // }, [socket]);
+  useEffect(() => {
+    socket.on("testing_received", (data) => {
+      alert(data);
+    });
+  }, [socket]);
 
   return (
     <Grid
@@ -67,7 +68,7 @@ function LandingPage(props) {
           display: "flex",
           alignItems: "center",
           width: "100%",
-          height: "90vh",
+          height: "100vh",
         }}
         mt={"0.1rem"}
       >
@@ -106,15 +107,15 @@ function LandingPage(props) {
                   display: "flex",
                   alignContent: "center",
                 }}
-                px={"10vw"}
+                px={"5vw"}
               >
                 <Grid.Col className="sharingtitle">
-                  <Title size="h1" underline>
+                  <Title size="h2" underline>
                     Sharing
                   </Title>
                 </Grid.Col>
                 <Grid.Col className="sharingdesc">
-                  <Text size="1.7vh">
+                  <Text size="2vh">
                     Have stuff that's still in a good working condition that
                     you're looking to throw or give away? <br />
                     <br />
@@ -126,13 +127,10 @@ function LandingPage(props) {
                   </Text>
                 </Grid.Col>
                 <Grid.Col className="sharingbutton">
-                  <Button
-                    size={"sm"}
-                    variant="outline"
-                    onClick={toggleSharingListings}
-                  >
+                  <Button variant="outline" onClick={toggleSharingListings}>
                     See Listings
                   </Button>
+                  {/* {<AuthModal />} */}
                 </Grid.Col>
               </Grid>
             </Grid.Col>
@@ -180,7 +178,7 @@ function LandingPage(props) {
                   </Title>
                 </Grid.Col>
                 <Grid.Col className="helpingdesc">
-                  <Text size="1.7vh">
+                  <Text size="2vh">
                     <i>
                       "Love your neighbour as you love yourself" - Mark 12:31
                     </i>
@@ -192,12 +190,8 @@ function LandingPage(props) {
                     their love for you instead!
                   </Text>
                 </Grid.Col>
-                <Grid.Col className="helpingbutton">
-                  <Button
-                    variant="outline"
-                    size={"sm"}
-                    onClick={toggleHelpingListings}
-                  >
+                <Grid.Col className="sharingbutton">
+                  <Button variant="outline" onClick={toggleSharingListings}>
                     See Listings
                   </Button>
                 </Grid.Col>
@@ -240,7 +234,7 @@ function LandingPage(props) {
                   </Title>
                 </Grid.Col>
                 <Grid.Col className="lendingdesc">
-                  <Text size="1.7vh">
+                  <Text size="2vh">
                     Loan out items to your neighbours or borrow their stuff with
                     our lending feature.
                     <br />
@@ -251,11 +245,7 @@ function LandingPage(props) {
                   </Text>
                 </Grid.Col>
                 <Grid.Col className="lendingbutton">
-                  <Button
-                    size={"sm"}
-                    variant="outline"
-                    onClick={toggleLendingListings}
-                  >
+                  <Button variant="outline" onClick={toggleSharingListings}>
                     See Listings
                   </Button>
                   {/* {<AuthModal />} */}
