@@ -29,6 +29,7 @@ import LandingPage from "./components/LandingPage";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
+import Chatroom from "./components/Chatroom";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -141,6 +142,10 @@ export default function App() {
               <Route
                 path="/lending/listing/:listingId"
                 element={<Listing title="Lending" drawerOpen={drawerOpen} />}
+              />
+              <Route
+                path="/:listingId/chatroom"
+                element={<Chatroom drawerOpen={drawerOpen} />}
               />
             </Routes>
           </UserContext.Provider>
