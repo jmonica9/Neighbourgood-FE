@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import DashboardCalendar from "./DashboardCalendar";
 //import styling
 import { Card, Grid, Paper, ScrollArea, Stack, Text } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
 import DashboardFriendsListings from "./DashboardFriendsListings";
+import { UserContext } from "../App";
 
 export default function Dashboard(props) {
   const drawerOpen = props.drawerOpen;
+  const [userData, setUserData] = useState(useContext(UserContext));
 
   return (
     <div>
@@ -22,7 +24,7 @@ export default function Dashboard(props) {
         >
           <Text align="left">Friend's Listings</Text>
           {/* Contents in here */}
-          <DashboardFriendsListings />
+          <DashboardFriendsListings user={userData} />
         </Card>
       </Grid>
       <br />

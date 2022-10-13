@@ -18,8 +18,7 @@ import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "./constants";
 
-import { io } from "socket.io-client";
-const socket = io("http://localhost:3001");
+import { socket } from "./App";
 
 export function Authentication(props) {
   const [registerUsername, setRegisterUsername] = useState("");
@@ -88,6 +87,9 @@ export function Authentication(props) {
       url: `${BACKEND_URL}/auth/login`,
     }).then((res) => {
       console.log(res);
+      //to remove when Mon finishes lifting userData as state to App
+      socket.emit("userData", res.data);
+      //end of 'to remove'
       toast.success("You have logged in! Welcome back", {
         position: "top-right",
         autoClose: 4500,
@@ -97,31 +99,11 @@ export function Authentication(props) {
         draggable: false,
         progress: undefined,
       });
+
       props.onClose();
       navigate("/dashboard");
     });
   };
-  // const getAllUsers = async () => {
-  //   await Axios({
-  //     method: "GET",
-  //     withCredentials: true,
-  //     url: `${BACKEND_URL}/auth/users`,
-  //   }).then((res) => {
-  //     setAllUsers(res.data);
-  //     console.log(res.data);
-  //   });
-  // };
-
-  // const getMyUser = async () => {
-  //   await Axios({
-  //     method: "GET",
-  //     withCredentials: true,
-  //     url: `${BACKEND_URL}/auth/myUser`,
-  //   }).then((res) => {
-  //     setMyUser(res.data);
-  //     console.log(res.data);
-  //   });
-  // };
 
   const checkJWT = () => {
     Axios({
@@ -131,6 +113,9 @@ export function Authentication(props) {
     }).then((res) => {
       console.log(res.data);
       setJwtUser(res.data.username);
+      //to remove when Mon finishes lifting userData as state to App
+      socket.emit("userData", res.data);
+      //end of 'to remove'
     });
   };
 

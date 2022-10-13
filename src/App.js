@@ -27,7 +27,7 @@ import LandingPage from "./components/LandingPage";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
-const socket = io("http://localhost:3001");
+export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
 
@@ -41,16 +41,12 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log("socket here");
-    socket.on("testing1_recieved", () => console.log("socket emitted"));
+    console.log("setUserData");
+    socket.on("userInfo", (data) => {
+      console.log("here");
+      setUserData(data);
+    });
   }, [socket]);
-
-  useEffect(() => {
-    socketEmit();
-  }, []);
-  const socketEmit = () => {
-    socket.emit("testing1", "data string");
-  };
 
   return (
     <div className="App">
