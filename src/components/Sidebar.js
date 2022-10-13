@@ -5,18 +5,10 @@ import { neighbourgoodTheme } from "../styles/Theme";
 import AuthModal from "../AuthModal";
 import { UserContext } from "../App";
 export default function Sidebar(props) {
-  const [user, setUser] = useState();
   const userData = useContext(UserContext);
   const closeDrawer = () => {
     props.drawerOpen();
   };
-
-  //To tim: with the conditional: the button to open/close the drawer disappears if there is a user
-  //so i removed it below
-  useEffect(() => {
-    // console.log(userData, "useContext userData from App.js");
-    setUser(userData);
-  }, [props]);
 
   return (
     <div>
@@ -41,7 +33,7 @@ export default function Sidebar(props) {
           >
             neighbourgood
           </Text>
-          {!user && (
+          {!userData && (
             <Text
               mt={"18.5rem"}
               ml={"-5.3rem"}
@@ -53,7 +45,7 @@ export default function Sidebar(props) {
           )}
         </Navbar.Section>
         <Navbar.Section>
-          {user ? (
+          {userData ? (
             <button
               className="drawer-toggle"
               onClick={() => {
@@ -66,7 +58,7 @@ export default function Sidebar(props) {
         </Navbar.Section>
       </Navbar>
       <SideDrawer
-        userData={user}
+        userData={userData}
         logout={props.logout}
         openDrawer={props.drawer}
         closeDrawer={closeDrawer}

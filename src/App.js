@@ -48,6 +48,7 @@ export default function App() {
       withCredentials: true,
       url: `${BACKEND_URL}/auth/logout`,
     }).then((res) => {
+      navigate("/");
       console.log(res.data);
       setUserData(null);
       toast("You have logged out!", {
@@ -70,7 +71,9 @@ export default function App() {
       url: `${BACKEND_URL}/auth/jwtUser`,
     }).then((res) => {
       console.log(res.data);
-      setUserData(res.data);
+      if (res.data === "No User Exists") {
+        setUserData(undefined);
+      } else setUserData(res.data);
     });
   };
 
@@ -80,7 +83,7 @@ export default function App() {
     });
     socket.on("user", (data) => {
       console.log(data, "socket user logged in DATA");
-      setUserData(data);
+      setUserData(data.data);
     });
   }, [socket]);
 
