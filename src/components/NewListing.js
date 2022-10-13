@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { BACKEND_URL } from "../constants";
 import { useParams, useLocation } from "react-router-dom";
-
+import { toast, ToastContainer } from "react-toastify";
 export default function NewListing(props) {
   const [userData, setUserData] = useState(props.user);
   const [opened, setOpened] = useState(false);
@@ -21,10 +21,6 @@ export default function NewListing(props) {
   const [description, setDescription] = useState();
   const [listingCategories, setListingCategories] = useState([]);
   const location = useLocation();
-
-  useEffect(() => {
-    console.log(userData);
-  });
 
   useEffect(() => {
     setOpened(props.openModal);
@@ -48,7 +44,8 @@ export default function NewListing(props) {
     setListingCategories([]);
   };
 
-  const submitListing = async () => {
+  const submitListing = async (e) => {
+    e.preventDefault();
     //title, image, categories, description, type
     const response = await axios.post(`${BACKEND_URL}/listing`, {
       userId: userData._id,
@@ -61,6 +58,17 @@ export default function NewListing(props) {
       type: location.pathname.split("/")[1],
     });
 
+    toast.success("You have created a new listing!", {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
+    props.closeNewModal();
+    closeModal();
     console.log(response.data);
     setTitle("");
     setListingCategories([]);
@@ -73,8 +81,7 @@ export default function NewListing(props) {
         opened={opened}
         onClose={() => {
           setOpened(false);
-          props.closeModal();
-          closeModal();
+          props.closeNewModal();
         }}
         title={`Add New ${props.type} Listing!`}
       >

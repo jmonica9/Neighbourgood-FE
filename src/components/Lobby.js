@@ -11,27 +11,63 @@ import {
   SimpleGrid,
   MultiSelect,
   Button,
+  Image,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
 import NewListing from "./NewListing";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Listing from "./Listing";
 import { UserContext } from "../App";
-
+import axios from "axios";
+import { BACKEND_URL } from "../constants";
 export default function Lobby(props) {
-  const [user, setUser] = useState();
+  const [lobbyListings, setLobbyListings] = useState([]);
   const [themeColor, setThemeColor] = useState(
     neighbourgoodTheme.colors.lightGray
   );
   const [openNewModal, setOpenNewModal] = useState(false);
+  const [myListings, setMyListings] = useState([]);
   const [openListingModal, setOpenListingModal] = useState(false);
-
+  const [refresh, setRefresh] = useState(false);
+  const [selectedListing, setSelectedListing] = useState();
+  const [myWatchlist, setMyWatchlist] = useState([]);
+  const location = useLocation();
   const navigate = useNavigate();
   const userData = useContext(UserContext);
 
   useEffect(() => {
-    setUser(userData);
-  }, []);
+    //WAIT FOR USERDATA
+    //according to lobby type:
+    //query for listings watchlist
+    axios
+      .get(
+        `${BACKEND_URL}/listing/${location.pathname.split("/")[1]}/${
+          userData._id
+        }/watchlist`
+      )
+      .then((res) => {
+        console.log("res for my watchlist listings", res);
+        setMyWatchlist(res.data);
+      });
+    //query for my own listings
+    axios
+      .get(
+        `${BACKEND_URL}/listing/${location.pathname.split("/")[1]}/${
+          userData._id
+        }`
+      )
+      .then((res) => {
+        console.log("res for my listings", res);
+        setMyListings(res.data);
+      });
+    //query for all listings
+    axios
+      .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
+      .then((res) => {
+        console.log("res for all listings", res);
+        setLobbyListings(res.data);
+      });
+  }, [userData, location, refresh]);
 
   useEffect(() => {
     if (props.title === "Sharing") {
@@ -42,8 +78,17 @@ export default function Lobby(props) {
       setThemeColor(neighbourgoodTheme.colors.lightBrown);
     }
   });
+
+  const TriggerOpenNewModal = () => {
+    setOpenNewModal(true);
+  };
+  const TriggerOpenListingModal = () => {
+    setOpenListingModal(true);
+  };
+
   const closeNewModal = () => {
     setOpenNewModal(false);
+    setRefresh(!refresh);
   };
   const closeListingModal = () => {
     setOpenListingModal(false);
@@ -58,11 +103,50 @@ export default function Lobby(props) {
     { value: "next", label: "Next.js" },
     { value: "blitz", label: "Blitz.js" },
   ];
+
+  const ListWatchlist = myWatchlist.map((listing) => (
+    <Card
+      sx={{ width: "10rem", height: "12rem" }}
+      onClick={(e) => {
+        setOpenListingModal(true);
+        setSelectedListing(listing);
+      }}
+    >
+      {listing.title}
+      <Image src={listing.image} />
+    </Card>
+  ));
+  const ListMyListings = myListings.map((listing) => (
+    <Card
+      sx={{ width: "10rem", height: "12rem" }}
+      onClick={(e) => {
+        setOpenListingModal(true);
+        setSelectedListing(listing);
+      }}
+    >
+      {listing.title}
+    </Card>
+  ));
+
+  const ListAllListings = lobbyListings.map((listing) => (
+    <Card
+      sx={{ width: "15rem", height: "17rem" }}
+      onClick={() => {
+        // navigate(`/${props.title.toLowerCase()}/listing/1`);
+        setOpenListingModal(true);
+        setSelectedListing(listing);
+      }}
+    >
+      {listing.title}
+    </Card>
+  ));
+
   return (
     <div
       style={{
         marginLeft: props.drawerOpen ? "26vw" : "6vw",
         marginRight: "4vw",
+        marginTop: "0.5vw",
       }}
     >
       {/* <Text color="black">{props.title}</Text> */}
@@ -74,72 +158,50 @@ export default function Lobby(props) {
             sx={{
               // width: props.drawerOpen ? "35vw" : "45vw",
               backgroundColor: themeColor,
-              height: "30vh",
+              height: "45vh",
               display: "flex",
               borderRadius: 25,
             }}
           >
             {/* Contents in here */}
             <Stack>
-              {props.title} Watchlist
-              <ScrollArea style={{ height: "15rem", width: "auto" }}>
+              <Text> {props.title} Watchlist</Text>
+
+              <ScrollArea style={{ height: "18rem", width: "100%" }}>
                 <Group spacing={"xs"}>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
+                  {/* map out the listings here */}
+                  {myWatchlist && myWatchlist.length > 0 ? (
+                    ListWatchlist
+                  ) : (
+                    <Text>Watchlist is empty</Text>
+                  )}
                 </Group>
               </ScrollArea>
             </Stack>
           </Card>
-          {/* </Grid.Col>
-            <Grid.Col span={8} p={0} pl={"1rem"}> */}
+
           <Card
             sx={{
               // width: props.drawerOpen ? "35vw" : "45vw",
               backgroundColor: themeColor,
-              height: "30vh",
+              height: "45vh",
               display: "flex",
               borderRadius: 25,
             }}
           >
-            {/* Contents in here */}
             <Stack>
-              Your {props.title} Activities
-              <ScrollArea style={{ height: "15rem", width: "auto" }}>
+              <Text align="left"> Your {props.title} Activities</Text>
+              <ScrollArea style={{ height: "18rem", width: "100%" }}>
                 <Group spacing={"xs"}>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
-                  <Card sx={{ width: "10rem", height: "12rem" }}>
-                    Placeholder Card
-                  </Card>
+                  {myListings && myListings.length > 0 ? (
+                    ListMyListings
+                  ) : (
+                    <Text>U have no listings</Text>
+                  )}
                 </Group>
               </ScrollArea>
             </Stack>
           </Card>
-          {/* </Grid.Col>
-          </Grid> */}
         </Group>
 
         <Group>
@@ -174,70 +236,28 @@ export default function Lobby(props) {
 
               <ScrollArea style={{ height: "50vh", width: "auto" }}>
                 <Group spacing={"xs"}>
-                  <Card
-                    sx={{ width: "18.5rem", height: "20rem" }}
-                    onClick={() => {
-                      // navigate(`/${props.title.toLowerCase()}/listing/1`);
-                      setOpenListingModal(true);
-                    }}
-                  >
-                    Listing
-                  </Card>
-                  <Card sx={{ width: "18.5rem", height: "20rem" }}>
-                    Listing{" "}
-                  </Card>
-                  <Card sx={{ width: "18.5rem", height: "20rem" }}>
-                    Listing{" "}
-                  </Card>
-                  <Card sx={{ width: "18.5rem", height: "20rem" }}>
-                    Listing{" "}
-                  </Card>
-                  <Card sx={{ width: "18.5rem", height: "20rem" }}>
-                    Listing{" "}
-                  </Card>
-                  <Card sx={{ width: "18.5rem", height: "20rem" }}>
-                    Listing{" "}
-                  </Card>
-                  <Card sx={{ width: "18.5rem", height: "20rem" }}>
-                    Listing{" "}
-                  </Card>
-                  <Card sx={{ width: "18.5rem", height: "20rem" }}>
-                    Listing{" "}
-                  </Card>
-                  <Card sx={{ width: "18.5rem", height: "20rem" }}>
-                    Listing{" "}
-                  </Card>
+                  {lobbyListings ? (
+                    ListAllListings
+                  ) : (
+                    <Text>No Listing Exist Yet</Text>
+                  )}
                 </Group>
               </ScrollArea>
-
-              {/* <Grid.Col span={8}>
-                <Card
-                  sx={{ height: "56vh", display: "flex", borderRadius: 25 }}
-                >
-                  Calendar
-                </Card>
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Card
-                  sx={{ height: "56vh", display: "flex", borderRadius: 25 }}
-                >
-                  Reviews
-                </Card>
-              </Grid.Col> */}
             </Grid>
           </Card>
         </Group>
         <NewListing
           openModal={openNewModal}
-          closeModal={closeNewModal}
+          closeNewModal={closeNewModal}
           type={props.title}
-          user={user}
+          user={userData}
         />
-        {/* <Listing
+        <Listing
           openModal={openListingModal}
           closeModal={closeListingModal}
           type={props.title}
-        /> */}
+          listing={selectedListing}
+        />
       </div>
     </div>
   );
