@@ -4,28 +4,28 @@ import React, { useEffect, useState, useContext } from "react";
 import { neighbourgoodTheme } from "../styles/Theme";
 import { BACKEND_URL } from "../constants";
 import Listing from "./Listing";
+import { UserContext } from "../App";
 
 export default function DashboardFriendsListings(props) {
-  const [userFriends, setUserFriends] = useState();
   const [friendsListings, setFriendsListings] = useState([]);
   const [openListingModal, setOpenListingModal] = useState(false);
   const [listingOpened, setListingOpened] = useState();
 
+  const user = useContext(UserContext);
+
   useEffect(() => {
-    if (props.user) {
-      console.log(props.user.accountsFollowing);
-      setUserFriends(props.user.accountsFollowing);
+    if (user) {
+      console.log(user.accountsFollowing);
       let friendsListingsArray = [];
-      let friendsArray = [];
-      if (props.user.accountsFollowing.length > 0) {
-        props.user.accountsFollowing.forEach(async (user_id) => {
+      if (user.accountsFollowing.length > 0) {
+        user.accountsFollowing.forEach(async (user_id) => {
           let listings = await getFriendsListings(user_id);
           friendsListingsArray = [...friendsListingsArray, ...listings];
           setFriendsListings(friendsListingsArray);
         });
       }
     }
-  }, []);
+  }, [user]);
 
   const getFriendsListings = async (id) => {
     const response = await axios.get(`${BACKEND_URL}/listing/${id}`);

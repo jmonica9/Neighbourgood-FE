@@ -8,7 +8,7 @@ import { UserContext } from "../App";
 
 export default function Dashboard(props) {
   const drawerOpen = props.drawerOpen;
-  const [userData, setUserData] = useState(useContext(UserContext));
+  const userData = useContext(UserContext);
 
   return (
     <div>
