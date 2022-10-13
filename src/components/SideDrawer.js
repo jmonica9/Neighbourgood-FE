@@ -28,18 +28,19 @@ export default function SideDrawer(props) {
   useEffect(() => {
     setOpened(props.openDrawer);
     console.log(props.userData, "userData props from SideBar");
-    setUser(props.userData);
+    // setUser(props.userData);
   }, [props]);
 
   useEffect(() => {
-    if (!user) {
-      setOpened(!props.openDrawer);
+    if (!props.userData) {
+      setOpened(false);
+      console.log("close drawer");
     }
-  }, [props]);
+  });
 
   return (
     <>
-      {user && user.username ? (
+      {props.userData ? (
         <Drawer
           // select classnames from above to target specific sub-components
           classNames={{ drawer: classes.drawerPaper }}
@@ -56,7 +57,7 @@ export default function SideDrawer(props) {
           withinPortal={false}
           withCloseButton={false}
         >
-          <Text>Welcome Back, {user.username}</Text>
+          <Text>Welcome Back, {props.userData.username}</Text>
           {/* Drawer content */}
           <button
             onClick={() => {
@@ -81,27 +82,7 @@ export default function SideDrawer(props) {
           </button>
           <button onClick={props.logout}>Logout</button>
         </Drawer>
-      ) : (
-        <Drawer
-          // select classnames from above to target specific sub-components
-          classNames={{ drawer: classes.drawerPaper }}
-          sx={{
-            transform: "translateX(50px)",
-          }}
-          opened={opened}
-          onClose={() => props.closeDrawer()}
-          title="Placeholder"
-          padding="xl"
-          size="20vw"
-          closeOnClickOutside={false}
-          withOverlay={false}
-          withinPortal={false}
-          withCloseButton={false}
-        >
-          <Text>Please register or log in first!</Text>
-          <AuthModal />
-        </Drawer>
-      )}
+      ) : null}
     </>
   );
 }
