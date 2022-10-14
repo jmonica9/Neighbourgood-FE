@@ -5,6 +5,7 @@ import { Card, Grid, Paper, ScrollArea, Stack, Text } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
 import DashboardFriendsListings from "./DashboardFriendsListings";
 import { UserContext } from "../App";
+import DashboardReviews from "./DashboardReviews";
 
 export default function Dashboard(props) {
   const drawerOpen = props.drawerOpen;
@@ -53,9 +54,21 @@ export default function Dashboard(props) {
               </Card>
             </Grid.Col>
             <Grid.Col span={4}>
-              <Card sx={{ height: "56vh", display: "flex", borderRadius: 25 }}>
-                Reviews
-              </Card>
+              <Stack>
+                <Card
+                  sx={{ height: "35vh", display: "flex", borderRadius: 25 }}
+                >
+                  <Stack>
+                    <Text align="left">Reviews</Text>
+                    <DashboardReviews />
+                  </Stack>
+                </Card>
+                <Card
+                  sx={{ height: "19vh", display: "flex", borderRadius: 25 }}
+                >
+                  Chat History
+                </Card>
+              </Stack>
             </Grid.Col>
           </Grid>
         </Card>
