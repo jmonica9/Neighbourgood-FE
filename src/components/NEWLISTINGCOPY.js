@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Convert } from "mongo-image-converter";
+// import { Convert } from "mongo-image-converter";
 import {
   Modal,
   Button,
@@ -20,7 +20,7 @@ export default function NewListing(props) {
   const [title, setTitle] = useState("");
   const [imageName, setImageName] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const [imageString, setImageString] = useState("");
+  const [imageString, setImageString] = useState();
   const [fileInputFile, setFileInputFile] = useState();
   const [fileInputValue, setFileInputValue] = useState(null);
   const [description, setDescription] = useState();
@@ -32,21 +32,19 @@ export default function NewListing(props) {
     setUserData(props.user);
   }, [props]);
   //convert image to string
-  let imageData;
-  const convertImage = async (event) => {
-    try {
-      const convertedImage = await Convert(imageFile);
-      if (convertedImage) {
-        console.log(convertedImage);
-        imageData = convertedImage;
-        setImageString(convertedImage);
-      } else {
-        console.log("The file is not in format of image/jpeg or image/png");
-      }
-    } catch (error) {
-      console.warn(error.message);
-    }
-  };
+  // const convertImage = async (event) => {
+  //   try {
+  //     const convertedImage = await Convert(imageFile);
+  //     if (convertedImage) {
+  //       console.log(convertedImage);
+  //       setImageString(convertedImage);
+  //     } else {
+  //       console.log("The file is not in format of image/jpeg or image/png");
+  //     }
+  //   } catch (error) {
+  //     console.warn(error.message);
+  //   }
+  // };
 
   // categories
   const data = [
@@ -58,7 +56,6 @@ export default function NewListing(props) {
     { value: "next", label: "Next.js" },
     { value: "blitz", label: "Blitz.js" },
   ];
-
   const closeModal = () => {
     setTitle("");
     setFileInputFile();
@@ -68,15 +65,14 @@ export default function NewListing(props) {
 
   const submitListing = async (e) => {
     e.preventDefault();
-    convertImage(e);
-    console.log(imageData, "imageData from submit");
-    console.log(imageString, "imagestring from submit");
+    // convertImage(e);
+
     //title, image, categories, description, type
     const response = await axios.post(`${BACKEND_URL}/listing`, {
       userId: userData._id,
       username: userData.username,
       title: title,
-      image: imageString,
+      // image: imageString,
       categories: listingCategories,
       description: description,
       type: location.pathname.split("/")[1],
@@ -95,7 +91,7 @@ export default function NewListing(props) {
     closeModal();
     console.log(response.data);
     setTitle("");
-    setImageFile("");
+    // setImageFile("");
     setListingCategories([]);
     setDescription("");
   };
@@ -118,7 +114,7 @@ export default function NewListing(props) {
             onChange={(e) => setTitle(e.target.value)}
             required
           />
-          {/* <FileInput
+          <FileInput
             label="Upload Image"
             icon={<UploadIcon />}
             onClick={(e) => console.log("try upload")}
@@ -127,11 +123,11 @@ export default function NewListing(props) {
               setFileInputValue(e.name);
               setFileInputFile(e);
             }}
-          /> */}
-          <input
+          />
+          {/* <input
             type="file"
             onChange={(e) => setImageFile(e.target.files[0])}
-          />
+          /> */}
           {/* <input
             value={imageName}
             onChange={(e) => setImageName(e.target.value)}

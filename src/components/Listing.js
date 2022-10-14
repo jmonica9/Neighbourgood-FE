@@ -21,7 +21,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../constants";
 
 export default function Listing(props) {
-  const { listingId } = useParams();
+  // const { listingId } = useParams();
   const [themeColor, setThemeColor] = useState(
     neighbourgoodTheme.colors.lightGray
   );
@@ -30,12 +30,14 @@ export default function Listing(props) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (props.listing.type === "sharing") {
-      setThemeColor(neighbourgoodTheme.colors.lightTeal);
-    } else if (props.listing.type === "helping") {
-      setThemeColor(neighbourgoodTheme.colors.lightPurple);
-    } else if (props.listing.type === "lending") {
-      setThemeColor(neighbourgoodTheme.colors.lightBrown);
+    if (props.listing) {
+      if (props.listing.type === "sharing") {
+        setThemeColor(neighbourgoodTheme.colors.lightTeal);
+      } else if (props.listing.type === "helping") {
+        setThemeColor(neighbourgoodTheme.colors.lightPurple);
+      } else if (props.listing.type === "lending") {
+        setThemeColor(neighbourgoodTheme.colors.lightBrown);
+      }
     }
   }, [props]);
 
@@ -55,7 +57,7 @@ export default function Listing(props) {
   return (
     <Modal
       size={"80%"}
-      opened={opened}
+      opened={props.openModal}
       onClose={() => {
         setOpened(false);
         props.closeModal();
@@ -63,48 +65,52 @@ export default function Listing(props) {
     >
       <div>
         <div>
-          <Card
-            sx={{
-              width: "100%",
-              backgroundColor: themeColor,
-              height: "95vh",
-              borderRadius: 25,
-            }}
-          >
-            {/* Contents in here */}
-            <CardSection>
-              <Grid sx={{ width: "100%" }}>
-                <Grid.Col span={6}>
-                  <Text align="left">Listing {listingId}</Text>
-                </Grid.Col>
-                <Grid.Col span={6}>
-                  <Text align="right">By: {props.listing.username}</Text>
-                </Grid.Col>
-              </Grid>
-            </CardSection>
-            <br />
-            <CardSection>
-              <Image src={`${props.listing.image}`} height={"60vh"} />
-            </CardSection>
-            <CardSection>
-              <Stack>
-                <Text align="left">Title : {props.listing.title}</Text>
-                <Text align="left">
-                  Description : {props.listing.description}
-                </Text>
-                <Grid>
-                  <Grid.Col span={9}></Grid.Col>
-                  <Grid.Col span={3}>
-                    {!props.listing.requestorIds.includes(userData._id) && (
-                      <Button ml={"5rem"} onClick={sendRequest}>
-                        Request
-                      </Button>
-                    )}
+          {props.listing ? (
+            <Card
+              sx={{
+                width: "100%",
+                backgroundColor: themeColor,
+                height: "95vh",
+                borderRadius: 25,
+              }}
+            >
+              {/* Contents in here */}
+              <CardSection>
+                <Grid sx={{ width: "100%" }}>
+                  <Grid.Col span={6}>
+                    <Text align="left">Listing {props.listing.title}</Text>
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    {/* <Text align="right">By: {props.listing.username}</Text> */}
                   </Grid.Col>
                 </Grid>
-              </Stack>
-            </CardSection>
-          </Card>
+              </CardSection>
+              <br />
+              <CardSection>
+                <Image src={`${props.listing.image}`} height={"60vh"} />
+              </CardSection>
+              <CardSection>
+                <Stack>
+                  <Text align="left">Title : {props.listing.title}</Text>
+                  <Text align="left">
+                    Description : {props.listing.description}
+                  </Text>
+                  <Grid>
+                    <Grid.Col span={9}></Grid.Col>
+                    <Grid.Col span={3}>
+                      {!props.listing.requestorIds.includes(userData._id) && (
+                        <Button ml={"5rem"} onClick={sendRequest}>
+                          Request
+                        </Button>
+                      )}
+                    </Grid.Col>
+                  </Grid>
+                </Stack>
+              </CardSection>
+            </Card>
+          ) : (
+            "null"
+          )}
         </div>
       </div>
     </Modal>
