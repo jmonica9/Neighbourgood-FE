@@ -18,7 +18,7 @@ export default function Dashboard(props) {
           sx={{
             width: drawerOpen ? "70vw" : "90vw",
             backgroundColor: neighbourgoodTheme.colors.lightGray,
-            height: "30vh",
+            height: "40vh",
             display: "block",
             borderRadius: 25,
           }}

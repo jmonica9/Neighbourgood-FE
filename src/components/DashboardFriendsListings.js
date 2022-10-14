@@ -28,7 +28,7 @@ export default function DashboardFriendsListings(props) {
   }, [user]);
 
   const getFriendsListings = async (id) => {
-    const response = await axios.get(`${BACKEND_URL}/listing/${id}`);
+    const response = await axios.get(`${BACKEND_URL}/listing/user/${id}`);
     console.log(response.data);
     return response.data;
   };
@@ -130,7 +130,7 @@ export default function DashboardFriendsListings(props) {
   });
   return (
     <div>
-      <ScrollArea style={{ width: "auto", height: "25vh" }}>
+      <ScrollArea style={{ width: "auto", height: "35vh" }}>
         <Grid>{displayFriendsListings}</Grid>
       </ScrollArea>
       {listingOpened ? (
