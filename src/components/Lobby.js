@@ -39,27 +39,29 @@ export default function Lobby(props) {
     //WAIT FOR USERDATA
     //according to lobby type:
     //query for listings watchlist
-    axios
-      .get(
-        `${BACKEND_URL}/listing/${location.pathname.split("/")[1]}/${
-          userData._id
-        }/watchlist`
-      )
-      .then((res) => {
-        console.log("res for my watchlist listings", res);
-        setMyWatchlist(res.data);
-      });
-    //query for my own listings
-    axios
-      .get(
-        `${BACKEND_URL}/listing/${location.pathname.split("/")[1]}/${
-          userData._id
-        }`
-      )
-      .then((res) => {
-        console.log("res for my listings", res);
-        setMyListings(res.data);
-      });
+    if (userData) {
+      axios
+        .get(
+          `${BACKEND_URL}/listing/${location.pathname.split("/")[1]}/${
+            userData._id
+          }/watchlist`
+        )
+        .then((res) => {
+          console.log("res for my watchlist listings", res);
+          setMyWatchlist(res.data);
+        });
+      //query for my own listings
+      axios
+        .get(
+          `${BACKEND_URL}/listing/${location.pathname.split("/")[1]}/${
+            userData._id
+          }`
+        )
+        .then((res) => {
+          console.log("res for my listings", res);
+          setMyListings(res.data);
+        });
+    }
     //query for all listings
     axios
       .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
@@ -79,12 +81,12 @@ export default function Lobby(props) {
     }
   });
 
-  const TriggerOpenNewModal = () => {
-    setOpenNewModal(true);
-  };
-  const TriggerOpenListingModal = () => {
-    setOpenListingModal(true);
-  };
+  // const TriggerOpenNewModal = () => {
+  //   setOpenNewModal(true);
+  // };
+  // const TriggerOpenListingModal = () => {
+  //   setOpenListingModal(true);
+  // };
 
   const closeNewModal = () => {
     setOpenNewModal(false);
@@ -137,6 +139,7 @@ export default function Lobby(props) {
         setSelectedListing(listing);
       }}
     >
+      <Image src={listing.image} alt="loading" />
       {listing.title}
     </Card>
   ));

@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 
 export default function Listing(props) {
-  const { listingId } = useParams();
+  // const { listingId } = useParams();
   const [themeColor, setThemeColor] = useState(
     neighbourgoodTheme.colors.lightGray
   );
@@ -35,19 +35,19 @@ export default function Listing(props) {
       }
     }
   }, [props]);
-
-  const requestAlert = () => {
-    //alert problem
-    return (
-      <Notification color={"green"} sx={{ zIndex: 100 }}>
-        Request Successful
-      </Notification>
-    );
-  };
+  //make a toast here
+  // const requestAlert = () => {
+  //   //alert problem
+  //   return (
+  //     <Notification color={"green"} sx={{ zIndex: 100 }}>
+  //       Request Successful
+  //     </Notification>
+  //   );
+  // };
   return (
     <Modal
       size={"80%"}
-      opened={opened}
+      opened={props.openModal}
       onClose={() => {
         setOpened(false);
         props.closeModal();
@@ -68,7 +68,7 @@ export default function Listing(props) {
               <CardSection>
                 <Grid sx={{ width: "100%" }}>
                   <Grid.Col span={6}>
-                    <Text align="left">Listing {listingId}</Text>
+                    <Text align="left">Listing {props.listing.title}</Text>
                   </Grid.Col>
                   <Grid.Col span={6}>
                     {/* <Text align="right">By: {props.listing.username}</Text> */}
