@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import helping from "../images/helping.jpg";
 import lending from "../images/lending.jpg";
 import sharing from "../images/sharing.jpg";
-
+import { UserContext } from "../App";
 import { Button, Grid, Text, Group, Title, Card } from "@mantine/core";
 import LandingPageCarousel from "./LandingPageCarousel";
 import { neighbourgoodTheme } from "../styles/Theme";
@@ -12,6 +12,7 @@ import LandingPageListings from "./LandingPageListings";
 import { socket } from "../App";
 
 function LandingPage(props) {
+  const userData = useContext(UserContext);
   const [showSharing, setShowSharing] = useState(false);
   const [showHelping, setShowHelping] = useState(false);
   const [showLending, setShowLending] = useState(false);

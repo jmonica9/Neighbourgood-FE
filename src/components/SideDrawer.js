@@ -66,7 +66,7 @@ export default function SideDrawer(props) {
           withinPortal={false}
           withCloseButton={false}
         >
-          <Stack spacing={"xs"}>
+          <Stack spacing={"xs"} sx={{ height: "100%" }}>
             <Card
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,

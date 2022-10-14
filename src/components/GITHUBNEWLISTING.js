@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Convert } from "mongo-image-converter";
 import {
   Modal,
   Button,
@@ -13,16 +12,12 @@ import {
 import { BACKEND_URL } from "../constants";
 import { useParams, useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { UploadIcon } from "@radix-ui/react-icons";
 export default function NewListing(props) {
   const [userData, setUserData] = useState(props.user);
   const [opened, setOpened] = useState(false);
   const [title, setTitle] = useState("");
-  const [imageName, setImageName] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [imageString, setImageString] = useState("");
   const [fileInputFile, setFileInputFile] = useState();
-  const [fileInputValue, setFileInputValue] = useState(null);
+  const [fileInputValue, setFileInputValue] = useState();
   const [description, setDescription] = useState();
   const [listingCategories, setListingCategories] = useState([]);
   const location = useLocation();
@@ -31,22 +26,6 @@ export default function NewListing(props) {
     setOpened(props.openModal);
     setUserData(props.user);
   }, [props]);
-  //convert image to string
-  let imageData;
-  const convertImage = async (event) => {
-    try {
-      const convertedImage = await Convert(imageFile);
-      if (convertedImage) {
-        console.log(convertedImage);
-        imageData = convertedImage;
-        setImageString(convertedImage);
-      } else {
-        console.log("The file is not in format of image/jpeg or image/png");
-      }
-    } catch (error) {
-      console.warn(error.message);
-    }
-  };
 
   // categories
   const data = [
@@ -58,7 +37,6 @@ export default function NewListing(props) {
     { value: "next", label: "Next.js" },
     { value: "blitz", label: "Blitz.js" },
   ];
-
   const closeModal = () => {
     setTitle("");
     setFileInputFile();
@@ -68,15 +46,13 @@ export default function NewListing(props) {
 
   const submitListing = async (e) => {
     e.preventDefault();
-    convertImage(e);
-    console.log(imageData, "imageData from submit");
-    console.log(imageString, "imagestring from submit");
     //title, image, categories, description, type
     const response = await axios.post(`${BACKEND_URL}/listing`, {
       userId: userData._id,
       username: userData.username,
       title: title,
-      image: imageString,
+      image:
+        "https://images.unsplash.com/photo-1615486363973-f79d875780cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80",
       categories: listingCategories,
       description: description,
       type: location.pathname.split("/")[1],
@@ -95,7 +71,6 @@ export default function NewListing(props) {
     closeModal();
     console.log(response.data);
     setTitle("");
-    setImageFile("");
     setListingCategories([]);
     setDescription("");
   };
@@ -103,7 +78,7 @@ export default function NewListing(props) {
   return (
     <>
       <Modal
-        opened={props.openModal}
+        opened={opened}
         onClose={() => {
           setOpened(false);
           props.closeNewModal();
@@ -118,30 +93,11 @@ export default function NewListing(props) {
             onChange={(e) => setTitle(e.target.value)}
             required
           />
-          {/* <FileInput
-            label="Upload Image"
-            icon={<UploadIcon />}
-            onClick={(e) => console.log("try upload")}
-            onChange={(e) => {
-              console.log("try");
-              setFileInputValue(e.name);
-              setFileInputFile(e);
-            }}
-          /> */}
-          <input
-            type="file"
-            onChange={(e) => setImageFile(e.target.files[0])}
+          <FileInput
+            label="Listing Image"
+            placeholder={fileInputFile}
+            onChange={(e) => setFileInputValue(e.name)}
           />
-          {/* <input
-            value={imageName}
-            onChange={(e) => setImageName(e.target.value)}
-          />
-          <input
-            type="file"
-            value={imageFile}
-            onChange={(e) => setImageFile(e.target.files[0])}
-          /> */}
-
           <MultiSelect
             data={data}
             label="Listing Category"
@@ -155,7 +111,6 @@ export default function NewListing(props) {
             required
             onChange={(e) => setDescription(e.target.value)}
           />
-
           <Button type="submit" radius={"xl"} mt={"xs"}>
             Submit
           </Button>
