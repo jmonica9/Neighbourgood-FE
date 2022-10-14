@@ -112,7 +112,7 @@ export default function DashboardFriendsListings(props) {
     return (
       <Grid.Col span={3} key={listing.id}>
         <Card
-          sx={{ backgroundColor: color, cursor: "pointer" }}
+          sx={{ backgroundColor: color, cursor: "pointer", borderRadius: 25 }}
           onClick={() => {
             setOpenListingModal(true);
             setListingOpened(listing);

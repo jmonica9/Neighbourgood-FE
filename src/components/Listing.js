@@ -37,7 +37,7 @@ export default function Listing(props) {
     } else if (props.listing.type === "lending") {
       setThemeColor(neighbourgoodTheme.colors.lightBrown);
     }
-  }, []);
+  }, [props]);
 
   useEffect(() => {
     setOpened(props.openModal);

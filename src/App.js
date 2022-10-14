@@ -65,7 +65,6 @@ export default function App() {
   };
 
   const checkJWT = async () => {
-    console.log("App.js check for user!");
     await Axios({
       method: "GET",
       withCredentials: true,
@@ -85,6 +84,9 @@ export default function App() {
     socket.on("user", (data) => {
       console.log(data, "socket user logged in DATA");
       setUserData(data.data);
+    });
+    socket.on("updating user info", () => {
+      checkJWT();
     });
   }, [socket]);
 
