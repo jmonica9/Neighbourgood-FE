@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Navbar, Text } from "@mantine/core";
+import { Group, Navbar, Text } from "@mantine/core";
 import SideDrawer from "./SideDrawer";
 import { neighbourgoodTheme } from "../styles/Theme";
 import AuthModal from "../AuthModal";
 import { UserContext } from "../App";
+import { Button } from "bootstrap";
+import Home from "./HomeButton";
+
 export default function Sidebar(props) {
   const userData = useContext(UserContext);
   const closeDrawer = () => {
@@ -26,18 +29,15 @@ export default function Sidebar(props) {
       >
         <Navbar.Section grow>
           <Text
-            mt={"6.5rem"}
-            ml={"-7rem"}
-            sx={{ position: "fixed", top: 0, left: 40 }}
+            sx={{ position: "fixed", top: "5rem", left: "-6rem" }}
             className="sidebar-neighbourgood"
           >
-            neighbourgood
+            <Home />
           </Text>
+
           {!userData && (
             <Text
-              mt={"18.5rem"}
-              ml={"-5.3rem"}
-              sx={{ position: "fixed", top: 0, left: 40 }}
+              sx={{ position: "fixed", top: "18rem", left: "-2.75rem" }}
               className="sidebar-neighbourgood"
             >
               <AuthModal />
