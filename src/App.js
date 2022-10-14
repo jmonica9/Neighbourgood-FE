@@ -29,6 +29,7 @@ import LandingPage from "./components/LandingPage";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
+import Chatroom from "./components/Chatroom";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -64,7 +65,6 @@ export default function App() {
   };
 
   const checkJWT = async () => {
-    console.log("App.js check for user!");
     await Axios({
       method: "GET",
       withCredentials: true,
@@ -84,6 +84,9 @@ export default function App() {
     socket.on("user", (data) => {
       console.log(data, "socket user logged in DATA");
       setUserData(data.data);
+    });
+    socket.on("updating user info", () => {
+      checkJWT();
     });
   }, [socket]);
 
@@ -141,6 +144,10 @@ export default function App() {
               <Route
                 path="/lending/listing/:listingId"
                 element={<Listing title="Lending" drawerOpen={drawerOpen} />}
+              />
+              <Route
+                path="/:listingId/chatroom"
+                element={<Chatroom drawerOpen={drawerOpen} />}
               />
             </Routes>
           </UserContext.Provider>

@@ -30,6 +30,7 @@ import {
 import { Paper } from "@mui/material";
 import { Grid, Group, Text } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
+import { CalendarIcon } from "@radix-ui/react-icons";
 
 const theme = createTheme({});
 
@@ -37,6 +38,14 @@ export default function DashboardCalendar() {
   const currentHour = getHours(new Date());
   const [chosenAppointment, setChosenAppointment] = useState({});
   const [openAppointmentModal, setOpenAppointmentModal] = useState(false);
+
+  //Today-Button
+  const todayButton = ({ style, ...restProps }) => (
+    <TodayButton.Button
+      {...restProps}
+      style={{ ...style, border: 0 }}
+    ></TodayButton.Button>
+  );
 
   const appointmentData = [
     {
@@ -120,10 +129,13 @@ export default function DashboardCalendar() {
         <WeekView startDayHour={6} endDayHour={24} cellDuration={30} />
         <Appointments appointmentComponent={calendarAppointment} />
 
-        <AllDayPanel />
+        {/* <AllDayPanel /> */}
         <Toolbar />
         <DateNavigator />
-        <TodayButton />
+        <TodayButton
+          buttonComponent={todayButton}
+          messages={{ today: <CalendarIcon /> }}
+        />
         <AppointmentModal
           data={chosenAppointment}
           open={openAppointmentModal}

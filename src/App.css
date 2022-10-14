@@ -50,3 +50,7 @@
   background-color: rgba(17, 5, 5, 0.2) !important;
   border-radius: 0.2em;
 }
+
+.home-button:hover {
+  background-color: rgba(0, 0, 0, 0);
+}

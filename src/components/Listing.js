@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { renderMatches, useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { renderMatches, useParams, useNavigate } from "react-router-dom";
 
 //import styling
 import { neighbourgoodTheme } from "../styles/Theme";
@@ -16,6 +16,9 @@ import {
   Notification,
   Modal,
 } from "@mantine/core";
+import { UserContext } from "../App";
+import axios from "axios";
+import { BACKEND_URL } from "../constants";
 
 export default function Listing(props) {
   // const { listingId } = useParams();
@@ -23,6 +26,8 @@ export default function Listing(props) {
     neighbourgoodTheme.colors.lightGray
   );
   const [opened, setOpened] = useState(props.openModal);
+  const userData = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (props.listing) {
@@ -35,15 +40,20 @@ export default function Listing(props) {
       }
     }
   }, [props]);
-  //make a toast here
-  // const requestAlert = () => {
-  //   //alert problem
-  //   return (
-  //     <Notification color={"green"} sx={{ zIndex: 100 }}>
-  //       Request Successful
-  //     </Notification>
-  //   );
-  // };
+
+  useEffect(() => {
+    setOpened(props.openModal);
+  });
+
+  const sendRequest = async () => {
+    //title, image, categories, description, type
+    const response = await axios.post(`${BACKEND_URL}/listing/request`, {
+      listing: props.listing,
+      userId: userData._id,
+    });
+    navigate(`/${props.listing._id}/chatroom`);
+  };
+
   return (
     <Modal
       size={"80%"}
@@ -88,14 +98,11 @@ export default function Listing(props) {
                   <Grid>
                     <Grid.Col span={9}></Grid.Col>
                     <Grid.Col span={3}>
-                      <Button
-                        ml={"5rem"}
-                        onClick={() => {
-                          return <Notification>Hi</Notification>;
-                        }}
-                      >
-                        Request
-                      </Button>
+                      {!props.listing.requestorIds.includes(userData._id) && (
+                        <Button ml={"5rem"} onClick={sendRequest}>
+                          Request
+                        </Button>
+                      )}
                     </Grid.Col>
                   </Grid>
                 </Stack>
