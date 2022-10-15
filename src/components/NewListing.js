@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { BACKEND_URL } from "../constants";
 import { useParams, useLocation } from "react-router-dom";
+
 import { toast, ToastContainer } from "react-toastify";
 import { UploadIcon } from "@radix-ui/react-icons";
 export default function NewListing(props) {
@@ -41,6 +42,18 @@ export default function NewListing(props) {
         imageData = convertedImage;
         setImageString(convertedImage);
       } else {
+        toast.error(
+          "Error! The file is not in format of image/jpeg or image/png",
+          {
+            position: "top-right",
+            autoClose: 4500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+          }
+        );
         console.log("The file is not in format of image/jpeg or image/png");
       }
     } catch (error) {
@@ -50,13 +63,14 @@ export default function NewListing(props) {
 
   // categories
   const data = [
-    { value: "react", label: "React" },
-    { value: "ng", label: "Angular" },
-    { value: "svelte", label: "Svelte" },
-    { value: "vue", label: "Vue" },
-    { value: "riot", label: "Riot" },
-    { value: "next", label: "Next.js" },
-    { value: "blitz", label: "Blitz.js" },
+    { value: "Kitchen Appliances", label: "Kitchen Appliances" },
+    { value: "Electronics", label: "Electronics" },
+    { value: "Clothes and Wearables", label: "Clothes and Apparel" },
+    { value: "Personal Care", label: "Personal Care" },
+    { value: "Furniture", label: "Furniture" },
+    { value: "Toys", label: "Toys" },
+    { value: "Hobby", label: "Hobby" },
+    { value: "Others", label: "Others" },
   ];
 
   const closeModal = () => {
@@ -68,7 +82,8 @@ export default function NewListing(props) {
 
   const submitListing = async (e) => {
     e.preventDefault();
-    convertImage(e);
+    await convertImage(e);
+    props.setLoading(true);
     console.log(imageData, "imageData from submit");
     console.log(imageString, "imagestring from submit");
     //title, image, categories, description, type
@@ -76,7 +91,7 @@ export default function NewListing(props) {
       userId: userData._id,
       username: userData.username,
       title: title,
-      image: imageString,
+      image: imageData,
       categories: listingCategories,
       description: description,
       type: location.pathname.split("/")[1],
@@ -93,6 +108,7 @@ export default function NewListing(props) {
     });
     props.closeNewModal();
     closeModal();
+    props.setLoading(false);
     console.log(response.data);
     setTitle("");
     setImageFile("");
