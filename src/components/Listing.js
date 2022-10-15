@@ -19,6 +19,7 @@ import {
 import { UserContext } from "../App";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
+import { toast } from "react-toastify";
 
 export default function Listing(props) {
   // const { listingId } = useParams();
@@ -52,6 +53,25 @@ export default function Listing(props) {
       userId: userData._id,
     });
     navigate(`/${props.listing._id}/chatroom`);
+  };
+  const deleteListing = async () => {
+    const response = await axios
+      .post(`${BACKEND_URL}/listing/delete/${props.listing._id}`)
+      .then((res) => {
+        console.log(res.data);
+        console.log("deleted!");
+      });
+    toast.success("You have deleted the listing!", {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
+    setOpened(false);
+    props.closeModal();
   };
 
   return (
@@ -103,6 +123,9 @@ export default function Listing(props) {
                           Request
                         </Button>
                       )}
+                      {userData._id === props.listing.userId ? (
+                        <Button onClick={deleteListing}>Delete</Button>
+                      ) : null}
                     </Grid.Col>
                   </Grid>
                 </Stack>
