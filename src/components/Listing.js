@@ -53,7 +53,7 @@ export default function Listing(props) {
   const sendRequest = async () => {
     // props.setLoading(true);
     //title, image, categories, description, type
-    const response = await axios.post(`${BACKEND_URL}/listing/request`, {
+    await axios.post(`${BACKEND_URL}/listing/request`, {
       listing: props.listing,
       userId: userData._id,
     });
@@ -67,7 +67,17 @@ export default function Listing(props) {
       draggable: false,
       progress: undefined,
     });
-    navigate(`/${props.listing._id}/chatroom`);
+
+    await axios
+      .post(`${BACKEND_URL}/chatroom/create/${props.listing._id}`, {
+        listingId: props.listing._id,
+        requestorId: userData._id,
+        ownerId: props.listing.userId,
+      })
+      .then((res) => {
+        console.log(res.data);
+        navigate(`/chatroom/${props.listing._id}/${res.data._id}`);
+      });
   };
 
   const withdrawRequest = async () => {
