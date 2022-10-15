@@ -25,7 +25,7 @@ import AuthModal from "./AuthModal";
 import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/LandingPage/LandingPage";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";

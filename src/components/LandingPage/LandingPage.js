@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from "react";
-import helping from "../images/helping.jpg";
-import lending from "../images/lending.jpg";
-import sharing from "../images/sharing.jpg";
-
+import React, { useState, useEffect, useContext } from "react";
+import helping from "../../images/helping.jpg";
+import lending from "../../images/lending.jpg";
+import sharing from "../../images/sharing.jpg";
+import { UserContext } from "../../App";
 import { Button, Grid, Text, Group, Title, Card } from "@mantine/core";
 import LandingPageCarousel from "./LandingPageCarousel";
-import { neighbourgoodTheme } from "../styles/Theme";
-import Listing from "./Listing";
-import Lobby from "./Lobby";
+import Listing from "../Listing";
+import Lobby from "../Lobby";
 import LandingPageListings from "./LandingPageListings";
-import AuthModal from "../AuthModal";
-import { socket } from "../App";
+import { socket } from "../../App";
 
 function LandingPage(props) {
+  const userData = useContext(UserContext);
   const [showSharing, setShowSharing] = useState(false);
   const [showHelping, setShowHelping] = useState(false);
   const [showLending, setShowLending] = useState(false);
@@ -33,18 +32,18 @@ function LandingPage(props) {
     setShowSharing(false);
   };
 
-  useEffect(() => {
-    socket.emit(
-      "testing",
-      "this message comes from the front end, and was sent to the backend via socket, then backend socket sends it back and it's now picked up by another use effect in the front end which displays it as an alert"
-    );
-  }, []);
+  // useEffect(() => {
+  //   socket.emit(
+  //     "testing",
+  //     "this message comes from the front end, and was sent to the backend via socket, then backend socket sends it back and it's now picked up by another use effect in the front end which displays it as an alert"
+  //   );
+  // }, []);
 
-  useEffect(() => {
-    socket.on("testing_received", (data) => {
-      alert(data);
-    });
-  }, [socket]);
+  // useEffect(() => {
+  //   socket.on("testing_received", (data) => {
+  //     alert(data);
+  //   });
+  // }, [socket]);
 
   return (
     <Grid
@@ -68,7 +67,7 @@ function LandingPage(props) {
           display: "flex",
           alignItems: "center",
           width: "100%",
-          height: "100vh",
+          height: "90vh",
         }}
         mt={"0.1rem"}
       >
@@ -107,15 +106,15 @@ function LandingPage(props) {
                   display: "flex",
                   alignContent: "center",
                 }}
-                px={"5vw"}
+                px={"10vw"}
               >
                 <Grid.Col className="sharingtitle">
-                  <Title size="h2" underline>
+                  <Title size="h1" underline>
                     Sharing
                   </Title>
                 </Grid.Col>
                 <Grid.Col className="sharingdesc">
-                  <Text size="2vh">
+                  <Text size="1.7vh">
                     Have stuff that's still in a good working condition that
                     you're looking to throw or give away? <br />
                     <br />
@@ -127,10 +126,13 @@ function LandingPage(props) {
                   </Text>
                 </Grid.Col>
                 <Grid.Col className="sharingbutton">
-                  <Button variant="outline" onClick={toggleSharingListings}>
+                  <Button
+                    size={"sm"}
+                    variant="outline"
+                    onClick={toggleSharingListings}
+                  >
                     See Listings
                   </Button>
-                  {/* {<AuthModal />} */}
                 </Grid.Col>
               </Grid>
             </Grid.Col>
@@ -178,7 +180,7 @@ function LandingPage(props) {
                   </Title>
                 </Grid.Col>
                 <Grid.Col className="helpingdesc">
-                  <Text size="2vh">
+                  <Text size="1.7vh">
                     <i>
                       "Love your neighbour as you love yourself" - Mark 12:31
                     </i>
@@ -190,8 +192,12 @@ function LandingPage(props) {
                     their love for you instead!
                   </Text>
                 </Grid.Col>
-                <Grid.Col className="sharingbutton">
-                  <Button variant="outline" onClick={toggleSharingListings}>
+                <Grid.Col className="helpingbutton">
+                  <Button
+                    variant="outline"
+                    size={"sm"}
+                    onClick={toggleHelpingListings}
+                  >
                     See Listings
                   </Button>
                 </Grid.Col>
@@ -234,7 +240,7 @@ function LandingPage(props) {
                   </Title>
                 </Grid.Col>
                 <Grid.Col className="lendingdesc">
-                  <Text size="2vh">
+                  <Text size="1.7vh">
                     Loan out items to your neighbours or borrow their stuff with
                     our lending feature.
                     <br />
@@ -245,7 +251,11 @@ function LandingPage(props) {
                   </Text>
                 </Grid.Col>
                 <Grid.Col className="lendingbutton">
-                  <Button variant="outline" onClick={toggleSharingListings}>
+                  <Button
+                    size={"sm"}
+                    variant="outline"
+                    onClick={toggleLendingListings}
+                  >
                     See Listings
                   </Button>
                   {/* {<AuthModal />} */}
