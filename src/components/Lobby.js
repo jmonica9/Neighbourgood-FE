@@ -281,7 +281,7 @@ export default function Lobby(props) {
               sx={{
                 // width: props.drawerOpen ? "35vw" : "45vw",
                 backgroundColor: themeColor,
-                height: "45vh",
+                height: "35vh",
                 display: "flex",
                 borderRadius: 25,
               }}
@@ -307,7 +307,8 @@ export default function Lobby(props) {
               sx={{
                 // width: props.drawerOpen ? "35vw" : "45vw",
                 backgroundColor: themeColor,
-                height: "45vh",
+                height: "35vh",
+                minHeight: 280,
                 display: "flex",
                 borderRadius: 25,
               }}

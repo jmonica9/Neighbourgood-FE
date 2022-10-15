@@ -59,18 +59,20 @@ export default function SideDrawer(props) {
           opened={opened}
           onClose={() => props.closeDrawer()}
           title=""
-          padding="xs"
+          padding={10}
           size="20vw"
           closeOnClickOutside={false}
           withOverlay={false}
           withinPortal={false}
           withCloseButton={false}
         >
-          <Stack spacing={"xs"} sx={{ height: "100%" }}>
+          <Stack spacing={"1vh"} sx={{ height: "100%" }}>
             <Card
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,
                 borderRadius: 25,
+                height: "15vh",
+                maxHeight: 120,
               }}
               pt={5}
               pb={5}
@@ -92,7 +94,7 @@ export default function SideDrawer(props) {
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,
                 borderRadius: 25,
-                height: "20vh",
+                height: "25vh",
               }}
               pt={5}
               pb={5}
@@ -112,9 +114,9 @@ export default function SideDrawer(props) {
                 align="left"
                 size="xl"
                 weight={"bold"}
-                mb={"1.5em"}
+                // mb={"3vh"}
               >
-                10 Following
+                {props.userData.accountsFollowing.length} Following
               </Text>
 
               {/* Other Profile Info */}
@@ -124,7 +126,9 @@ export default function SideDrawer(props) {
                   sx={{
                     backgroundColor: neighbourgoodTheme.colors.darkGray,
                     borderRadius: 25,
-                    bottom: 0,
+                    position: "absolute",
+                    bottom: "1vh",
+                    right: "1vh",
                   }}
                   onClick={() => {
                     setOpenEditProfileModal(true);
@@ -141,45 +145,48 @@ export default function SideDrawer(props) {
             <Button
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightTeal,
-                borderRadius: 25,
+                borderRadius: 15,
                 display: "flex",
-                height: "5vh",
+                height: "7vh",
+                maxHeight: 55,
               }}
               onClick={() => {
                 navigate("/sharing");
               }}
             >
-              <Text align="left" size={"28px"}>
+              <Text align="left" size={"25px"}>
                 Sharing
               </Text>
             </Button>
             <Button
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightPurple,
-                borderRadius: 25,
+                borderRadius: 15,
                 display: "flex",
-                height: "5vh",
+                height: "7vh",
+                maxHeight: 55,
               }}
               onClick={() => {
                 navigate("/helping");
               }}
             >
-              <Text align="left" size={"28px"}>
+              <Text align="left" size={"25px"}>
                 Helping
               </Text>
             </Button>
             <Button
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightBrown,
-                borderRadius: 25,
+                borderRadius: 15,
                 display: "flex",
-                height: "5vh",
+                height: "7vh",
+                maxHeight: 55,
               }}
               onClick={() => {
                 navigate("/lending");
               }}
             >
-              <Text align="left" size={"28px"}>
+              <Text align="left" size={"25px"}>
                 Lending
               </Text>
             </Button>
@@ -187,12 +194,12 @@ export default function SideDrawer(props) {
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,
                 borderRadius: 25,
-                height: "20vh",
+                height: "30vh",
               }}
               pt={5}
               pb={5}
             >
-              <Text color={"white"} align="left" size="30px" weight={"bold"}>
+              <Text color={"white"} align="left" size="25px" weight={"bold"}>
                 Current Chats
               </Text>
               <Text color={"white"} align="left" size="xl" weight={"bold"}>
@@ -202,7 +209,7 @@ export default function SideDrawer(props) {
                 {/* some stuff */}
               </Text>
             </Card>
-            <Card
+            {/* <Card
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,
                 borderRadius: 25,
@@ -215,22 +222,24 @@ export default function SideDrawer(props) {
                 Awards
               </Text>
               <Text color={"white"} align="left" size="xl" weight={"bold"}>
-                {/* some stuff */}
+                
               </Text>
               <Text color={"white"} align="left" size="xl" weight={"bold"}>
-                {/* some stuff */}
+                
               </Text>
-            </Card>
+            </Card> */}
             <Button
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.darkGray,
                 borderRadius: 25,
                 display: "flex",
                 height: "5vh",
+                bottom: 0,
+                // position: "absolute",
               }}
               onClick={props.logout}
             >
-              <Text align="left" size={"28px"}>
+              <Text align="left" size={"25px"}>
                 Logout
               </Text>
             </Button>
