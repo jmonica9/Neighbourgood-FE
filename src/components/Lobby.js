@@ -258,6 +258,7 @@ export default function Lobby(props) {
           setOpenListingModal(true);
           setSelectedListing(listing);
         }}
+        key={listing._id}
       >
         <Card.Section width="13rem" height="15rem">
           <Image
