@@ -373,7 +373,7 @@ export default function Lobby(props) {
               sx={{
                 width: props.drawerOpen ? "70vw" : "90vw",
                 backgroundColor: themeColor,
-                height: "65vh",
+                height: "100%",
                 display: "block",
                 borderRadius: 25,
                 marginBottom: "5vh",
@@ -406,16 +406,16 @@ export default function Lobby(props) {
                     Add a Listing
                   </Button>
                 </Grid.Col>
-
-                <ScrollArea style={{ height: "50vh", width: "auto" }}>
-                  <Group spacing={"xs"} sx={{ marginBottom: "7vh" }}>
-                    {lobbyListings ? (
-                      ListAllListings
-                    ) : (
-                      <Text>No Listing Exist Yet</Text>
-                    )}
-                  </Group>
-                </ScrollArea>
+                {/* 
+                <ScrollArea style={{ height: "50vh", width: "auto" }}> */}
+                <Group spacing={"xs"} sx={{ marginBottom: "7vh" }}>
+                  {lobbyListings ? (
+                    ListAllListings
+                  ) : (
+                    <Text>No Listing Exist Yet</Text>
+                  )}
+                </Group>
+                {/* </ScrollArea> */}
               </Grid>
             </Card>
           </Group>
