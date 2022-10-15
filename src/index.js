@@ -6,6 +6,18 @@ import reportWebVitals from "./reportWebVitals";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 
+import { createStyles } from "@mantine/core";
+import { neighbourgoodTheme } from "./styles/Theme";
+
+const useStyles = createStyles((theme) => ({
+  text: {
+    fontSize: theme.fontSizes.xl,
+    [theme.fn.smallerThan("lg")]: {
+      fontSize: theme.fontSizes.sm,
+    },
+  },
+}));
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
