@@ -12,6 +12,7 @@ import {
   Image,
   Modal,
   useMantineTheme,
+  Text,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import { useNavigate } from "react-router-dom";
@@ -150,15 +151,36 @@ export default function LandingPageListings(props) {
                       })
                       .map((listing) => (
                         <Card
-                          sx={{ width: "15rem", height: "17rem" }}
+                          sx={{
+                            width: "15rem",
+                            height: "17rem",
+                            marginTop: "2vh",
+                            marginBottom: "2vh",
+                          }}
+                          target="_blank"
                           onClick={() => {
                             setAuthOpen(true);
                           }}
                           key={listing._id}
-                          m="1rem"
                         >
-                          <Image src={listing.cloudimg?.url} alt="loading" />
-                          {listing.title}
+                          <Card.Section width="13rem" height="15rem">
+                            <Image
+                              src={listing.cloudimg?.url}
+                              width="15rem"
+                              max-width="15rem"
+                              max-height="15rem"
+                              height={160}
+                              alt="No way!"
+                            />
+                          </Card.Section>
+
+                          <Text weight={500} size="lg" mt="md">
+                            {listing.title}
+                          </Text>
+
+                          <Text mt="xs" color="dimmed" size="sm">
+                            {listing.description}
+                          </Text>
                         </Card>
                       ))
                   ) : (

@@ -15,7 +15,7 @@ export default function DashboardFriendsListings(props) {
 
   useEffect(() => {
     if (user) {
-      console.log(user.accountsFollowing);
+      // console.log(user.accountsFollowing);
       let friendsListingsArray = [];
       if (user.accountsFollowing.length > 0) {
         user.accountsFollowing.forEach(async (user_id) => {
@@ -29,7 +29,7 @@ export default function DashboardFriendsListings(props) {
 
   const getFriendsListings = async (id) => {
     const response = await axios.get(`${BACKEND_URL}/listing/user/${id}`);
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   };
 
@@ -110,7 +110,7 @@ export default function DashboardFriendsListings(props) {
         color = neighbourgoodTheme.colors.lightGray;
     }
     return (
-      <Grid.Col span={3} key={listing.id}>
+      <Grid.Col span={3} key={listing._id}>
         <Card
           sx={{ backgroundColor: color, cursor: "pointer", borderRadius: 25 }}
           onClick={() => {
