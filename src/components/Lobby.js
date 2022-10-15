@@ -161,14 +161,15 @@ export default function Lobby(props) {
             sx={{
               // width: props.drawerOpen ? "35vw" : "45vw",
               backgroundColor: themeColor,
-              height: "45vh",
+              height: "35vh",
               display: "flex",
               borderRadius: 25,
+              minHeight: 280,
             }}
           >
             {/* Contents in here */}
             <Stack>
-              <Text> {props.title} Watchlist</Text>
+              <Text align="left"> {props.title} Watchlist</Text>
 
               <ScrollArea style={{ height: "18rem", width: "100%" }}>
                 <Group spacing={"xs"}>
@@ -187,8 +188,9 @@ export default function Lobby(props) {
             sx={{
               // width: props.drawerOpen ? "35vw" : "45vw",
               backgroundColor: themeColor,
-              height: "45vh",
+              height: "35vh",
               display: "flex",
+              minHeight: 280,
               borderRadius: 25,
             }}
           >

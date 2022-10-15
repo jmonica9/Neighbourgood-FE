@@ -62,7 +62,12 @@ export default function DashboardReviews() {
     return (
       <div>
         <Card
-          sx={{ backgroundColor: color, width: "23vw", cursor: "pointer" }}
+          sx={{
+            backgroundColor: color,
+            width: "22vw",
+            cursor: "pointer",
+            borderRadius: 15,
+          }}
           onClick={() => {
             setOpenReviewModal(true);
             setSelectedReview(review);
@@ -75,14 +80,11 @@ export default function DashboardReviews() {
   });
 
   return (
-    <div>
+    <div name="card">
       {user && userReviews ? (
         <>
-          <ScrollArea
-            style={{ width: "auto", height: "24vh" }}
-            offsetScrollbars
-          >
-            <Stack>{displayReviews}</Stack>
+          <ScrollArea style={{ height: "30vh" }} offsetScrollbars>
+            <Stack spacing={"1vh"}>{displayReviews}</Stack>
           </ScrollArea>
           <Review
             review={selectedReview}

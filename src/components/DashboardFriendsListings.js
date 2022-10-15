@@ -110,27 +110,36 @@ export default function DashboardFriendsListings(props) {
         color = neighbourgoodTheme.colors.lightGray;
     }
     return (
-      <Grid.Col span={3} key={listing.id}>
+      <Grid.Col span={3} key={listing.id} p={"0.5vh"}>
         <Card
-          sx={{ backgroundColor: color, cursor: "pointer", borderRadius: 25 }}
+          sx={{
+            backgroundColor: color,
+            cursor: "pointer",
+            borderRadius: 25,
+            padding: 0,
+          }}
           onClick={() => {
             setOpenListingModal(true);
             setListingOpened(listing);
             // console.log(listing);
           }}
         >
-          <Text size={"sm"}>
+          <Text size={"sm"} lineClamp={1}>
             {index}: {listing.title}
           </Text>
           <Text size={"sm"}>By: {listing.username}</Text>
-          <Image src={listing.image} height={"15vh"} />
+          <Image
+            src={listing.image}
+            height={"15vh"}
+            sx={{ maxHeight: "15vh" }}
+          />
         </Card>
       </Grid.Col>
     );
   });
   return (
     <div>
-      <ScrollArea style={{ width: "auto", height: "35vh" }}>
+      <ScrollArea style={{ width: "100%", height: "30vh" }}>
         <Grid>{displayFriendsListings}</Grid>
       </ScrollArea>
       {listingOpened ? (
