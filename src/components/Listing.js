@@ -15,6 +15,10 @@ import {
   Alert,
   Notification,
   Modal,
+  Badge,
+  Title,
+  Container,
+  ScrollArea,
 } from "@mantine/core";
 import { UserContext } from "../App";
 import axios from "axios";
@@ -47,14 +51,26 @@ export default function Listing(props) {
   });
 
   const sendRequest = async () => {
+    props.setLoading(true);
     //title, image, categories, description, type
     const response = await axios.post(`${BACKEND_URL}/listing/request`, {
       listing: props.listing,
       userId: userData._id,
     });
-    navigate(`/${props.listing._id}/chatroom`);
+    props.setLoading(false);
+    toast.success("You have sent a request!", {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
+    // navigate(`/${props.listing._id}/chatroom`);
   };
   const deleteListing = async () => {
+    props.setLoading(true);
     const response = await axios
       .post(`${BACKEND_URL}/listing/delete/${props.listing._id}`)
       .then((res) => {
@@ -70,21 +86,23 @@ export default function Listing(props) {
       draggable: false,
       progress: undefined,
     });
+    props.setLoading(false);
     setOpened(false);
     props.closeModal();
   };
 
   return (
     <Modal
-      size={"80%"}
+      // overflow="inside"
+      size={"90%"}
       opened={props.openModal}
       onClose={() => {
         setOpened(false);
         props.closeModal();
       }}
     >
-      <div>
-        <div>
+      {/* <div> */}
+      {/* <div>
           {props.listing ? (
             <Card
               sx={{
@@ -94,15 +112,12 @@ export default function Listing(props) {
                 borderRadius: 25,
               }}
             >
-              {/* Contents in here */}
               <CardSection>
                 <Grid sx={{ width: "100%" }}>
                   <Grid.Col span={6}>
                     <Text align="left">Listing {props.listing.title}</Text>
                   </Grid.Col>
-                  <Grid.Col span={6}>
-                    {/* <Text align="right">By: {props.listing.username}</Text> */}
-                  </Grid.Col>
+                  <Grid.Col span={6}></Grid.Col>
                 </Grid>
               </CardSection>
               <br />
@@ -134,8 +149,127 @@ export default function Listing(props) {
           ) : (
             "null"
           )}
-        </div>
-      </div>
+        </div> */}
+      {/* {props.listing ? (
+          <Card
+            shadow="sm"
+            p="lg"
+            radius="md"
+            withBorder
+            height="100"
+            sx={{
+              width: "100%",
+              backgroundColor: themeColor,
+              height: "95vh",
+              borderRadius: 25,
+            }}
+          >
+            <Card.Section>
+              <Image
+                mt={3}
+                src={props.listing.cloudimg?.url}
+                alt={props.listing.title}
+                height="50vh"
+                fit="contain"
+              />
+              
+            </Card.Section>
+
+            
+            <Group inheritPadding position="right" mt="md" mb="xs">
+              {!props.listing.requestorIds.includes(userData._id) && (
+                <Button
+                  variant="light"
+                  color="blue"
+                  radius="md"
+                  onClick={sendRequest}
+                >
+                  {" "}
+                  Request
+                </Button>
+              )}
+              {userData._id === props.listing.userId ? (
+                <Button
+                  variant="light"
+                  color="blue"
+                  radius="md"
+                  onClick={deleteListing}
+                >
+                  Delete
+                </Button>
+              ) : null}
+            </Group>
+          </Card>
+        ) : (
+          "Loading.."
+        )}
+      </div> */}
+      {props.listing ? (
+        <Container fluid className="SideBar-Content-body" px="xs">
+          <Grid grow align="center">
+            <Grid.Col span={4}>
+              <Card radius="md" mr={3}>
+                <Card.Section mt="sm">
+                  <Image
+                    src={props.listing.cloudimg?.url}
+                    height="50vh"
+                    alt="photo display"
+                    fit="contain"
+                  />
+                </Card.Section>
+              </Card>
+            </Grid.Col>
+
+            <Card
+              sx={{
+                width: "50%",
+                // width: "100%",
+                backgroundColor: themeColor,
+                // height: "95vh",
+                borderRadius: 25,
+              }}
+            >
+              <Card.Section>
+                <ScrollArea style={{ height: "18rem" }}>
+                  <Grid.Col span={6}>
+                    <br />
+                    <Text size={28} weight={500} mb={4}>
+                      {props.listing.title}
+                    </Text>
+                    <Text size={20} color="dimmed" mb={4}>
+                      Posted by: {props.listing.username}
+                    </Text>
+                    <Text size={18} color="dimmed">
+                      {props.listing.description}
+                    </Text>
+
+                    <br />
+                  </Grid.Col>
+                </ScrollArea>
+              </Card.Section>
+            </Card>
+            <Grid.Col span={6}>
+              <Group position="right" mt="md" mb="xs">
+                {/* im not the owner of listing + the requestorIds dont have mine */}
+                {!props.listing.requestorIds.includes(userData._id) &&
+                  !userData._id === props.listing.userId && (
+                    <Button variant="dark" radius="md" onClick={sendRequest}>
+                      Request
+                    </Button>
+                  )}
+                {/* If i own this listing */}
+                {userData._id === props.listing.userId ? (
+                  <Button variant="dark" radius="md" onClick={deleteListing}>
+                    Delete
+                  </Button>
+                ) : null}
+              </Group>
+            </Grid.Col>
+          </Grid>
+        </Container>
+      ) : (
+        "There is no listing yet"
+      )}
     </Modal>
   );
 }
