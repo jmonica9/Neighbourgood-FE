@@ -20,12 +20,14 @@ import Listing from "./Listing";
 import { UserContext } from "../App";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
+import { experimentalStyled } from "@mui/material";
 export default function Lobby(props) {
   const [lobbyListings, setLobbyListings] = useState([]);
   const [themeColor, setThemeColor] = useState(
     neighbourgoodTheme.colors.lightGray
   );
   const [openNewModal, setOpenNewModal] = useState(false);
+  const [chosenCategories, setChosenCategories] = useState([]);
   const [myListings, setMyListings] = useState([]);
   const [openListingModal, setOpenListingModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -61,15 +63,32 @@ export default function Lobby(props) {
           console.log("res for my listings", res);
           setMyListings(res.data);
         });
+      console.log(chosenCategories, "chosen categories");
+      //query for all listings
+      // if (chosenCategories === []) {
+      //   axios
+      //     .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
+      //     .then((res) => {
+      //       console.log("res for all listings", res);
+      //       setLobbyListings(res.data);
+      //     });
+      // }
     }
-    //query for all listings
-    axios
-      .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
-      .then((res) => {
-        console.log("res for all listings", res);
-        setLobbyListings(res.data);
-      });
   }, [userData, location, refresh]);
+
+  useEffect(() => {
+    if (chosenCategories === [] || chosenCategories.length < 1) {
+      axios
+        .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
+        .then((res) => {
+          console.log("res for all listings", res);
+          setLobbyListings(res.data);
+        });
+    } else if (chosenCategories !== []) {
+      console.log("REQ BE TO SORT CATEGORIES LISTING");
+      sortByCategories();
+    }
+  }, [chosenCategories, location]);
 
   useEffect(() => {
     if (props.title === "Sharing") {
@@ -81,6 +100,26 @@ export default function Lobby(props) {
     }
   });
 
+  // useEffect(() => {
+  //   if (chosenCategories !== []) {
+  //     console.log("REQ BE TO SORT CATEGORIES LISTING");
+  //     sortByCategories();
+  //   }
+  //   setRefresh(!refresh);
+  //   console.log(refresh, "refresh");
+  // }, [chosenCategories]);
+
+  const sortByCategories = async () => {
+    await axios
+      .post(
+        `${BACKEND_URL}/listing/categories/${location.pathname.split("/")[1]}`,
+        { categories: chosenCategories }
+      )
+      .then((res) => {
+        console.log("sorted by categories chosen", res.data);
+        setLobbyListings(res.data);
+      });
+  };
   // const TriggerOpenNewModal = () => {
   //   setOpenNewModal(true);
   // };
@@ -94,55 +133,70 @@ export default function Lobby(props) {
   };
   const closeListingModal = () => {
     setOpenListingModal(false);
+    setRefresh(!refresh);
   };
 
+  // categories
   const categories = [
-    { value: "react", label: "React" },
-    { value: "ng", label: "Angular" },
-    { value: "svelte", label: "Svelte" },
-    { value: "vue", label: "Vue" },
-    { value: "riot", label: "Riot" },
-    { value: "next", label: "Next.js" },
-    { value: "blitz", label: "Blitz.js" },
+    { value: "Kitchen Appliances", label: "Kitchen Appliances" },
+    { value: "Electronics", label: "Electronics" },
+    { value: "Clothes and Wearables", label: "Clothes and Apparel" },
+    { value: "Personal Care", label: "Personal Care" },
+    { value: "Furniture", label: "Furniture" },
+    { value: "Toys", label: "Toys" },
+    { value: "Hobby", label: "Hobby" },
+    { value: "Others", label: "Others" },
   ];
 
-  const ListWatchlist = myWatchlist.map((listing) => (
-    <Card
-      sx={{ width: "10rem", height: "12rem" }}
-      onClick={(e) => {
-        setOpenListingModal(true);
-        setSelectedListing(listing);
-      }}
-    >
-      {listing.title}
-      <Image src={listing.image} />
-    </Card>
-  ));
-  const ListMyListings = myListings.map((listing) => (
-    <Card
-      sx={{ width: "10rem", height: "12rem" }}
-      onClick={(e) => {
-        setOpenListingModal(true);
-        setSelectedListing(listing);
-      }}
-    >
-      {listing.title}
-    </Card>
-  ));
+  const ListWatchlist = myWatchlist
+    .sort((a, b) => {
+      return new Date(b.updatedAt) - new Date(a.updatedAt);
+    })
+    .map((listing) => (
+      <Card
+        sx={{ width: "10rem", height: "12rem" }}
+        onClick={(e) => {
+          setOpenListingModal(true);
+          setSelectedListing(listing);
+        }}
+      >
+        {listing.title}
+        <Image src={listing.image} />
+      </Card>
+    ));
+  const ListMyListings = myListings
+    .sort((a, b) => {
+      return new Date(b.updatedAt) - new Date(a.updatedAt);
+    })
+    .map((listing) => (
+      <Card
+        sx={{ width: "10rem", height: "12rem" }}
+        onClick={(e) => {
+          setOpenListingModal(true);
+          setSelectedListing(listing);
+        }}
+      >
+        {listing.title}
+      </Card>
+    ));
 
-  const ListAllListings = lobbyListings.map((listing) => (
-    <Card
-      sx={{ width: "15rem", height: "17rem" }}
-      onClick={() => {
-        // navigate(`/${props.title.toLowerCase()}/listing/1`);
-        setOpenListingModal(true);
-        setSelectedListing(listing);
-      }}
-    >
-      <Image src={listing.image} alt="loading" />
-      {listing.title}
-    </Card>
-  ));
+  const ListAllListings = lobbyListings
+    .sort((a, b) => {
+      return new Date(b.updatedAt) - new Date(a.updatedAt);
+    })
+    .map((listing) => (
+      <Card
+        sx={{ width: "15rem", height: "17rem" }}
+        onClick={() => {
+          // navigate(`/${props.title.toLowerCase()}/listing/1`);
+          setOpenListingModal(true);
+          setSelectedListing(listing);
+        }}
+      >
+        <Image src={listing.cloudimg?.url} alt="loading" />
+        {listing.title}
+      </Card>
+    ));
 
   return (
     <div
@@ -222,10 +276,18 @@ export default function Lobby(props) {
                 Latest {props.title}s
               </Grid.Col>
               <Grid.Col span={6} pl={0}>
-                <MultiSelect data={categories} placeholder="Categories" />
+                <MultiSelect
+                  data={categories}
+                  placeholder="Categories"
+                  onChange={(e) => {
+                    console.log("change categories!");
+                    console.log(e);
+                    setChosenCategories(e);
+                  }}
+                />
               </Grid.Col>
               <Grid.Col span={3} pl={0}>
-                <MultiSelect data={categories} placeholder="Categories" />
+                <MultiSelect data={categories} placeholder="Location" />
               </Grid.Col>
               <Grid.Col
                 span={3}
