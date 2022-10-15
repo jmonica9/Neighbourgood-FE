@@ -1,5 +1,3 @@
-import React, {useState} from 'react'
+import React, { useState } from "react";
 
-export default function Profile.js(){
-
-}
+export default function Profile() {}
