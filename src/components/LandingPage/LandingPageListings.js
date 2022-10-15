@@ -10,51 +10,63 @@ import {
   MultiSelect,
   Button,
   Image,
+  Modal,
+  useMantineTheme,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import { useNavigate } from "react-router-dom";
 import Listing from "../Listing";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
+import { Authentication } from "../../Authentication";
 
 export default function LandingPageListings(props) {
   const [themeColor, setThemeColor] = useState(
     neighbourgoodTheme.colors.lightGray
   );
-  const [openListingModal, setOpenListingModal] = useState(false);
-  const [listings, setListings] = useState();
-  const navigate = useNavigate();
-  const [chosenCategories, setChosenCategories] = useState([]);
+  const [listings, setListings] = useState([]);
+  const [chosenCategories, setChosenCategories] = useState("");
+  const [selectedListing, setSelectedListing] = useState({ _id: "test" });
+  const [authOpen, setAuthOpen] = useState(false);
+  const theme = useMantineTheme();
 
   useEffect(() => {
-    if (props.title === "Sharing") {
+    if (props.title === "sharing") {
       setThemeColor(neighbourgoodTheme.colors.lightTeal);
-      axios.get(`${BACKEND_URL}/listing/sharing`).then((res) => {
-        console.log(res.data);
-        setListings(res.data);
-      });
-    } else if (props.title === "Helping") {
+    } else if (props.title === "helping") {
       setThemeColor(neighbourgoodTheme.colors.lightPurple);
-      axios.get(`${BACKEND_URL}/listing/helping`).then((res) => {
-        console.log(res.data);
-        setListings(res.data);
-      });
-    } else if (props.title === "Lending") {
+    } else if (props.title === "lending") {
       setThemeColor(neighbourgoodTheme.colors.lightBrown);
-      axios.get(`${BACKEND_URL}/listing/lending`).then((res) => {
-        console.log(res.data);
-        setListings(res.data);
-      });
     }
+  });
+
+  useEffect(() => {
+    axios.get(`${BACKEND_URL}/listing/${props.title}`).then((res) => {
+      setListings(res.data);
+    });
   }, []);
 
   useEffect(() => {
-    console.log(listings);
-  }, [listings]);
+    if (chosenCategories.length < 1) {
+      axios.get(`${BACKEND_URL}/listing/${props.title}`).then((res) => {
+        setListings(res.data);
+      });
+    } else sortByCategories();
+  }, [chosenCategories]);
 
-  const closeListingModal = () => {
-    setOpenListingModal(false);
+  const sortByCategories = async () => {
+    await axios
+      .post(`${BACKEND_URL}/listing/categories/${props.title}`, {
+        categories: chosenCategories,
+      })
+      .then((res) => {
+        setListings(res.data);
+      });
   };
+
+  useEffect(() => {
+    console.log(selectedListing);
+  }, [selectedListing]);
 
   const categories = [
     { value: "Kitchen Appliances", label: "Kitchen Appliances" },
@@ -67,26 +79,31 @@ export default function LandingPageListings(props) {
     { value: "Others", label: "Others" },
   ];
 
-  //query for all listings
-  // if (chosenCategories === []) {
-  //   axios
-  //     .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
-  //     .then((res) => {
-  //       console.log("res for all listings", res);
-  //       setLobbyListings(res.data);
-  //     });
-  // }
-
   return (
     <Grid
       sx={{
         justifyContent: "center",
       }}
       mt={"1rem"}
-      mb={"2rem"}
+      mb={"10rem"}
     >
+      <Modal
+        overlayColor={
+          theme.colorScheme === "dark"
+            ? theme.colors.dark[9]
+            : theme.colors.gray[2]
+        }
+        overlayOpacity={0.55}
+        overlayBlur={3}
+        opened={authOpen}
+        onClose={() => setAuthOpen(false)}
+        overflow="inside"
+      >
+        {/* <AuthForm /> */}
+        <Authentication onClose={() => setAuthOpen(false)} />
+      </Modal>
       <Grid>
-        <Group>
+        <Group sx={{ minHeight: "50vh" }}>
           <Card
             sx={{
               width: props.drawerOpen ? "70vw" : "90vw",
@@ -107,7 +124,13 @@ export default function LandingPageListings(props) {
                 Latest {props.title}s
               </Grid.Col>
               <Grid.Col span={6} pl={0}>
-                <MultiSelect data={categories} placeholder="Categories" />
+                <MultiSelect
+                  data={categories}
+                  placeholder="Categories"
+                  onChange={(e) => {
+                    setChosenCategories(e);
+                  }}
+                />
               </Grid.Col>
               <Grid.Col span={6} pl={0}>
                 <MultiSelect data={categories} placeholder="Categories" />
@@ -120,7 +143,7 @@ export default function LandingPageListings(props) {
                     justifyContent: "space-evenly",
                   }}
                 >
-                  {listings &&
+                  {listings.length > 0 ? (
                     listings
                       .sort((a, b) => {
                         return new Date(b.updatedAt) - new Date(a.updatedAt);
@@ -129,25 +152,29 @@ export default function LandingPageListings(props) {
                         <Card
                           sx={{ width: "15rem", height: "17rem" }}
                           onClick={() => {
-                            setOpenListingModal(true);
+                            setAuthOpen(true);
                           }}
-                          key={listing.id}
+                          key={listing._id}
                           m="1rem"
                         >
                           <Image src={listing.cloudimg?.url} alt="loading" />
                           {listing.title}
                         </Card>
-                      ))}
+                      ))
+                  ) : (
+                    <Grid>
+                      <Grid.Col px="17rem" py="5rem">
+                        There are no listings matching your selected categories.
+                        Please try a different selection or check back again in
+                        a few days!
+                      </Grid.Col>
+                    </Grid>
+                  )}
                 </Group>
               </Grid>
             </Grid>
           </Card>
         </Group>
-        <Listing
-          openModal={openListingModal}
-          closeModal={closeListingModal}
-          type={props.title}
-        />
       </Grid>
     </Grid>
   );

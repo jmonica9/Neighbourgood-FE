@@ -267,17 +267,17 @@ function LandingPage(props) {
         <Grid.Col className="listings-container" p={0}>
           {showSharing && (
             <Grid.Col mt={"2rem"}>
-              <LandingPageListings title="Sharing" />
+              <LandingPageListings title="sharing" />
             </Grid.Col>
           )}
           {showHelping && (
             <Grid.Col mt={"2rem"}>
-              <LandingPageListings title="Helping" />
+              <LandingPageListings title="helping" />
             </Grid.Col>
           )}
           {showLending && (
             <Grid.Col mt={"2rem"}>
-              <LandingPageListings title="Lending" />
+              <LandingPageListings title="lending" />
             </Grid.Col>
           )}
         </Grid.Col>
