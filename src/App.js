@@ -70,7 +70,7 @@ export default function App() {
       withCredentials: true,
       url: `${BACKEND_URL}/auth/jwtUser`,
     }).then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data === "No User Exists") {
         setUserData(undefined);
       } else setUserData(res.data);

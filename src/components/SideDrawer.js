@@ -43,7 +43,7 @@ export default function SideDrawer(props) {
   useEffect(() => {
     if (!props.userData) {
       setOpened(false);
-      console.log("close drawer");
+      // console.log("close drawer");
     }
   });
 

@@ -51,13 +51,13 @@ export default function Listing(props) {
   });
 
   const sendRequest = async () => {
-    props.setLoading(true);
+    // props.setLoading(true);
     //title, image, categories, description, type
     const response = await axios.post(`${BACKEND_URL}/listing/request`, {
       listing: props.listing,
       userId: userData._id,
     });
-    props.setLoading(false);
+    // props.setLoading(false);
     toast.success("You have sent a request!", {
       position: "top-right",
       autoClose: 4500,
@@ -67,8 +67,26 @@ export default function Listing(props) {
       draggable: false,
       progress: undefined,
     });
-    // navigate(`/${props.listing._id}/chatroom`);
+    navigate(`/${props.listing._id}/chatroom`);
   };
+
+  const withdrawRequest = async () => {
+    const response = await axios.post(`${BACKEND_URL}/listing/withdraw`, {
+      listing: props.listing,
+      userId: userData._id,
+    });
+    toast.error(`You have withdrawn your request for ${props.listing.title}`, {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
+    navigate(`/${props.listing.type}`);
+  };
+
   const deleteListing = async () => {
     props.setLoading(true);
     const response = await axios
@@ -250,13 +268,37 @@ export default function Listing(props) {
             </Card>
             <Grid.Col span={6}>
               <Group position="right" mt="md" mb="xs">
-                {/* im not the owner of listing + the requestorIds dont have mine */}
+                {/* User has not yet requested + user is not the owner of the listing*/}
                 {!props.listing.requestorIds.includes(userData._id) &&
-                  !userData._id === props.listing.userId && (
+                  !(userData._id === props.listing.userId) && (
                     <Button variant="dark" radius="md" onClick={sendRequest}>
                       Request
                     </Button>
                   )}
+
+                {/* User has requested already + user is not the owner of the listing */}
+                {props.listing.requestorIds.includes(userData._id) &&
+                  !(userData._id === props.listing.userId) && (
+                    <div>
+                      <div>
+                        You have already requested this item. Click
+                        <button
+                          onClick={() => {
+                            alert("send to chatroom");
+                          }}
+                        >
+                          here
+                        </button>
+                        to go to the chatroom!
+                      </div>
+                      <div>
+                        alternatively, click{" "}
+                        <button onClick={withdrawRequest}>here</button> to
+                        withdraw your interest
+                      </div>
+                    </div>
+                  )}
+
                 {/* If i own this listing */}
                 {userData._id === props.listing.userId ? (
                   <Button variant="dark" radius="md" onClick={deleteListing}>
