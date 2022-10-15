@@ -29,6 +29,7 @@ export function Authentication(props) {
   const [allUsers, setAllUsers] = useState(null);
   const [myUser, setMyUser] = useState(null);
   const [jwtUser, setJwtUser] = useState(null);
+  const [location, setLocation] = useState(null);
   const [welcomeMsg, setWelcomeMsg] = useState(null);
   const REGISTER_MODE = "Register";
   const LOGIN_MODE = "Login";
@@ -142,9 +143,15 @@ export function Authentication(props) {
 
   return (
     <div>
-      <Container size={420} my={40}>
-        <Title align="center">
-          {jwtUser !== undefined ? welcomeMsg : "please log in"}
+      <Container size={420}>
+        <Title
+          align="center"
+          sx={(theme) => ({
+            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+            fontWeight: 900,
+          })}
+        >
+          Welcome to Neighbourgood
         </Title>
         <Text color="dimmed" size="sm" align="center" mt={5}>
           Do you have an account yet?{" "}
@@ -166,25 +173,34 @@ export function Authentication(props) {
         {authMode === REGISTER_MODE ? (
           <Paper withBorder shadow="md" p={30} mt={30} radius="md">
             <TextInput
-              label="username"
+              label="Username"
+              autoComplete="false"
               value={registerUsername}
               placeholder="register username here"
               onChange={(e) => setRegisterUsername(e.target.value)}
               required
             />
             <TextInput
-              label="email"
+              label="Email"
               value={registerEmail}
               placeholder="register email here"
               onChange={(e) => setRegisterEmail(e.target.value)}
+              mt="md"
               required
+            />
+            <TextInput
+              label="Location"
+              value={location}
+              placeholder="set your location"
+              onChange={(e) => setLocation(e.target.value)}
+              mt="md"
             />
             <PasswordInput
               label="Password"
               placeholder="Your password"
+              mt="md"
               onChange={(e) => setRegisterPassword(e.target.value)}
               required
-              mt="md"
             />
 
             <Button fullWidth mt="xl" onClick={register}>
@@ -211,8 +227,6 @@ export function Authentication(props) {
             <Button fullWidth mt="xl" onClick={login}>
               Login
             </Button>
-
-            <Button onClick={logout}>Log Out</Button>
           </Paper>
         )}
       </Container>

@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { BACKEND_URL } from "../constants";
 import { useParams, useLocation } from "react-router-dom";
+
 import { toast, ToastContainer } from "react-toastify";
 import { UploadIcon } from "@radix-ui/react-icons";
 export default function NewListing(props) {
@@ -82,6 +83,7 @@ export default function NewListing(props) {
   const submitListing = async (e) => {
     e.preventDefault();
     await convertImage(e);
+    props.setLoading(true);
     console.log(imageData, "imageData from submit");
     console.log(imageString, "imagestring from submit");
     //title, image, categories, description, type
@@ -89,7 +91,7 @@ export default function NewListing(props) {
       userId: userData._id,
       username: userData.username,
       title: title,
-      image: imageString,
+      image: imageData,
       categories: listingCategories,
       description: description,
       type: location.pathname.split("/")[1],
@@ -106,6 +108,7 @@ export default function NewListing(props) {
     });
     props.closeNewModal();
     closeModal();
+    props.setLoading(false);
     console.log(response.data);
     setTitle("");
     setImageFile("");
