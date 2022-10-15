@@ -6,6 +6,8 @@ import AuthModal from "../AuthModal";
 import { UserContext } from "../App";
 import { Button } from "bootstrap";
 import Home from "./HomeButton";
+import { CaretRightSquare } from "react-bootstrap-icons";
+import { CaretLeftSquareFill } from "react-bootstrap-icons";
 
 export default function Sidebar(props) {
   const userData = useContext(UserContext);
@@ -46,14 +48,17 @@ export default function Sidebar(props) {
         </Navbar.Section>
         <Navbar.Section>
           {userData ? (
-            <button
+            <div
               className="drawer-toggle"
+              style={{
+                display: "flex",
+              }}
               onClick={() => {
                 props.drawerOpen();
               }}
             >
-              {!props.drawer ? `>` : `<`}
-            </button>
+              {!props.drawer ? <CaretRightSquare /> : <CaretLeftSquareFill />}
+            </div>
           ) : null}
         </Navbar.Section>
       </Navbar>

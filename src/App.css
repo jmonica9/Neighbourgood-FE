@@ -54,3 +54,7 @@
 .home-button:hover {
   background-color: rgba(0, 0, 0, 0);
 }
+
+.drawer-toggle:hover {
+  cursor: pointer;
+}
