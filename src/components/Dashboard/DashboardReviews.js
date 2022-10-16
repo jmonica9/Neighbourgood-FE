@@ -1,7 +1,7 @@
 import { ScrollArea, Stack, Card, Text } from "@mantine/core";
 import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../App";
-import { neighbourgoodTheme } from "../styles/Theme";
+import { UserContext } from "../../App";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import Review from "./Review";
 
 export default function DashboardReviews() {

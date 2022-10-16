@@ -334,6 +334,7 @@ export default function Lobby(props) {
                 width: props.drawerOpen ? "70vw" : "90vw",
                 backgroundColor: themeColor,
                 height: "100%",
+
                 display: "block",
                 borderRadius: 25,
                 marginBottom: "5vh",
