@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
 import AuthModal from "../AuthModal";
-import EditProfileModal from "./EditProfileModal";
+import EditProfileModal from "./Profile/EditProfileModal";
 
 const useStyles = createStyles((theme) => ({
   drawerPaper: {

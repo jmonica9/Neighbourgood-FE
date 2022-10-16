@@ -5,7 +5,7 @@ import Axios from "axios";
 import { BACKEND_URL } from "./constants";
 //import child components
 // import AuthForm from "./components/AuthForm";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 //import styling
 import {
@@ -30,6 +30,7 @@ import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
 import Chatroom from "./components/Chatroom";
+import ProfilePage from "./components/Profile/ProfilePage";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -120,6 +121,10 @@ export default function App() {
               <Route
                 path="/dashboard"
                 element={<Dashboard drawerOpen={drawerOpen} />}
+              />
+              <Route
+                path="/user/:username"
+                element={<ProfilePage drawerOpen={drawerOpen} />}
               />
               <Route
                 path="/sharing"

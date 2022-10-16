@@ -1,10 +1,10 @@
 import { Card, Grid, Image, ScrollArea, Text } from "@mantine/core";
 import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
-import { neighbourgoodTheme } from "../styles/Theme";
-import { BACKEND_URL } from "../constants";
-import Listing from "./Listing";
-import { UserContext } from "../App";
+import { neighbourgoodTheme } from "../../styles/Theme";
+import { BACKEND_URL } from "../../constants";
+import Listing from "../Listing";
+import { UserContext } from "../../App";
 
 export default function DashboardFriendsListings(props) {
   const [friendsListings, setFriendsListings] = useState([]);

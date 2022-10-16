@@ -10,9 +10,9 @@ import {
   Text,
   createStyles,
 } from "@mantine/core";
-import { neighbourgoodTheme } from "../styles/Theme";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import DashboardFriendsListings from "./DashboardFriendsListings";
-import { UserContext } from "../App";
+import { UserContext } from "../../App";
 import DashboardReviews from "./DashboardReviews";
 
 export default function Dashboard(props) {

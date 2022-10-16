@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AppointmentModal from "./AppointmentModal";
+import AppointmentModal from "../AppointmentModal";
 
 import {
   ViewState,
@@ -29,7 +29,7 @@ import {
 } from "@mui/material/styles";
 import { Paper } from "@mui/material";
 import { Grid, Group, Text, ScrollArea } from "@mantine/core";
-import { neighbourgoodTheme } from "../styles/Theme";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import { CalendarIcon } from "@radix-ui/react-icons";
 
 const theme = createTheme({});

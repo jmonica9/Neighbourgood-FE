@@ -24,6 +24,7 @@ import { UserContext } from "../App";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
 import { toast } from "react-toastify";
+import ProfileMenu from "./Profile/ProfileMenu";
 
 export default function Listing(props) {
   // const { listingId } = useParams();
@@ -207,7 +208,7 @@ export default function Listing(props) {
       {props.listing ? (
         <Container fluid className="SideBar-Content-body" px="xs">
           <Grid grow align="center">
-            <Grid.Col span={4}>
+            <Grid.Col span={6}>
               <Card radius="md" mr={3}>
                 <Card.Section mt="sm">
                   <Image
@@ -225,20 +226,25 @@ export default function Listing(props) {
                 width: "50%",
                 // width: "100%",
                 backgroundColor: themeColor,
-                // height: "95vh",
+                height: "100%",
+                // minHeight: "50vh",
                 borderRadius: 25,
               }}
             >
               <Card.Section>
-                <ScrollArea style={{ height: "18rem" }}>
+                <ScrollArea style={{ height: "50vh" }}>
                   <Grid.Col span={6}>
                     <br />
                     <Text size={28} weight={500} mb={4}>
                       {props.listing.title}
                     </Text>
-                    <Text size={20} color="dimmed" mb={4}>
-                      Posted by: {props.listing.username}
-                    </Text>
+                    <Group grow>
+                      <Text size={20} color="dimmed" mb={4}>
+                        Posted by: {props.listing.username}
+                      </Text>
+                      <ProfileMenu userId={props.listing.userId} />
+                    </Group>
+
                     <Text size={18} color="dimmed">
                       {props.listing.description}
                     </Text>
