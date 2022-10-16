@@ -282,6 +282,7 @@ export default function Lobby(props) {
                 // width: props.drawerOpen ? "35vw" : "45vw",
                 backgroundColor: themeColor,
                 height: "35vh",
+                minHeight: 280,
                 display: "flex",
                 borderRadius: 25,
               }}
