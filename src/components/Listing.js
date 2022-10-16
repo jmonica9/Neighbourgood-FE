@@ -76,7 +76,7 @@ export default function Listing(props) {
       })
       .then((res) => {
         console.log(res.data);
-        navigate(`/chatroom/${props.listing._id}/${res.data._id}`);
+        navigate(`/chatroom/${res.data._id}`);
       });
   };
 
@@ -117,6 +117,14 @@ export default function Listing(props) {
     props.setLoading(false);
     setOpened(false);
     props.closeModal();
+  };
+
+  const sendToChatroom = async () => {
+    const response = await axios.post(`${BACKEND_URL}/chatroom/join`, {
+      listing: props.listing,
+      userId: userData._id,
+    });
+    navigate(`/chatroom/${response.data._id}`);
   };
 
   return (
@@ -292,13 +300,7 @@ export default function Listing(props) {
                     <div>
                       <div>
                         You have already requested this item. Click
-                        <button
-                          onClick={() => {
-                            alert("send to chatroom");
-                          }}
-                        >
-                          here
-                        </button>
+                        <button onClick={sendToChatroom}>here</button>
                         to go to the chatroom!
                       </div>
                       <div>

@@ -6,32 +6,46 @@ import axios from "axios";
 import { BACKEND_URL } from "../constants";
 
 function Chatroom(props) {
-  const { listingId, chatroomId } = useParams();
+  const { chatroomId } = useParams();
   const userData = useContext(UserContext);
   const navigate = useNavigate();
-  const [listing, setListing] = useState("");
-  const [requestor, setRequestor] = useState("");
-  const [owner, setOwner] = useState("");
+  const [listing, setListing] = useState();
+  const [requestor, setRequestor] = useState();
+  const [owner, setOwner] = useState();
 
   useEffect(() => {
-    getListingInfo();
+    getChatroomInfo();
   }, [userData]);
 
-  const getListingInfo = () => {
-    axios.get(`${BACKEND_URL}/chatroom/${listingId}`).then((res) => {
-      setListing(res.data);
+  const getChatroomInfo = () => {
+    axios.get(`${BACKEND_URL}/chatroom/${chatroomId}`).then((res) => {
+      setRequestor(res.data.requestorId);
+      setOwner(res.data.ownerId);
+      axios
+        .get(`${BACKEND_URL}/chatroom/listing/${res.data.listingId}`)
+        .then((res) => {
+          setListing(res.data);
+        });
     });
   };
 
+  useEffect(() => {
+    console.log(listing);
+    console.log(requestor);
+    console.log(owner);
+  }, [listing]);
+
   return (
     <div>
-      <p style={{ color: "black" }}>
-        listing item details: {listing._id}
-        <br />
-        listing item title: {listing.title}
-        <br />
-        chatroomId: {chatroomId}
-      </p>
+      {listing && (
+        <p style={{ color: "black" }}>
+          listing item id: {listing._id}
+          <br />
+          listing item title: {listing.title}
+          <br />
+          chatroomId: {chatroomId}
+        </p>
+      )}
 
       <button onClick={() => navigate("/dashboard")}>
         go back to dashboard
