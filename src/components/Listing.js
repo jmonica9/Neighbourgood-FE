@@ -20,7 +20,7 @@ import {
   Container,
   ScrollArea,
 } from "@mantine/core";
-import { UserContext } from "../App";
+import { socket, UserContext } from "../App";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
 import { toast } from "react-toastify";
@@ -75,16 +75,21 @@ export default function Listing(props) {
         ownerId: props.listing.userId,
       })
       .then((res) => {
-        console.log(res.data);
-        navigate(`/chatroom/${res.data._id}`);
+        navigate(`/chatroom/${res.data._id}`, {
+          state: { fromRequestPage: true },
+        });
       });
   };
 
-  const withdrawRequest = async () => {
-    const response = await axios.post(`${BACKEND_URL}/listing/withdraw`, {
+  const withdrawRequest = () => {
+    axios.post(`${BACKEND_URL}/listing/withdraw`, {
       listing: props.listing,
       userId: userData._id,
     });
+    axios.delete(
+      `${BACKEND_URL}/chatroom/delete/${props.listing._id}/${userData._id}`
+    );
+
     toast.error(`You have withdrawn your request for ${props.listing.title}`, {
       position: "top-right",
       autoClose: 4500,
@@ -94,7 +99,9 @@ export default function Listing(props) {
       draggable: false,
       progress: undefined,
     });
-    navigate(`/${props.listing.type}`);
+    alert(
+      "need to socket emit here to make both owner's and requestor's dashboard/lobby update"
+    );
   };
 
   const deleteListing = async () => {
@@ -124,7 +131,9 @@ export default function Listing(props) {
       listing: props.listing,
       userId: userData._id,
     });
-    navigate(`/chatroom/${response.data._id}`);
+    navigate(`/chatroom/${response.data._id}`, {
+      state: { fromRequestPage: false },
+    });
   };
 
   return (

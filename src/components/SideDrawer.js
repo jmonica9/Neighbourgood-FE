@@ -17,6 +17,8 @@ import {
 import { neighbourgoodTheme } from "../styles/Theme";
 import AuthModal from "../AuthModal";
 import EditProfileModal from "./EditProfileModal";
+import axios from "axios";
+import { BACKEND_URL } from "../constants";
 
 const useStyles = createStyles((theme) => ({
   drawerPaper: {
@@ -28,8 +30,10 @@ const useStyles = createStyles((theme) => ({
 
 export default function SideDrawer(props) {
   const [opened, setOpened] = useState(false);
-  const [user, setUser] = useState();
+  const userData = useContext(UserContext);
+  const [user, setUser] = useState(userData);
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
+  const [chats, setChats] = useState();
 
   const navigate = useNavigate();
   const { classes } = useStyles();
@@ -46,6 +50,24 @@ export default function SideDrawer(props) {
       // console.log("close drawer");
     }
   });
+
+  useEffect(() => {
+    if (userData) {
+      getChats();
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (chats) {
+      console.log(chats);
+    }
+  }, [chats]);
+
+  const getChats = () => {
+    axios.get(`${BACKEND_URL}/chatroom/user/${userData._id}`).then((res) => {
+      setChats(res.data);
+    });
+  };
 
   return (
     <>
@@ -200,11 +222,30 @@ export default function SideDrawer(props) {
               pb={5}
             >
               <Text color={"white"} align="left" size="25px" weight={"bold"}>
-                Current Chats
+                {/* Current Chats -- need to socket refresh whenever there is a
+                change from chats */}
               </Text>
-              <Text color={"white"} align="left" size="xl" weight={"bold"}>
-                {/* some stuff */}
-              </Text>
+              <Grid>
+                {chats &&
+                  chats.map((chat) => {
+                    return (
+                      <Grid.Col key={chat._id}>
+                        <p style={{ fontSize: "1rem" }}>
+                          listingId: {chat.listingId}
+                        </p>
+                        <button
+                          onClick={() => {
+                            navigate(`/chatroom/${chat._id}`, {
+                              state: { fromRequestPage: false },
+                            });
+                          }}
+                        >
+                          go to chatroom
+                        </button>
+                      </Grid.Col>
+                    );
+                  })}
+              </Grid>
               <Text color={"white"} align="left" size="xl" weight={"bold"}>
                 {/* some stuff */}
               </Text>
