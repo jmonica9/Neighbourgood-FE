@@ -18,6 +18,7 @@ function Chatroom(props) {
   const [opened, setOpened] = useState(false);
 
   useEffect(() => {
+    console.log(state);
     if (state.fromRequestPage && listing) {
       if (listing.type === "lending") {
         setOpened(true);
