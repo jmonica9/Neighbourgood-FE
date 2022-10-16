@@ -20,7 +20,7 @@ import {
   Container,
   ScrollArea,
 } from "@mantine/core";
-import { UserContext } from "../App";
+import { socket, UserContext } from "../App";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
 import { toast } from "react-toastify";
@@ -52,13 +52,13 @@ export default function Listing(props) {
   });
 
   const sendRequest = async () => {
-    props.setLoading(true);
+    // props.setLoading(true);
     //title, image, categories, description, type
-    const response = await axios.post(`${BACKEND_URL}/listing/request`, {
+    await axios.post(`${BACKEND_URL}/listing/request`, {
       listing: props.listing,
       userId: userData._id,
     });
-    props.setLoading(false);
+    // props.setLoading(false);
     toast.success("You have sent a request!", {
       position: "top-right",
       autoClose: 4500,
@@ -68,8 +68,43 @@ export default function Listing(props) {
       draggable: false,
       progress: undefined,
     });
-    // navigate(`/${props.listing._id}/chatroom`);
+
+    await axios
+      .post(`${BACKEND_URL}/chatroom/create/${props.listing._id}`, {
+        listingId: props.listing._id,
+        requestorId: userData._id,
+        ownerId: props.listing.userId,
+      })
+      .then((res) => {
+        navigate(`/chatroom/${res.data._id}`, {
+          state: { fromRequestPage: true },
+        });
+      });
   };
+
+  const withdrawRequest = () => {
+    axios.post(`${BACKEND_URL}/listing/withdraw`, {
+      listing: props.listing,
+      userId: userData._id,
+    });
+    axios.delete(
+      `${BACKEND_URL}/chatroom/delete/${props.listing._id}/${userData._id}`
+    );
+
+    toast.error(`You have withdrawn your request for ${props.listing.title}`, {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
+    alert(
+      "need to socket emit here to make both owner's and requestor's dashboard/lobby update"
+    );
+  };
+
   const deleteListing = async () => {
     props.setLoading(true);
     const response = await axios
@@ -90,6 +125,16 @@ export default function Listing(props) {
     props.setLoading(false);
     setOpened(false);
     props.closeModal();
+  };
+
+  const sendToChatroom = async () => {
+    const response = await axios.post(`${BACKEND_URL}/chatroom/join`, {
+      listing: props.listing,
+      userId: userData._id,
+    });
+    navigate(`/chatroom/${response.data._id}`, {
+      state: { fromRequestPage: false },
+    });
   };
 
   return (
@@ -256,13 +301,31 @@ export default function Listing(props) {
             </Card>
             <Grid.Col span={6}>
               <Group position="right" mt="md" mb="xs">
-                {/* im not the owner of listing + the requestorIds dont have mine */}
+                {/* User has not yet requested + user is not the owner of the listing*/}
                 {!props.listing.requestorIds.includes(userData._id) &&
-                  !userData._id === props.listing.userId && (
+                  !(userData._id === props.listing.userId) && (
                     <Button variant="dark" radius="md" onClick={sendRequest}>
                       Request
                     </Button>
                   )}
+
+                {/* User has requested already + user is not the owner of the listing */}
+                {props.listing.requestorIds.includes(userData._id) &&
+                  !(userData._id === props.listing.userId) && (
+                    <div>
+                      <div>
+                        You have already requested this item. Click
+                        <button onClick={sendToChatroom}>here</button>
+                        to go to the chatroom!
+                      </div>
+                      <div>
+                        alternatively, click{" "}
+                        <button onClick={withdrawRequest}>here</button> to
+                        withdraw your interest
+                      </div>
+                    </div>
+                  )}
+
                 {/* If i own this listing */}
                 {userData._id === props.listing.userId ? (
                   <Button variant="dark" radius="md" onClick={deleteListing}>

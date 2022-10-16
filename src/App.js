@@ -25,7 +25,7 @@ import AuthModal from "./AuthModal";
 import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/LandingPage/LandingPage";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
@@ -71,7 +71,7 @@ export default function App() {
       withCredentials: true,
       url: `${BACKEND_URL}/auth/jwtUser`,
     }).then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data === "No User Exists") {
         setUserData(undefined);
       } else setUserData(res.data);
@@ -151,7 +151,7 @@ export default function App() {
                 element={<Listing title="Lending" drawerOpen={drawerOpen} />}
               />
               <Route
-                path="/:listingId/chatroom"
+                path="/chatroom/:chatroomId"
                 element={<Chatroom drawerOpen={drawerOpen} />}
               />
             </Routes>
