@@ -1,8 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import Carousel from "react-bootstrap/Carousel";
-import charityone from "../images/charityone.jpg";
-import charitytwo from "../images/charitytwo.jpg";
-import spdbanner from "../images/spdbanner.jpeg";
+import charityone from "../../images/charityone.jpg";
+import charitytwo from "../../images/charitytwo.jpg";
+import spdbanner from "../../images/spdbanner.jpeg";
 
 function LandingPageCarousel() {
   return (

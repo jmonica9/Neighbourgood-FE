@@ -1,10 +1,10 @@
 import { Card, Grid, Image, ScrollArea, Text } from "@mantine/core";
 import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
-import { neighbourgoodTheme } from "../styles/Theme";
-import { BACKEND_URL } from "../constants";
-import Listing from "./Listing";
-import { UserContext } from "../App";
+import { neighbourgoodTheme } from "../../styles/Theme";
+import { BACKEND_URL } from "../../constants";
+import Listing from "../Listing";
+import { UserContext } from "../../App";
 
 export default function DashboardFriendsListings(props) {
   const [friendsListings, setFriendsListings] = useState([]);
@@ -15,7 +15,7 @@ export default function DashboardFriendsListings(props) {
 
   useEffect(() => {
     if (user) {
-      console.log(user.accountsFollowing);
+      // console.log(user.accountsFollowing);
       let friendsListingsArray = [];
       if (user.accountsFollowing.length > 0) {
         user.accountsFollowing.forEach(async (user_id) => {
@@ -29,7 +29,7 @@ export default function DashboardFriendsListings(props) {
 
   const getFriendsListings = async (id) => {
     const response = await axios.get(`${BACKEND_URL}/listing/user/${id}`);
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   };
 
@@ -110,27 +110,36 @@ export default function DashboardFriendsListings(props) {
         color = neighbourgoodTheme.colors.lightGray;
     }
     return (
-      <Grid.Col span={3} key={listing.id}>
+      <Grid.Col span={3} key={listing._id} p={"0.5vh"}>
         <Card
-          sx={{ backgroundColor: color, cursor: "pointer", borderRadius: 25 }}
+          sx={{
+            backgroundColor: color,
+            cursor: "pointer",
+            borderRadius: 25,
+            padding: 0,
+          }}
           onClick={() => {
             setOpenListingModal(true);
             setListingOpened(listing);
             // console.log(listing);
           }}
         >
-          <Text size={"sm"}>
+          <Text size={"sm"} lineClamp={1}>
             {index}: {listing.title}
           </Text>
           <Text size={"sm"}>By: {listing.username}</Text>
-          <Image src={listing.image} height={"15vh"} />
+          <Image
+            src={listing.image}
+            height={"15vh"}
+            sx={{ maxHeight: "15vh" }}
+          />
         </Card>
       </Grid.Col>
     );
   });
   return (
     <div>
-      <ScrollArea style={{ width: "auto", height: "35vh" }}>
+      <ScrollArea style={{ width: "100%", height: "30vh" }}>
         <Grid>{displayFriendsListings}</Grid>
       </ScrollArea>
       {listingOpened ? (

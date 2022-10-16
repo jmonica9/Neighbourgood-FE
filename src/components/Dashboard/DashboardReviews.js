@@ -1,7 +1,7 @@
 import { ScrollArea, Stack, Card, Text } from "@mantine/core";
 import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../App";
-import { neighbourgoodTheme } from "../styles/Theme";
+import { UserContext } from "../../App";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import Review from "./Review";
 
 export default function DashboardReviews() {
@@ -10,7 +10,7 @@ export default function DashboardReviews() {
   const [openReviewModal, setOpenReviewModal] = useState(false);
 
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
   }, [user]);
 
   const closeReviewModal = () => {
@@ -19,24 +19,28 @@ export default function DashboardReviews() {
 
   const userReviews = [
     {
+      _id: 1,
       requestorId: "requestorId",
       // ownerId: user._id,
       reviewText: "review string 1",
       type: "sharing",
     },
     {
+      _id: 2,
       requestorId: "requestorId",
       // ownerId: user._id,
       reviewText: "review string 2",
       type: "helping",
     },
     {
+      _id: 3,
       requestorId: "requestorId",
       // ownerId: user._id,
       reviewText: "review string 3",
       type: "lending",
     },
     {
+      _id: 4,
       requestorId: "requestorId",
       // ownerId: user._id,
       reviewText: "review string 4",
@@ -60,9 +64,14 @@ export default function DashboardReviews() {
         color = neighbourgoodTheme.colors.lightGray;
     }
     return (
-      <div>
+      <div key={review._id}>
         <Card
-          sx={{ backgroundColor: color, width: "23vw", cursor: "pointer" }}
+          sx={{
+            backgroundColor: color,
+            width: "22vw",
+            cursor: "pointer",
+            borderRadius: 15,
+          }}
           onClick={() => {
             setOpenReviewModal(true);
             setSelectedReview(review);
@@ -75,14 +84,11 @@ export default function DashboardReviews() {
   });
 
   return (
-    <div>
+    <div name="card">
       {user && userReviews ? (
         <>
-          <ScrollArea
-            style={{ width: "auto", height: "24vh" }}
-            offsetScrollbars
-          >
-            <Stack>{displayReviews}</Stack>
+          <ScrollArea style={{ height: "30vh" }} offsetScrollbars>
+            <Stack spacing={"1vh"}>{displayReviews}</Stack>
           </ScrollArea>
           <Review
             review={selectedReview}

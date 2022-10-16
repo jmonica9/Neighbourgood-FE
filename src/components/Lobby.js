@@ -53,7 +53,6 @@ export default function Lobby(props) {
           }/watchlist`
         )
         .then((res) => {
-          console.log("res for my watchlist listings", res);
           setMyWatchlist(res.data);
         });
       //query for my own listings
@@ -64,19 +63,8 @@ export default function Lobby(props) {
           }`
         )
         .then((res) => {
-          console.log("res for my listings", res);
           setMyListings(res.data);
         });
-      console.log(chosenCategories, "chosen categories");
-      //query for all listings
-      // if (chosenCategories === []) {
-      //   axios
-      //     .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
-      //     .then((res) => {
-      //       console.log("res for all listings", res);
-      //       setLobbyListings(res.data);
-      //     });
-      // }
     }
   }, [userData, location, refresh]);
 
@@ -85,11 +73,9 @@ export default function Lobby(props) {
       axios
         .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
         .then((res) => {
-          console.log("res for all listings", res);
           setLobbyListings(res.data);
         });
     } else if (chosenCategories !== []) {
-      console.log("REQ BE TO SORT CATEGORIES LISTING");
       sortByCategories();
     }
   }, [chosenCategories, location, loading]);
@@ -104,15 +90,6 @@ export default function Lobby(props) {
     }
   });
 
-  // useEffect(() => {
-  //   if (chosenCategories !== []) {
-  //     console.log("REQ BE TO SORT CATEGORIES LISTING");
-  //     sortByCategories();
-  //   }
-  //   setRefresh(!refresh);
-  //   console.log(refresh, "refresh");
-  // }, [chosenCategories]);
-
   const sortByCategories = async () => {
     await axios
       .post(
@@ -120,7 +97,6 @@ export default function Lobby(props) {
         { categories: chosenCategories }
       )
       .then((res) => {
-        console.log("sorted by categories chosen", res.data);
         setLobbyListings(res.data);
       });
   };
@@ -170,6 +146,7 @@ export default function Lobby(props) {
           setOpenListingModal(true);
           setSelectedListing(listing);
         }}
+        key={listing._id}
       >
         <Card.Section width="10rem" height="10rem">
           <Image
@@ -258,6 +235,7 @@ export default function Lobby(props) {
           setOpenListingModal(true);
           setSelectedListing(listing);
         }}
+        key={listing._id}
       >
         <Card.Section width="13rem" height="15rem">
           <Image
@@ -278,25 +256,6 @@ export default function Lobby(props) {
           {listing.description}
         </Text>
       </Card>
-      // <Card
-      //   justify="center"
-      //   sx={{ width: "15rem", height: "17rem" }}
-      //   onClick={() => {
-      //     // navigate(`/${props.title.toLowerCase()}/listing/1`);
-      //     setOpenListingModal(true);
-      //     setSelectedListing(listing);
-      //   }}
-      // >
-
-      //     <Image src={listing.cloudimg?.url} alt="loading" />
-      //     <Title order={4} weight={700}>
-      //       {listing.title}
-      //     </Title>
-      //     <Text size="sm" align="center" color="dimmed">
-      //       {listing.description}
-      //     </Text>
-
-      // </Card>
     ));
 
   return (
@@ -323,6 +282,7 @@ export default function Lobby(props) {
                 // width: props.drawerOpen ? "35vw" : "45vw",
                 backgroundColor: themeColor,
                 height: "35vh",
+                minHeight: 280,
                 display: "flex",
                 borderRadius: 25,
               }}
@@ -349,6 +309,7 @@ export default function Lobby(props) {
                 // width: props.drawerOpen ? "35vw" : "45vw",
                 backgroundColor: themeColor,
                 height: "35vh",
+                minHeight: 280,
                 display: "flex",
                 borderRadius: 25,
               }}
@@ -374,6 +335,7 @@ export default function Lobby(props) {
                 width: props.drawerOpen ? "70vw" : "90vw",
                 backgroundColor: themeColor,
                 height: "100%",
+
                 display: "block",
                 borderRadius: 25,
                 marginBottom: "5vh",
@@ -388,8 +350,6 @@ export default function Lobby(props) {
                     data={categories}
                     placeholder="Categories"
                     onChange={(e) => {
-                      console.log("change categories!");
-                      console.log(e);
                       setChosenCategories(e);
                     }}
                   />

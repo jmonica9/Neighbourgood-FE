@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { Modal, Button, Group, TextInput, MultiSelect } from "@mantine/core";
-import { UserContext } from "../App";
+import { UserContext } from "../../App";
 import axios from "axios";
-import { BACKEND_URL } from "../constants";
-import { socket } from "../App";
+import { BACKEND_URL } from "../../constants";
+import { socket } from "../../App";
 
 export default function EditProfileModal(props) {
   const [opened, setOpened] = useState(false);

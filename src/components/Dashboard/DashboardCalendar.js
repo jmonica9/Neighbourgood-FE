@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import AppointmentModal from "./AppointmentModal";
+import React, { useEffect, useState } from "react";
+import AppointmentModal from "../AppointmentModal";
 
 import {
   ViewState,
@@ -28,8 +28,8 @@ import {
   alpha,
 } from "@mui/material/styles";
 import { Paper } from "@mui/material";
-import { Grid, Group, Text } from "@mantine/core";
-import { neighbourgoodTheme } from "../styles/Theme";
+import { Grid, Group, Text, ScrollArea } from "@mantine/core";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import { CalendarIcon } from "@radix-ui/react-icons";
 
 const theme = createTheme({});
@@ -38,6 +38,8 @@ export default function DashboardCalendar() {
   const currentHour = getHours(new Date());
   const [chosenAppointment, setChosenAppointment] = useState({});
   const [openAppointmentModal, setOpenAppointmentModal] = useState(false);
+  const [schedulerHeight, setSchedulerHeight] = useState();
+  const [scrollAreaHeight, setScrollAreaHeight] = useState();
 
   //Today-Button
   const todayButton = ({ style, ...restProps }) => (
@@ -118,30 +120,50 @@ export default function DashboardCalendar() {
       </Paper>
     );
   };
+  useEffect(() => {
+    if (window.innerHeight < 830) {
+      setSchedulerHeight(window.innerHeight * 0.45);
+      setScrollAreaHeight(window.innerHeight * 0.45);
+    } else if (window.innerHeight >= 830 && window.innerHeight < 1000) {
+      setSchedulerHeight(window.innerHeight * 0.5);
+      setScrollAreaHeight(window.innerHeight * 0.5);
+    } else {
+      setSchedulerHeight(window.innerHeight * 0.54);
+    }
+    console.log(schedulerHeight);
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
       {/* <Paper sx={{ overflow: "auto", overflowY: true }}> */}
+      <ScrollArea
+        style={{ height: schedulerHeight, padding: 0 }}
+        // style={{ height: "20rem", padding: 0 }}
+        offsetScrollbars
+      >
+        <Scheduler height={schedulerHeight} data={appointmentData}>
+          <ViewState />
 
-      <Scheduler height={"600"} data={appointmentData}>
-        <ViewState />
+          <WeekView startDayHour={6} endDayHour={24} cellDuration={30} />
+          <Appointments appointmentComponent={calendarAppointment} />
 
-        <WeekView startDayHour={6} endDayHour={24} cellDuration={30} />
-        <Appointments appointmentComponent={calendarAppointment} />
-
-        {/* <AllDayPanel /> */}
-        <Toolbar />
-        <DateNavigator />
-        <TodayButton
-          buttonComponent={todayButton}
-          messages={{ today: <CalendarIcon /> }}
-        />
-        <AppointmentModal
-          data={chosenAppointment}
-          open={openAppointmentModal}
-          close={() => setOpenAppointmentModal(false)}
-        />
-      </Scheduler>
+          {/* <AllDayPanel /> */}
+          <Toolbar />
+          <DateNavigator />
+          <TodayButton
+            buttonComponent={todayButton}
+            messages={{ today: <CalendarIcon /> }}
+          />
+          <AppointmentModal
+            data={chosenAppointment}
+            open={openAppointmentModal}
+            close={() => setOpenAppointmentModal(false)}
+          />
+        </Scheduler>
+      </ScrollArea>
+      <Text align="left" size={"xl"} ml={"2vh"} mb={"1vh"}>
+        Calendar
+      </Text>
     </ThemeProvider>
   );
 }

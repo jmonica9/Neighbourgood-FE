@@ -5,7 +5,7 @@ import Axios from "axios";
 import { BACKEND_URL } from "./constants";
 //import child components
 // import AuthForm from "./components/AuthForm";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 //import styling
 import {
@@ -25,11 +25,12 @@ import AuthModal from "./AuthModal";
 import Sidebar from "./components/Sidebar";
 import Lobby from "./components/Lobby";
 import Listing from "./components/Listing";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/LandingPage/LandingPage";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
 import Chatroom from "./components/Chatroom";
+import ProfilePage from "./components/Profile/ProfilePage";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -70,7 +71,7 @@ export default function App() {
       withCredentials: true,
       url: `${BACKEND_URL}/auth/jwtUser`,
     }).then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data === "No User Exists") {
         setUserData(undefined);
       } else setUserData(res.data);
@@ -122,6 +123,10 @@ export default function App() {
                 element={<Dashboard drawerOpen={drawerOpen} />}
               />
               <Route
+                path="/user/:username"
+                element={<ProfilePage drawerOpen={drawerOpen} />}
+              />
+              <Route
                 path="/sharing"
                 element={<Lobby title="Sharing" drawerOpen={drawerOpen} />}
               />
@@ -146,7 +151,7 @@ export default function App() {
                 element={<Listing title="Lending" drawerOpen={drawerOpen} />}
               />
               <Route
-                path="/:listingId/chatroom"
+                path="/chatroom/:chatroomId"
                 element={<Chatroom drawerOpen={drawerOpen} />}
               />
             </Routes>
