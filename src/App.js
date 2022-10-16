@@ -146,7 +146,7 @@ export default function App() {
                 element={<Listing title="Lending" drawerOpen={drawerOpen} />}
               />
               <Route
-                path="/chatroom/:listingId/:chatroomId"
+                path="/chatroom/:chatroomId"
                 element={<Chatroom drawerOpen={drawerOpen} />}
               />
             </Routes>
