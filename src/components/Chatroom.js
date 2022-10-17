@@ -14,12 +14,13 @@ import {
   Box,
 } from "@mantine/core";
 import { Send } from "react-bootstrap-icons";
+import { Select } from "@mantine/core";
+import { TimeInput } from "@mantine/dates";
 
 function Chatroom(props) {
   const { chatroomId } = useParams();
   const userData = useContext(UserContext);
   const { state } = useLocation();
-
   const navigate = useNavigate();
   const [listing, setListing] = useState();
   const [requestorId, setRequestorId] = useState();
@@ -29,18 +30,23 @@ function Chatroom(props) {
   const [owner, setOwner] = useState();
   const [message, setMessage] = useState("");
   const [allMessages, setAllMessages] = useState();
+  const [days, setDays] = useState(originalDays);
+  const [proposedMonth, setProposedMonth] = useState();
+  const [proposedDay, setProposedDay] = useState();
+  const [proposedTime, setProposedTime] = useState();
+  const [appointmentProposed, setAppointmentProposed] = useState(false);
+  const [appointmentConfirmed, setAppointmentConfirmed] = useState(false);
 
+  /* if user came from a lending "request", then show etiquette modal */
   useEffect(() => {
-    console.log(state);
     if (state.fromRequestPage && listing) {
       if (listing.type === "lending") {
         setOpened(true);
       }
-    } else {
-      console.log("from elsewhere");
     }
   }, [listing]);
 
+  /* once userData is in, get chatroom info --> listingId, ownerId, requestorId */
   useEffect(() => {
     getChatroomInfo();
   }, [userData]);
@@ -57,9 +63,13 @@ function Chatroom(props) {
     });
   };
 
+  /* once listing details and users IDs are gotten, get full users info + all chat messages and check on status of appointment */
   useEffect(() => {
-    getUsersInfo();
-    getMessages();
+    if (listing) {
+      getUsersInfo();
+      getMessages();
+      getAppointmentInfo();
+    }
   }, [listing]);
 
   const getUsersInfo = () => {
@@ -71,11 +81,46 @@ function Chatroom(props) {
     });
   };
 
-  useEffect(() => {
-    console.log(allMessages);
-  }, [allMessages]);
+  const getMessages = () => {
+    axios.get(`${BACKEND_URL}/messages/${chatroomId}`).then((res) => {
+      setAllMessages(res.data);
+    });
+  };
 
-  //send messages
+  const getAppointmentInfo = () => {
+    axios
+      .get(`${BACKEND_URL}/appointment`, { chatroomId: chatroomId })
+      .then((res) => {
+        if (res.data) {
+          if (res.data.proposedDateAndTime) {
+            setAppointmentProposed(true);
+          }
+          if (res.data.confirmed) {
+            setAppointmentConfirmed(true);
+          }
+        }
+      });
+  };
+
+  /* when user selects a month, update the days to be the number of days in that month */
+  useEffect(() => {
+    let daysArray = [];
+    if (monthsWithThirtyOneDays.includes(proposedMonth)) {
+      for (let i = 1; i < 32; i++) {
+        daysArray.push(`${i}`);
+        setDays(daysArray);
+      }
+    } else if (proposedMonth === "Feb") {
+      for (let i = 1; i < 29; i++) {
+        daysArray.push(`${i}`);
+        setDays(daysArray);
+      }
+    } else {
+      setDays(originalDays);
+    }
+  }, [proposedMonth]);
+
+  /*------------------------------ send message functions ----------------------------------*/
   const setMessageValue = (e) => {
     setMessage(e.target.value);
   };
@@ -95,67 +140,19 @@ function Chatroom(props) {
     getMessages();
   };
 
-  //getmessages
-  const getMessages = () => {
-    axios.get(`${BACKEND_URL}/messages/${chatroomId}`).then((res) => {
-      setAllMessages(res.data);
-    });
+  /*------------------------------ appointment functions ----------------------------------*/
+  const proposeAppointment = () => {
+    axios
+      .post(`${BACKEND_URL}/appointment`, {
+        requestorId: requestorId,
+        ownerId: ownerId,
+        listingId: listing._id,
+        proposedDateAndTime: `${proposedMonth}-${proposedDay}-${proposedTime}`,
+      })
+      .then(() => {
+        setAppointmentProposed(true);
+      });
   };
-
-  function time_ago(time) {
-    switch (typeof time) {
-      case "number":
-        break;
-      case "string":
-        time = +new Date(time);
-        break;
-      case "object":
-        if (time.constructor === Date) time = time.getTime();
-        break;
-      default:
-        time = +new Date();
-    }
-    var time_formats = [
-      [60, "seconds", 1], // 60
-      [120, "1 minute ago", "1 minute from now"], // 60*2
-      [3600, "minutes", 60], // 60*60, 60
-      [7200, "1 hour ago", "1 hour from now"], // 60*60*2
-      [86400, "hours", 3600], // 60*60*24, 60*60
-      [172800, "Yesterday", "Tomorrow"], // 60*60*24*2
-      [604800, "days", 86400], // 60*60*24*7, 60*60*24
-      [1209600, "Last week", "Next week"], // 60*60*24*7*4*2
-      [2419200, "weeks", 604800], // 60*60*24*7*4, 60*60*24*7
-      [4838400, "Last month", "Next month"], // 60*60*24*7*4*2
-      [29030400, "months", 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
-      [58060800, "Last year", "Next year"], // 60*60*24*7*4*12*2
-      [2903040000, "years", 29030400], // 60*60*24*7*4*12*100, 60*60*24*7*4*12
-      [5806080000, "Last century", "Next century"], // 60*60*24*7*4*12*100*2
-      [58060800000, "centuries", 2903040000], // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
-    ];
-    var seconds = (+new Date() - time) / 1000,
-      token = "ago",
-      list_choice = 1;
-
-    if (seconds == 0) {
-      return "Just now";
-    }
-    if (seconds < 0) {
-      seconds = Math.abs(seconds);
-      token = "from now";
-      list_choice = 2;
-    }
-    var i = 0,
-      format;
-    while ((format = time_formats[i++]))
-      if (seconds < format[0]) {
-        if (typeof format[2] == "string") return format[list_choice];
-        else
-          return (
-            Math.floor(seconds / format[2]) + " " + format[1] + " " + token
-          );
-      }
-    return time;
-  }
 
   return (
     listing &&
@@ -265,7 +262,6 @@ function Chatroom(props) {
             mx={"2%"}
             px={"2%"}
             py={"2%"}
-            className="thisishere"
           >
             <Grid>
               <Grid.Col span={12}>
@@ -278,7 +274,71 @@ function Chatroom(props) {
                   Not yet implemented...
                 </Text>
               </Grid.Col>
-              <Grid.Col span={12}>Date Picker here</Grid.Col>
+              {!appointmentProposed && (
+                <span>
+                  <Grid.Col
+                    span={12}
+                    sx={{ display: "flex", alignItems: "flex-end" }}
+                  >
+                    <Text size="lg" sx={{ height: "1rem" }}>
+                      Propose a time:
+                    </Text>
+                  </Grid.Col>
+                  <Grid.Col span={12} sx={{ display: "flex" }}>
+                    <Select
+                      placeholder="Day"
+                      data={days}
+                      sx={{ width: "20%" }}
+                      variant="filled"
+                      mr={"1%"}
+                      onChange={(e) => {
+                        setProposedDay(e);
+                      }}
+                    />
+                    <Select
+                      placeholder="Month"
+                      data={[
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ]}
+                      mr={"1%"}
+                      sx={{ width: "20%" }}
+                      variant="filled"
+                      onChange={(e) => {
+                        setProposedMonth(e);
+                      }}
+                    />
+                    <TimeInput
+                      variant="filled"
+                      format="12"
+                      defaultValue={new Date()}
+                      sx={{ width: "20%" }}
+                      mr={"1%"}
+                      onChange={(e) =>
+                        setProposedTime(
+                          e.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        )
+                      }
+                    />
+                    <Button variant="filled" onClick={proposeAppointment}>
+                      Propose
+                    </Button>
+                  </Grid.Col>
+                </span>
+              )}
             </Grid>
           </Box>
         </Box>
@@ -304,7 +364,7 @@ function Chatroom(props) {
             {allMessages.length > 0 &&
               allMessages.map((message) => {
                 return (
-                  <Box py={"0.5rem"}>
+                  <Box py={"0.5rem"} key={message._id}>
                     <Text>
                       {message.senderName}: {message.messageText}
                     </Text>
@@ -314,19 +374,19 @@ function Chatroom(props) {
           </Box>
           <Box
             sx={{
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              backgroundColor: "rgba(0, 0, 0, 0.4)",
               borderRadius: "1rem",
             }}
             mx={"1rem"}
-            mt={"0.5rem"}
-            p={"0.5rem"}
+            mt={"1rem"}
+            p={"1rem"}
           >
             <Box
               sx={{
                 color: "black",
               }}
             >
-              <form className="chatForm">
+              <form>
                 <input
                   className="chatInput"
                   placeholder="send a message here"
@@ -347,3 +407,71 @@ function Chatroom(props) {
 }
 
 export default Chatroom;
+
+let originalDays = [];
+for (let i = 1; i < 31; i++) {
+  originalDays.push(`${i}`);
+}
+
+const monthsWithThirtyOneDays = [
+  "Jan",
+  "Mar",
+  "May",
+  "Jul",
+  "Aug",
+  "Oct",
+  "Dec",
+];
+
+function time_ago(time) {
+  switch (typeof time) {
+    case "number":
+      break;
+    case "string":
+      time = +new Date(time);
+      break;
+    case "object":
+      if (time.constructor === Date) time = time.getTime();
+      break;
+    default:
+      time = +new Date();
+  }
+  var time_formats = [
+    [60, "seconds", 1], // 60
+    [120, "1 minute ago", "1 minute from now"], // 60*2
+    [3600, "minutes", 60], // 60*60, 60
+    [7200, "1 hour ago", "1 hour from now"], // 60*60*2
+    [86400, "hours", 3600], // 60*60*24, 60*60
+    [172800, "Yesterday", "Tomorrow"], // 60*60*24*2
+    [604800, "days", 86400], // 60*60*24*7, 60*60*24
+    [1209600, "Last week", "Next week"], // 60*60*24*7*4*2
+    [2419200, "weeks", 604800], // 60*60*24*7*4, 60*60*24*7
+    [4838400, "Last month", "Next month"], // 60*60*24*7*4*2
+    [29030400, "months", 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
+    [58060800, "Last year", "Next year"], // 60*60*24*7*4*12*2
+    [2903040000, "years", 29030400], // 60*60*24*7*4*12*100, 60*60*24*7*4*12
+    [5806080000, "Last century", "Next century"], // 60*60*24*7*4*12*100*2
+    [58060800000, "centuries", 2903040000], // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
+  ];
+  var seconds = (+new Date() - time) / 1000,
+    token = "ago",
+    list_choice = 1;
+
+  if (seconds == 0) {
+    return "Just now";
+  }
+  if (seconds < 0) {
+    seconds = Math.abs(seconds);
+    token = "from now";
+    list_choice = 2;
+  }
+  var i = 0,
+    format;
+  while ((format = time_formats[i++]))
+    if (seconds < format[0]) {
+      if (typeof format[2] == "string") return format[list_choice];
+      else
+        return Math.floor(seconds / format[2]) + " " + format[1] + " " + token;
+    }
+  return time;
+}
