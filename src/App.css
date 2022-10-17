@@ -14,8 +14,7 @@
   }
 }
 
-/* .App-header
- {
+.App-header {
   background-color: #ffffff;
   min-height: 100vh;
 
@@ -25,7 +24,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-} */
+}
 
 .App-link {
   color: #61dafb;
@@ -183,7 +182,7 @@ main::-webkit-scrollbar-thumb {
   bottom: 0;
   background-color: rgb(24, 23, 23);
   width: auto;
-  max-width: 728px;
+  max-width: 100vw;
   display: flex;
   font-size: 1.5rem;
 }
