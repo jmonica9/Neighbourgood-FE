@@ -31,6 +31,10 @@ import { Authentication } from "./Authentication";
 import { io } from "socket.io-client";
 import Chatroom from "./components/Chatroom";
 import ProfilePage from "./components/Profile/ProfilePage";
+import { Faq } from "./components/Faq";
+import ChatroomFE from "./components/ChatroomFE";
+import { OverallChats } from "./components/OverallChat";
+import { Error } from "./components/Error";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -154,6 +158,16 @@ export default function App() {
                 path="/chatroom/:chatroomId"
                 element={<Chatroom drawerOpen={drawerOpen} />}
               />
+              <Route path="/faq" element={<Faq />}></Route>
+              <Route
+                path="/testChat"
+                element={<ChatroomFE drawerOpen={drawerOpen} />}
+              ></Route>
+              <Route
+                path="/overallChats"
+                element={<OverallChats drawerOpen={drawerOpen} />}
+              ></Route>
+              <Route path="/*" element={<Error />}></Route>
             </Routes>
           </UserContext.Provider>
           <ToastContainer
