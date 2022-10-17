@@ -177,14 +177,9 @@ main::-webkit-scrollbar-thumb {
   background: #6649b8;
 }
 
-.chatForm {
-  height: 10%;
-  width: 100%;
-}
-
 .chatInput {
   line-height: 2rem;
-  width: 94%;
+  width: 96%;
   font-size: 1.1rem;
   background: white;
   color: black;
@@ -198,7 +193,7 @@ main::-webkit-scrollbar-thumb {
   margin-left: 1%;
   border-radius: 1rem;
   min-height: 2rem;
-  width: 5%;
+  width: 3%;
   background: #c8a2d6;
   color: white;
   font-size: 1.1rem;
