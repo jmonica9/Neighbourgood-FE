@@ -231,9 +231,10 @@ export default function SideDrawer(props) {
                     return (
                       <Grid.Col key={chat._id}>
                         <p style={{ fontSize: "1rem" }}>
-                          listingId: {chat.listingId}
+                          {/* listingId: {chat.listingId} */}
                         </p>
-                        <button
+                        <Button
+                          variant="dark"
                           onClick={() => {
                             navigate(`/chatroom/${chat._id}`, {
                               state: { fromRequestPage: false },
@@ -241,7 +242,7 @@ export default function SideDrawer(props) {
                           }}
                         >
                           go to chatroom
-                        </button>
+                        </Button>
                       </Grid.Col>
                     );
                   })}
