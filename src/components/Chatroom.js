@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../App";
 import { useParams } from "react-router-dom";
@@ -31,11 +31,12 @@ function Chatroom(props) {
   const [message, setMessage] = useState("");
   const [allMessages, setAllMessages] = useState();
   const [days, setDays] = useState(originalDays);
-  const [proposedMonth, setProposedMonth] = useState();
-  const [proposedDay, setProposedDay] = useState();
-  const [proposedTime, setProposedTime] = useState();
+  const [proposedMonth, setProposedMonth] = useState("Jan");
+  const [proposedDay, setProposedDay] = useState(1);
+  const [proposedTime, setProposedTime] = useState(new Date());
   const [appointmentProposed, setAppointmentProposed] = useState(false);
   const [appointmentConfirmed, setAppointmentConfirmed] = useState(false);
+  const bottomRef = useRef(null);
 
   /* if user came from a lending "request", then show etiquette modal */
   useEffect(() => {
@@ -89,8 +90,12 @@ function Chatroom(props) {
 
   const getAppointmentInfo = () => {
     axios
-      .get(`${BACKEND_URL}/appointment`, { chatroomId: chatroomId })
+      .post(`${BACKEND_URL}/appointment/getinfo`, {
+        listingId: listing._id,
+        chatroomId: chatroomId,
+      })
       .then((res) => {
+        console.log(res.data);
         if (res.data) {
           if (res.data.proposedDateAndTime) {
             setAppointmentProposed(true);
@@ -134,23 +139,145 @@ function Chatroom(props) {
         senderName: userData.username,
       })
       .then((res) => {
-        console.log("this is here", res.data);
+        setMessage("");
+        getMessages();
       });
-    setMessage("");
-    getMessages();
   };
 
+  useEffect(() => {
+    // 👇️ scroll to bottom every time messages change
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [allMessages]);
+
   /*------------------------------ appointment functions ----------------------------------*/
+
+  const acceptAppointment = () => {
+    alert("need to code this in");
+  };
+
+  const deleteAppointment = () => {
+    //delete from appointment collection and delete from messages collection
+
+    axios.delete(`${BACKEND_URL}/appointment`, {
+      data: {
+        listingId: listing._id,
+        requestorId: requestorId,
+        ownerId: ownerId,
+      },
+    });
+
+    axios
+      .delete(`${BACKEND_URL}/messages`, {
+        data: { chatroomId: chatroomId },
+      })
+      .then(() => {
+        getMessages();
+      });
+    setAppointmentProposed(false);
+  };
+
   const proposeAppointment = () => {
+    let monthFormat;
+    switch (proposedMonth) {
+      case "Jan":
+        monthFormat = 1;
+        break;
+
+      case "Feb":
+        monthFormat = 2;
+        break;
+
+      case "Mar":
+        monthFormat = 3;
+        break;
+
+      case "Apr":
+        monthFormat = 4;
+        break;
+
+      case "May":
+        monthFormat = 5;
+        break;
+
+      case "Jun":
+        monthFormat = 6;
+        break;
+
+      case "Jul":
+        monthFormat = 7;
+        break;
+
+      case "Aug":
+        monthFormat = 8;
+        break;
+
+      case "Sep":
+        monthFormat = 9;
+        break;
+
+      case "Oct":
+        monthFormat = 10;
+        break;
+
+      case "Nov":
+        monthFormat = 11;
+        break;
+
+      case "Dec":
+        monthFormat = 12;
+        break;
+
+      default:
+        monthFormat = 1;
+    }
+
     axios
       .post(`${BACKEND_URL}/appointment`, {
+        chatroomId: chatroomId,
         requestorId: requestorId,
         ownerId: ownerId,
         listingId: listing._id,
-        proposedDateAndTime: `${proposedMonth}-${proposedDay}-${proposedTime}`,
+        proposedDateAndTime: `2022-${monthFormat}-${proposedDay}T${proposedTime.toLocaleTimeString(
+          [],
+          {
+            hour: "2-digit",
+            minute: "2-digit",
+          }
+        )}`,
       })
-      .then(() => {
-        setAppointmentProposed(true);
+      .then((res) => {
+        axios
+          .post(
+            `${BACKEND_URL}/messages/appointment/${chatroomId}/${userData._id}`,
+            {
+              messageText: `${
+                listing.type === "helping"
+                  ? `${
+                      userData._id === requestorId
+                        ? `${userData.username} has proposed to help you on `
+                        : `${userData.username} needs your help on`
+                    }`
+                  : `${
+                      userData._id === requestorId
+                        ? `${userData.username} has proposed to collect the item from you on `
+                        : `${userData.username} is available to pass you the item on`
+                    }`
+              }`,
+              senderName: userData.username,
+              proposedDate: `${proposedDay} of ${proposedMonth} at ${proposedTime.toLocaleTimeString(
+                [],
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              )}hrs`,
+            }
+          )
+          .then(() => {
+            setAppointmentProposed(true);
+            setMessage("");
+            getMessages();
+          });
       });
   };
 
@@ -159,7 +286,7 @@ function Chatroom(props) {
     owner && (
       <Box
         sx={{
-          height: "70rem",
+          height: "50rem",
           width: "90%",
           backgroundColor: "#D3D3D3",
           display: "flex",
@@ -268,10 +395,6 @@ function Chatroom(props) {
                 <Text size="lg">
                   Description: <br />
                   {listing.description}
-                  <br />
-                  <br />
-                  Condition: <br />
-                  Not yet implemented...
                 </Text>
               </Grid.Col>
               {!appointmentProposed && (
@@ -324,14 +447,7 @@ function Chatroom(props) {
                       defaultValue={new Date()}
                       sx={{ width: "20%" }}
                       mr={"1%"}
-                      onChange={(e) =>
-                        setProposedTime(
-                          e.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        )
-                      }
+                      onChange={(e) => setProposedTime(e)}
                     />
                     <Button variant="filled" onClick={proposeAppointment}>
                       Propose
@@ -356,17 +472,161 @@ function Chatroom(props) {
               backgroundColor: "white",
               borderRadius: "1rem",
               minHeight: "70%",
+              maxHeight: "70%",
               color: "black",
+              overflowY: "scroll",
             }}
             mx={"1rem"}
             mt={"1rem"}
           >
-            {allMessages.length > 0 &&
+            {/* .message {
+  display: flex;
+  align-items: center;
+}
+
+.sent {
+  flex-direction: row-reverse;
+} */
+            /* .sent p {
+  color: white;
+  background: #0b93f6;
+  align-self: flex-end;
+}
+.received p {
+  background: #e5e5ea;
+  color: black;
+} */}
+
+            {allMessages &&
+              allMessages.length > 0 &&
               allMessages.map((message) => {
-                return (
-                  <Box py={"0.5rem"} key={message._id}>
-                    <Text>
-                      {message.senderName}: {message.messageText}
+                return !message.proposedDate ? (
+                  message.senderId === userData._id ? (
+                    <Box
+                      py={"0.4rem"}
+                      px={"2rem"}
+                      key={message._id}
+                      ref={bottomRef}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "row-reverse",
+                      }}
+                    >
+                      <Text
+                        size="md"
+                        sx={{
+                          color: "#fff",
+                          background: "#0b93f6",
+                          alignSelf: "flex-end",
+                          borderRadius: "0.5rem",
+                        }}
+                        px={"1rem"}
+                        py={"0.2rem"}
+                      >
+                        {message.messageText}
+                      </Text>
+                      {/* <img
+                        src={
+                          "https://api.adorable.io/avatars/23/abott@adorable.png"
+                        }
+                        alt="userpic"
+                      /> */}
+                    </Box>
+                  ) : (
+                    <Box
+                      py={"0.4rem"}
+                      px={"2rem"}
+                      key={message._id}
+                      ref={bottomRef}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Text
+                        size="md"
+                        sx={{
+                          color: "#000",
+                          background: "#e5e5ea",
+                          alignSelf: "flex-start",
+                          borderRadius: "0.5rem",
+                        }}
+                        px={"1rem"}
+                        py={"0.2rem"}
+                        ml={"1rem"}
+                      >
+                        {message.messageText}
+                      </Text>
+                    </Box>
+                  )
+                ) : message.senderId !== userData._id ? (
+                  <>
+                    <Box
+                      py={"1rem"}
+                      px={"2rem"}
+                      key={message._id}
+                      ref={bottomRef}
+                      sx={{
+                        width: "100%",
+                      }}
+                    >
+                      <Text
+                        size="lg"
+                        sx={{
+                          width: "100%",
+                          color: "#fff",
+                          background: "#9F2F5A",
+                          borderRadius: "0.5rem",
+                        }}
+                        px={"1rem"}
+                        py={"0.5rem"}
+                      >
+                        {message.messageText} {message.proposedDate}
+                        <Button
+                          mx="1rem"
+                          color="teal"
+                          size="xs"
+                          variant="outline"
+                          onClick={acceptAppointment}
+                        >
+                          Accept
+                        </Button>
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          color="teal"
+                          onClick={deleteAppointment}
+                        >
+                          Decline
+                        </Button>
+                      </Text>
+                    </Box>
+                  </>
+                ) : (
+                  <Box
+                    py={"1rem"}
+                    px={"2rem"}
+                    key={message._id}
+                    ref={bottomRef}
+                    sx={{
+                      width: "100%",
+                    }}
+                  >
+                    <Text
+                      size="lg"
+                      sx={{
+                        width: "100%",
+                        color: "#fff",
+                        background: "#519E8A",
+                        borderRadius: "0.5rem",
+                      }}
+                      px={"1rem"}
+                      py={"0.5rem"}
+                    >
+                      Currently waiting for the other party to accept your
+                      proposed appointment for {message.proposedDate}
                     </Text>
                   </Box>
                 );
@@ -379,7 +639,7 @@ function Chatroom(props) {
             }}
             mx={"1rem"}
             mt={"1rem"}
-            p={"1rem"}
+            p={"0.5rem"}
           >
             <Box
               sx={{
@@ -407,6 +667,13 @@ function Chatroom(props) {
 }
 
 export default Chatroom;
+
+/*------------------------------ other functions ----------------------------------*/
+/*---------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------*/
 
 let originalDays = [];
 for (let i = 1; i < 31; i++) {

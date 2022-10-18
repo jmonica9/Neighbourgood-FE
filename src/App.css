@@ -119,15 +119,17 @@
   padding: 10px;
   box-sizing: border-box;
 } */
-main {
+
+/* main {
   padding: 10px;
   height: 80vh;
   margin: 10vh 0 10vh;
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
-}
-p {
+} */
+
+/* p {
   max-width: 500px;
   margin-bottom: 12px;
   line-height: 24px;
@@ -136,7 +138,8 @@ p {
   position: relative;
   color: white;
   text-align: center;
-}
+} */
+/* 
 
 .message {
   display: flex;
@@ -145,9 +148,9 @@ p {
 
 .sent {
   flex-direction: row-reverse;
-}
+} */
 
-.sent p {
+/* .sent p {
   color: white;
   background: #0b93f6;
   align-self: flex-end;
@@ -155,7 +158,7 @@ p {
 .received p {
   background: #e5e5ea;
   color: black;
-}
+} */
 
 /* need to give images specific class names. this causes all images to inherit this style */
 /* img {
