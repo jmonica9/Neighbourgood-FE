@@ -36,6 +36,9 @@ function Chatroom(props) {
   const [proposedTime, setProposedTime] = useState(new Date());
   const [appointmentProposed, setAppointmentProposed] = useState(false);
   const [appointmentConfirmed, setAppointmentConfirmed] = useState(false);
+  const [confirmedTransactioNDate, setConfirmedTransactionDate] = useState("");
+  const templatedConfirmedMessage =
+    "We've left the chatroom open for you to work out additional details.";
   const bottomRef = useRef(null);
 
   /* if user came from a lending "request", then show etiquette modal */
@@ -95,13 +98,21 @@ function Chatroom(props) {
         chatroomId: chatroomId,
       })
       .then((res) => {
-        console.log(res.data);
         if (res.data) {
           if (res.data.proposedDateAndTime) {
             setAppointmentProposed(true);
           }
           if (res.data.confirmed) {
             setAppointmentConfirmed(true);
+            setConfirmedTransactionDate(
+              `${proposedDay} of ${proposedMonth} at ${proposedTime.toLocaleTimeString(
+                [],
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              )} hrs`
+            );
           }
         }
       });
@@ -151,8 +162,40 @@ function Chatroom(props) {
 
   /*------------------------------ appointment functions ----------------------------------*/
 
-  const acceptAppointment = () => {
-    alert("need to code this in");
+  const acceptAppointment = (message) => {
+    //set appointment to true
+
+    axios
+      .put(`${BACKEND_URL}/appointment`, {
+        listingId: listing._id,
+        requestorId: requestorId,
+        ownerId: ownerId,
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
+
+    //delete the message
+    axios
+      .delete(`${BACKEND_URL}/messages`, {
+        data: { chatroomId: chatroomId },
+      })
+      .then(() => {
+        getMessages();
+      });
+
+    //change listing "reservedBy"
+    axios
+      .put(`${BACKEND_URL}/listing/reserve`, {
+        listingId: listing._id,
+        requestorId: requestorId,
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
+    //change all other chatrooms' listing messages to "reserved"
+    // alert("need to code this in");
+    console.log("test", message);
   };
 
   const deleteAppointment = () => {
@@ -270,7 +313,7 @@ function Chatroom(props) {
                   hour: "2-digit",
                   minute: "2-digit",
                 }
-              )}hrs`,
+              )} hrs`,
             }
           )
           .then(() => {
@@ -299,6 +342,7 @@ function Chatroom(props) {
         ml="3rem"
         my="1rem"
       >
+        {/* etiquette for lending modal */}
         <>
           <Modal opened={opened} onClose={() => setOpened(false)} fullScreen>
             <Group position="center">
@@ -326,6 +370,7 @@ function Chatroom(props) {
             </Group>
           </Modal>
         </>
+        {/* should we have another modal that pops up when an item has been reserved? */}
         <Box
           sx={{
             height: "6%",
@@ -390,72 +435,133 @@ function Chatroom(props) {
             px={"2%"}
             py={"2%"}
           >
-            <Grid>
-              <Grid.Col span={12}>
-                <Text size="lg">
-                  Description: <br />
-                  {listing.description}
-                </Text>
-              </Grid.Col>
-              {!appointmentProposed && (
-                <span>
-                  <Grid.Col
-                    span={12}
-                    sx={{ display: "flex", alignItems: "flex-end" }}
-                  >
-                    <Text size="lg" sx={{ height: "1rem" }}>
-                      Propose a time:
+            {listing.reservedBy ? (
+              <span>
+                <Grid>
+                  <Grid.Col span={12}>
+                    <Text size="lg">
+                      Description: <br />
+                      {listing.description}
                     </Text>
                   </Grid.Col>
-                  <Grid.Col span={12} sx={{ display: "flex" }}>
-                    <Select
-                      placeholder="Day"
-                      data={days}
-                      sx={{ width: "20%" }}
-                      variant="filled"
-                      mr={"1%"}
-                      onChange={(e) => {
-                        setProposedDay(e);
-                      }}
-                    />
-                    <Select
-                      placeholder="Month"
-                      data={[
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "May",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
-                      ]}
-                      mr={"1%"}
-                      sx={{ width: "20%" }}
-                      variant="filled"
-                      onChange={(e) => {
-                        setProposedMonth(e);
-                      }}
-                    />
-                    <TimeInput
-                      variant="filled"
-                      format="12"
-                      defaultValue={new Date()}
-                      sx={{ width: "20%" }}
-                      mr={"1%"}
-                      onChange={(e) => setProposedTime(e)}
-                    />
-                    <Button variant="filled" onClick={proposeAppointment}>
-                      Propose
-                    </Button>
+                  <span>
+                    <Grid.Col
+                      span={12}
+                      sx={{ display: "flex", alignItems: "flex-end" }}
+                    >
+                      {listing.userId === userData._id ? (
+                        listing.type === "helping" && requestor ? (
+                          <>
+                            <Text size="lg" sx={{ height: "1rem" }}>
+                              {`${requestor.username} has agreed to help you on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                            </Text>
+                          </>
+                        ) : (
+                          <>
+                            <Text size="lg" sx={{ height: "1rem" }}>
+                              {`You have agreed to pass this item to ${owner.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                            </Text>
+                          </>
+                        )
+                      ) : listing.type === "helping" ? (
+                        <>
+                          {listing.reservedBy === userData._id ? (
+                            <Text size="lg" sx={{ height: "1rem" }}>
+                              {`You have agreed to help ${owner.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                            </Text>
+                          ) : (
+                            <Text size="lg" sx={{ height: "1rem" }}>
+                              {`Someone else has already agreed to help ${owner.username}! But we've left the chatroom open for you to continue your conversation.`}
+                            </Text>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {listing.reservedBy === userData._id ? (
+                            <Text size="lg" sx={{ height: "1rem" }}>
+                              {`You have agreed to pick up this item from ${owner.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                            </Text>
+                          ) : (
+                            <Text size="lg" sx={{ height: "1rem" }}>
+                              {`${owner.username} has already reserved this item for someone else! But we've left the chatroom open for you to continue your conversation.`}
+                            </Text>
+                          )}
+                        </>
+                      )}
+                    </Grid.Col>
+                  </span>
+                </Grid>
+              </span>
+            ) : (
+              <span>
+                <Grid>
+                  <Grid.Col span={12}>
+                    <Text size="lg">
+                      Description: <br />
+                      {listing.description}
+                    </Text>
                   </Grid.Col>
-                </span>
-              )}
-            </Grid>
+                  {(!appointmentProposed || !appointmentConfirmed) && (
+                    <span>
+                      <Grid.Col
+                        span={12}
+                        sx={{ display: "flex", alignItems: "flex-end" }}
+                      >
+                        <Text size="lg" sx={{ height: "1rem" }}>
+                          Propose a time:
+                        </Text>
+                      </Grid.Col>
+                      <Grid.Col span={12} sx={{ display: "flex" }}>
+                        <Select
+                          placeholder="Day"
+                          data={days}
+                          sx={{ width: "20%" }}
+                          variant="filled"
+                          mr={"1%"}
+                          onChange={(e) => {
+                            setProposedDay(e);
+                          }}
+                        />
+                        <Select
+                          placeholder="Month"
+                          data={[
+                            "Jan",
+                            "Feb",
+                            "Mar",
+                            "Apr",
+                            "May",
+                            "Jun",
+                            "Jul",
+                            "Aug",
+                            "Sep",
+                            "Oct",
+                            "Nov",
+                            "Dec",
+                          ]}
+                          mr={"1%"}
+                          sx={{ width: "20%" }}
+                          variant="filled"
+                          onChange={(e) => {
+                            setProposedMonth(e);
+                          }}
+                        />
+                        <TimeInput
+                          variant="filled"
+                          format="12"
+                          defaultValue={new Date()}
+                          sx={{ width: "20%" }}
+                          mr={"1%"}
+                          onChange={(e) => setProposedTime(e)}
+                        />
+                        <Button variant="filled" onClick={proposeAppointment}>
+                          Propose
+                        </Button>
+                      </Grid.Col>
+                    </span>
+                  )}
+                </Grid>
+              </span>
+            )}
           </Box>
         </Box>
         <Box
@@ -589,7 +695,7 @@ function Chatroom(props) {
                           color="teal"
                           size="xs"
                           variant="outline"
-                          onClick={acceptAppointment}
+                          onClick={() => acceptAppointment(message)}
                         >
                           Accept
                         </Button>
