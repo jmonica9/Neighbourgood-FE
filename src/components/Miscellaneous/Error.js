@@ -7,7 +7,7 @@ import {
   Group,
   Image,
 } from "@mantine/core";
-import Illustration from "../images/404.png";
+import Illustration from "../../images/404.png";
 import { useNavigate } from "react-router-dom";
 const useStyles = createStyles((theme) => ({
   root: {

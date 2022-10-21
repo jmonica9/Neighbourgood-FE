@@ -5,8 +5,8 @@ import sharing from "../../images/sharing.jpg";
 import { UserContext } from "../../App";
 import { Button, Grid, Text, Group, Title, Card } from "@mantine/core";
 import LandingPageCarousel from "./LandingPageCarousel";
-import Listing from "../Listing";
-import Lobby from "../Lobby";
+import Listing from "../Lobby/Listing";
+import Lobby from "../Lobby/Lobby";
 import LandingPageListings from "./LandingPageListings";
 import { socket } from "../../App";
 

@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Group, Navbar, Text } from "@mantine/core";
-import SideDrawer from "./SideDrawer";
-import { neighbourgoodTheme } from "../styles/Theme";
-import AuthModal from "../AuthModal";
-import { UserContext } from "../App";
-import { Button } from "bootstrap";
+import SideDrawer from "../SideDrawer";
+import { neighbourgoodTheme } from "../../styles/Theme";
+import AuthModal from "./AuthModal";
+import { UserContext } from "../../App";
 import Home from "./HomeButton";
 import { CaretRightSquare } from "react-bootstrap-icons";
 import { CaretLeftSquareFill } from "react-bootstrap-icons";

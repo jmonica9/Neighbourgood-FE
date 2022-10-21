@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { UserContext } from "../App";
+import { socket, UserContext } from "../App";
 
 //import styling
 import {
@@ -15,7 +15,6 @@ import {
   Grid,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
-import AuthModal from "../AuthModal";
 import EditProfileModal from "./Profile/EditProfileModal";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
@@ -42,6 +41,9 @@ export default function SideDrawer(props) {
 
   useEffect(() => {
     setOpened(props.openDrawer);
+    if (userData) {
+      getChats();
+    }
   }, [props]);
 
   useEffect(() => {
@@ -50,12 +52,6 @@ export default function SideDrawer(props) {
       // console.log("close drawer");
     }
   });
-
-  useEffect(() => {
-    if (userData) {
-      getChats();
-    }
-  }, [userData]);
 
   useEffect(() => {
     if (chats) {

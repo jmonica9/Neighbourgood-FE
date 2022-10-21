@@ -14,13 +14,13 @@ import {
   Image,
   Center,
 } from "@mantine/core";
-import { neighbourgoodTheme } from "../styles/Theme";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import NewListing from "./NewListing";
 import { useLocation, useNavigate } from "react-router-dom";
 import Listing from "./Listing";
-import { UserContext } from "../App";
+import { UserContext } from "../../App";
 import axios from "axios";
-import { BACKEND_URL } from "../constants";
+import { BACKEND_URL } from "../../constants";
 import { LoadingOverlay, Title } from "@mantine/core";
 import { experimentalStyled } from "@mui/material";
 export default function Lobby(props) {
@@ -394,6 +394,7 @@ export default function Lobby(props) {
             listing={selectedListing}
             loading={loading}
             setLoading={setLoading}
+            socket={props.socket}
           />
         </div>
       </div>

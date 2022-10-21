@@ -7,7 +7,7 @@ import {
   Container,
   Title,
 } from "@mantine/core";
-import helping from "../images/helping.jpg";
+import helping from "../../images/helping.jpg";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
