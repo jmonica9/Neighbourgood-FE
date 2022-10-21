@@ -11,7 +11,7 @@ import {
   Grid,
 } from "@mantine/core";
 import { format } from "date-fns";
-import { neighbourgoodTheme } from "../styles/Theme";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import { ClockIcon } from "@radix-ui/react-icons";
 import { height } from "@mui/system";
 

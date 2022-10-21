@@ -3,7 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import { BACKEND_URL } from "../../constants";
-import Listing from "../Listing";
+import Listing from "../Lobby/Listing";
 import { UserContext } from "../../App";
 
 export default function DashboardFriendsListings(props) {

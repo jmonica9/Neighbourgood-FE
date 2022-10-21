@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { UserContext } from "../App";
+import { UserContext } from "../../App";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { BACKEND_URL } from "../constants";
+import { BACKEND_URL } from "../../constants";
 import {
   Modal,
   Button,
@@ -16,6 +16,11 @@ import {
 import { Send } from "react-bootstrap-icons";
 import { Select } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
+import "../../App.css";
+import LendingTermsAndConditions from "./LendingTermsConditionsModal";
+// import { socket } from ".././App";
+// import { io } from "socket.io-client";
+// const socket = io("http://localhost:3000");
 
 function Chatroom(props) {
   const { chatroomId } = useParams();
@@ -34,14 +39,34 @@ function Chatroom(props) {
   const [proposedMonth, setProposedMonth] = useState("Jan");
   const [proposedDay, setProposedDay] = useState(1);
   const [proposedTime, setProposedTime] = useState(new Date());
-  const [appointmentProposed, setAppointmentProposed] = useState(false);
-  const [appointmentConfirmed, setAppointmentConfirmed] = useState(false);
+  const [appointment, setAppointment] = useState();
+  const [appointmentProposed, setAppointmentProposed] = useState();
   const [confirmedTransactioNDate, setConfirmedTransactionDate] = useState("");
-  const templatedConfirmedMessage =
-    "We've left the chatroom open for you to work out additional details.";
+  const templatedConfirmedMessage = `We've left this chatroom open for you to work out any additional details.`;
   const bottomRef = useRef(null);
 
-  /* if user came from a lending "request", then show etiquette modal */
+  /* --------------------socket stuff-------------------- */
+
+  // join room at start
+  useEffect(() => {
+    props.socket.emit("join_room", { room: `${chatroomId}` });
+  }, [chatroomId]);
+
+  //when socket says to refresh, chatroom should re-get the following things:
+  //messages, appointment, listing
+  useEffect(() => {
+    props.socket.on("refresh_chatroom", (data) => {
+      getChatroomInfo();
+    });
+
+    props.socket.on("refresh_listing", (data) => {
+      getChatroomInfo();
+    });
+  }, [props.socket]);
+
+  /* --------------------end of socket stuff-------------------- */
+
+  /* if user came from a lending "request", then show etiquette modala */
   useEffect(() => {
     if (state.fromRequestPage && listing) {
       if (listing.type === "lending") {
@@ -59,12 +84,16 @@ function Chatroom(props) {
     axios.get(`${BACKEND_URL}/chatroom/${chatroomId}`).then((res) => {
       setRequestorId(res.data.requestorId);
       setOwnerId(res.data.ownerId);
+    });
+
+    axios.get(`${BACKEND_URL}/chatroom/${chatroomId}`).then((res) => {
       axios
         .get(`${BACKEND_URL}/chatroom/listing/${res.data.listingId}`)
         .then((res) => {
           setListing(res.data);
         });
     });
+    console.log("getchatroominfo ran");
   };
 
   /* once listing details and users IDs are gotten, get full users info + all chat messages and check on status of appointment */
@@ -76,6 +105,16 @@ function Chatroom(props) {
     }
   }, [listing]);
 
+  useEffect(() => {
+    if (appointment) {
+      setAppointmentProposed(true);
+    } else setAppointmentProposed(false);
+  }, [appointment]);
+
+  useEffect(() => {
+    console.log("appointment proposed?", appointmentProposed);
+  }, [appointmentProposed]);
+
   const getUsersInfo = () => {
     axios.get(`${BACKEND_URL}/users/${ownerId}`).then((res) => {
       setOwner(res.data);
@@ -83,39 +122,7 @@ function Chatroom(props) {
         setRequestor(res.data);
       });
     });
-  };
-
-  const getMessages = () => {
-    axios.get(`${BACKEND_URL}/messages/${chatroomId}`).then((res) => {
-      setAllMessages(res.data);
-    });
-  };
-
-  const getAppointmentInfo = () => {
-    axios
-      .post(`${BACKEND_URL}/appointment/getinfo`, {
-        listingId: listing._id,
-        chatroomId: chatroomId,
-      })
-      .then((res) => {
-        if (res.data) {
-          if (res.data.proposedDateAndTime) {
-            setAppointmentProposed(true);
-          }
-          if (res.data.confirmed) {
-            setAppointmentConfirmed(true);
-            setConfirmedTransactionDate(
-              `${proposedDay} of ${proposedMonth} at ${proposedTime.toLocaleTimeString(
-                [],
-                {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }
-              )} hrs`
-            );
-          }
-        }
-      });
+    console.log("getusersinfo ran");
   };
 
   /* when user selects a month, update the days to be the number of days in that month */
@@ -136,6 +143,53 @@ function Chatroom(props) {
     }
   }, [proposedMonth]);
 
+  /* -------------------- chatroom functions -------------------- */
+  const getMessages = () => {
+    axios.get(`${BACKEND_URL}/messages/${chatroomId}`).then((res) => {
+      setAllMessages(res.data);
+    });
+    console.log("getmessages ran");
+  };
+
+  const getAppointmentInfo = () => {
+    setAppointment("");
+    axios
+      .post(`${BACKEND_URL}/appointment/getinfo`, {
+        listingId: listing._id,
+        chatroomId: chatroomId,
+      })
+      .then((res) => {
+        if (res.data) {
+          if (res.data.confirmed) {
+            setConfirmedTransactionDate(
+              `${proposedDay} of ${proposedMonth} at ${proposedTime.toLocaleTimeString(
+                [],
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              )} hrs`
+            );
+          }
+
+          setAppointment(res.data);
+        }
+      });
+    console.log("getappointmentinfo ran");
+  };
+
+  const deleteChatroom = () => {
+    //delete the chatroom, navigate to dashboard
+    axios.post(`${BACKEND_URL}/listing/withdraw`, {
+      listing: listing,
+      userId: userData._id,
+    });
+    axios.delete(
+      `${BACKEND_URL}/chatroom/delete/${listing._id}/${userData._id}`
+    );
+    navigate("/dashboard");
+  };
+
   /*------------------------------ send message functions ----------------------------------*/
   const setMessageValue = (e) => {
     setMessage(e.target.value);
@@ -143,7 +197,7 @@ function Chatroom(props) {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-
+    console.log("button fired off");
     axios
       .post(`${BACKEND_URL}/messages/${chatroomId}/${userData._id}`, {
         messageText: message,
@@ -151,8 +205,9 @@ function Chatroom(props) {
       })
       .then((res) => {
         setMessage("");
-        getMessages();
       });
+    console.log("post received");
+    props.socket.emit("chatroom_updated", { room: `${chatroomId}` });
   };
 
   useEffect(() => {
@@ -162,9 +217,8 @@ function Chatroom(props) {
 
   /*------------------------------ appointment functions ----------------------------------*/
 
-  const acceptAppointment = (message) => {
+  const acceptAppointment = () => {
     //set appointment to true
-
     axios
       .put(`${BACKEND_URL}/appointment`, {
         listingId: listing._id,
@@ -182,9 +236,15 @@ function Chatroom(props) {
       })
       .then(() => {
         getMessages();
+        props.socket.emit("chatroom_updated", {
+          room: `${chatroomId}`,
+        });
+        props.socket.emit("listing_updated", {
+          listingId: `${listing._id}`,
+        });
       });
 
-    //change listing "reservedBy"
+    //change listing's "reservedBy"
     axios
       .put(`${BACKEND_URL}/listing/reserve`, {
         listingId: listing._id,
@@ -193,9 +253,6 @@ function Chatroom(props) {
       .then((res) => {
         console.log(res.data);
       });
-    //change all other chatrooms' listing messages to "reserved"
-    // alert("need to code this in");
-    console.log("test", message);
   };
 
   const deleteAppointment = () => {
@@ -215,8 +272,10 @@ function Chatroom(props) {
       })
       .then(() => {
         getMessages();
+        props.socket.emit("chatroom_updated", {
+          room: `${chatroomId}`,
+        });
       });
-    setAppointmentProposed(false);
   };
 
   const proposeAppointment = () => {
@@ -289,6 +348,10 @@ function Chatroom(props) {
         )}`,
       })
       .then((res) => {
+        props.socket.emit("chatroom_updated", {
+          room: `${chatroomId}`,
+        });
+
         axios
           .post(
             `${BACKEND_URL}/messages/appointment/${chatroomId}/${userData._id}`,
@@ -317,9 +380,11 @@ function Chatroom(props) {
             }
           )
           .then(() => {
-            setAppointmentProposed(true);
             setMessage("");
             getMessages();
+            props.socket.emit("chatroom_updated", {
+              room: `${chatroomId}`,
+            });
           });
       });
   };
@@ -327,121 +392,53 @@ function Chatroom(props) {
   return (
     listing &&
     owner && (
-      <Box
-        sx={{
-          height: "50rem",
-          width: "90%",
-          backgroundColor: "#D3D3D3",
-          display: "flex",
-          flexFlow: "column nowrap",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          borderRadius: "1rem",
-          color: "#000",
-        }}
-        ml="3rem"
-        my="1rem"
-      >
+      <Box className="chatroom-main-container">
         {/* etiquette for lending modal */}
         <>
           <Modal opened={opened} onClose={() => setOpened(false)} fullScreen>
-            <Group position="center">
-              <Grid>
-                <Grid.Col>BORROWING ETIQUETTE</Grid.Col>
-                <Grid.Col>
-                  There are many variations of passages of Lorem Ipsum
-                  available, but the majority have suffered alteration in some
-                  form, by injected humour, or randomised words which don't look
-                  even slightly believable. If you are going to use a passage of
-                  Lorem Ipsum, you need to be sure there isn't anything
-                  embarrassing hidden in the middle of text. All the Lorem Ipsum
-                  generators on the Internet tend to repeat predefined chunks as
-                  necessary, making this the first true generator on the
-                  Internet. It uses a dictionary of over 200 Latin words,
-                  combined with a handful of model sentence structures, to
-                  generate Lorem Ipsum which looks reasonable. The generated
-                  Lorem Ipsum is therefore always free from repetition, injected
-                  humour, or non-characteristic words etc.
-                </Grid.Col>
-                <Grid.Col>
-                  <Button onClick={() => setOpened(false)}>Accept</Button>
-                </Grid.Col>
-              </Grid>
-            </Group>
+            <LendingTermsAndConditions closeModal={() => setOpened(false)} />
           </Modal>
         </>
-        {/* should we have another modal that pops up when an item has been reserved? */}
-        <Box
-          sx={{
-            height: "6%",
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-          px={"3rem"}
-          my={"1rem"}
-        >
-          <Text>Item: {listing.title}</Text>
-          <Text>
-            Posted by {owner.username}{" "}
-            {`${time_ago(new Date(listing.createdAt))}`}
-          </Text>
-        </Box>
-        <Box
-          sx={{
-            height: "47%",
-            width: "95%",
-            backgroundColor: "#3E3E3E",
-            display: "flex",
-            flexFlow: "row nowrap",
-            justifyContent: "space-around",
-            alignItems: "center",
-            borderRadius: "1rem",
-          }}
-          mb={"1rem"}
-        >
-          <Box
-            sx={{
-              height: "90%",
-              width: "50%",
-              backgroundColor: "#fff",
-              display: "flex",
-              flexFlow: "row nowrap",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "1rem",
-            }}
-            mx={"2%"}
-          >
+        {listing && requestor && owner && (
+          <>
+            <Box className="chatroom-postedby-container">
+              <Text size="lg">
+                <b>Title: {listing.title}</b>
+                <Text size="xs"> Listing type: {listing.type}</Text>
+              </Text>
+              <Text size="lg" sx={{ textAlign: "center" }}>
+                <b>
+                  <u>
+                    {requestor.username} & {owner.username}
+                  </u>
+                </b>
+                <Text size="xs" sx={{ textAlign: "center" }}>
+                  {" "}
+                  Posted: {`${time_ago(new Date(listing.createdAt))}`}
+                </Text>
+              </Text>
+              <button className="chatroom-end-button" onClick={deleteChatroom}>
+                End Chat
+              </button>
+            </Box>
+          </>
+        )}
+        <Box className="chatroom-listingdetails-container">
+          <Box className="chatroom-listingimage-container">
             <img
               style={{ maxHeight: "90%", maxWidth: "90%" }}
               src={listing.image}
               alt={listing.title}
             />
           </Box>
-
-          <Box
-            sx={{
-              height: "90%",
-              width: "50%",
-              backgroundColor: "#fff",
-              display: "flex",
-              borderRadius: "1rem",
-              color: "black",
-              textAlign: "left",
-            }}
-            mx={"2%"}
-            px={"2%"}
-            py={"2%"}
-          >
-            {listing.reservedBy ? (
+          <Box className="chatroom-listingdescription-container">
+            {listing.reservedBy && requestor ? (
               <span>
                 <Grid>
-                  <Grid.Col span={12}>
-                    <Text size="lg">
+                  <Grid.Col span={9}>
+                    <Text size="xl">
                       Description: <br />
-                      {listing.description}
+                      <Text size="md">{listing.description}</Text>
                     </Text>
                   </Grid.Col>
                   <span>
@@ -450,40 +447,59 @@ function Chatroom(props) {
                       sx={{ display: "flex", alignItems: "flex-end" }}
                     >
                       {listing.userId === userData._id ? (
-                        listing.type === "helping" && requestor ? (
+                        listing.type === "helping" ? (
                           <>
-                            <Text size="lg" sx={{ height: "1rem" }}>
+                            <Text
+                              size="md"
+                              className="chatroom-description-appointment confirmed"
+                            >
                               {`${requestor.username} has agreed to help you on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           </>
                         ) : (
                           <>
-                            <Text size="lg" sx={{ height: "1rem" }}>
-                              {`You have agreed to pass this item to ${owner.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                            <Text
+                              size="md"
+                              className="chatroom-description-appointment confirmed"
+                            >
+                              {`You have agreed to pass this item to ${requestor.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           </>
                         )
                       ) : listing.type === "helping" ? (
                         <>
                           {listing.reservedBy === userData._id ? (
-                            <Text size="lg" sx={{ height: "1rem" }}>
-                              {`You have agreed to help ${owner.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                            <Text
+                              size="md"
+                              className="chatroom-description-appointment confirmed"
+                            >
+                              {`You have agreed to help ${owner.username} on ${confirmedTransactioNDate}!
+                              ${templatedConfirmedMessage}`}
                             </Text>
                           ) : (
-                            <Text size="lg" sx={{ height: "1rem" }}>
-                              {`Someone else has already agreed to help ${owner.username}! But we've left the chatroom open for you to continue your conversation.`}
+                            <Text
+                              size="md"
+                              className="chatroom-description-appointment other"
+                            >
+                              {`Someone else has already agreed to help ${owner.username}! But we've left this chatroom open for you to continue your conversation.`}
                             </Text>
                           )}
                         </>
                       ) : (
                         <>
                           {listing.reservedBy === userData._id ? (
-                            <Text size="lg" sx={{ height: "1rem" }}>
+                            <Text
+                              size="md"
+                              className="chatroom-description-appointment confirmed"
+                            >
                               {`You have agreed to pick up this item from ${owner.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           ) : (
-                            <Text size="lg" sx={{ height: "1rem" }}>
-                              {`${owner.username} has already reserved this item for someone else! But we've left the chatroom open for you to continue your conversation.`}
+                            <Text
+                              size="md"
+                              className="chatroom-description-appointment other"
+                            >
+                              {`${owner.username} has already reserved this item for someone else! But we've left this chatroom open for you to continue your conversation.`}
                             </Text>
                           )}
                         </>
@@ -501,14 +517,14 @@ function Chatroom(props) {
                       {listing.description}
                     </Text>
                   </Grid.Col>
-                  {(!appointmentProposed || !appointmentConfirmed) && (
+                  {!appointment && (
                     <span>
                       <Grid.Col
                         span={12}
                         sx={{ display: "flex", alignItems: "flex-end" }}
                       >
-                        <Text size="lg" sx={{ height: "1rem" }}>
-                          Propose a time:
+                        <Text size="lg" sx={{ height: "1rem" }} mt="3rem">
+                          Propose a date and time:
                         </Text>
                       </Grid.Col>
                       <Grid.Col span={12} sx={{ display: "flex" }}>
@@ -564,110 +580,43 @@ function Chatroom(props) {
             )}
           </Box>
         </Box>
-        <Box
-          sx={{
-            height: "47%",
-            width: "95%",
-            backgroundColor: "#3E3E3E",
-            borderRadius: "1rem",
-          }}
-          mb={"1rem"}
-        >
-          <Box
-            sx={{
-              backgroundColor: "white",
-              borderRadius: "1rem",
-              minHeight: "70%",
-              maxHeight: "70%",
-              color: "black",
-              overflowY: "scroll",
-            }}
-            mx={"1rem"}
-            mt={"1rem"}
-          >
-            {/* .message {
-  display: flex;
-  align-items: center;
-}
-
-.sent {
-  flex-direction: row-reverse;
-} */
-            /* .sent p {
-  color: white;
-  background: #0b93f6;
-  align-self: flex-end;
-}
-.received p {
-  background: #e5e5ea;
-  color: black;
-} */}
-
+        <Box className="chatroom-chatbox-container">
+          <Box className="chatroom-chatboxdisplay-container">
             {allMessages &&
               allMessages.length > 0 &&
               allMessages.map((message) => {
+                //if no proposed date
                 return !message.proposedDate ? (
                   message.senderId === userData._id ? (
                     <Box
-                      py={"0.4rem"}
-                      px={"2rem"}
                       key={message._id}
                       ref={bottomRef}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexDirection: "row-reverse",
-                      }}
+                      className="chatroom-message-container chatroomuser"
                     >
                       <Text
                         size="md"
-                        sx={{
-                          color: "#fff",
-                          background: "#0b93f6",
-                          alignSelf: "flex-end",
-                          borderRadius: "0.5rem",
-                        }}
-                        px={"1rem"}
-                        py={"0.2rem"}
+                        className="chatroom-message-text usermessage"
                       >
                         {message.messageText}
                       </Text>
-                      {/* <img
-                        src={
-                          "https://api.adorable.io/avatars/23/abott@adorable.png"
-                        }
-                        alt="userpic"
-                      /> */}
                     </Box>
                   ) : (
                     <Box
-                      py={"0.4rem"}
-                      px={"2rem"}
                       key={message._id}
                       ref={bottomRef}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexDirection: "row",
-                      }}
+                      className="chatroom-message-container otheruser"
                     >
                       <Text
                         size="md"
-                        sx={{
-                          color: "#000",
-                          background: "#e5e5ea",
-                          alignSelf: "flex-start",
-                          borderRadius: "0.5rem",
-                        }}
-                        px={"1rem"}
-                        py={"0.2rem"}
+                        className="chatroom-message-text othermessage"
                         ml={"1rem"}
                       >
                         {message.messageText}
                       </Text>
                     </Box>
                   )
-                ) : message.senderId !== userData._id ? (
+                ) : //if there is a proposesd date
+                message.senderId !== userData._id ? (
                   <>
                     <Box
                       py={"1rem"}
@@ -680,14 +629,7 @@ function Chatroom(props) {
                     >
                       <Text
                         size="lg"
-                        sx={{
-                          width: "100%",
-                          color: "#fff",
-                          background: "#9F2F5A",
-                          borderRadius: "0.5rem",
-                        }}
-                        px={"1rem"}
-                        py={"0.5rem"}
+                        className="chatroom-appointment appointment-received"
                       >
                         {message.messageText} {message.proposedDate}
                         <Button
@@ -722,14 +664,7 @@ function Chatroom(props) {
                   >
                     <Text
                       size="lg"
-                      sx={{
-                        width: "100%",
-                        color: "#fff",
-                        background: "#519E8A",
-                        borderRadius: "0.5rem",
-                      }}
-                      px={"1rem"}
-                      py={"0.5rem"}
+                      className="chatroom-appointment appointment-proposed"
                     >
                       Currently waiting for the other party to accept your
                       proposed appointment for {message.proposedDate}
@@ -760,7 +695,7 @@ function Chatroom(props) {
                   onChange={(e) => setMessageValue(e)}
                 />
 
-                <span className="formButton" type="submit">
+                <span className="messageButton" type="submit">
                   <Send onClick={sendMessage} />
                 </span>
               </form>

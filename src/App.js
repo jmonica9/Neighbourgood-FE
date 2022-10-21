@@ -3,8 +3,6 @@ import { useNavigate, Route, Routes } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Axios from "axios";
 import { BACKEND_URL } from "./constants";
-//import child components
-// import AuthForm from "./components/AuthForm";
 import Dashboard from "./components/Dashboard/Dashboard";
 
 //import styling
@@ -20,21 +18,19 @@ import { neighbourgoodTheme } from "./styles/Theme";
 
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
-import AuthModal from "./AuthModal";
 
-import Sidebar from "./components/Sidebar";
-import Lobby from "./components/Lobby";
-import Listing from "./components/Listing";
+import Sidebar from "./components/Sidebar/Sidebar";
+import Lobby from "./components/Lobby/Lobby";
+import Listing from "./components/Lobby/Listing";
 import LandingPage from "./components/LandingPage/LandingPage";
 import { Authentication } from "./Authentication";
 
 import { io } from "socket.io-client";
-import Chatroom from "./components/Chatroom";
+import Chatroom from "./components/Chatroom/Chatroom";
 import ProfilePage from "./components/Profile/ProfilePage";
-import { Faq } from "./components/Faq";
-import ChatroomFE from "./components/ChatroomFE";
+import { Faq } from "./components/Miscellaneous/Faq";
 import { OverallChats } from "./components/OverallChat";
-import { Error } from "./components/Error";
+import { Error } from "./components/Miscellaneous/Error";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -132,15 +128,33 @@ export default function App() {
               />
               <Route
                 path="/sharing"
-                element={<Lobby title="Sharing" drawerOpen={drawerOpen} />}
+                element={
+                  <Lobby
+                    title="Sharing"
+                    drawerOpen={drawerOpen}
+                    socket={socket}
+                  />
+                }
               />
               <Route
                 path="/helping"
-                element={<Lobby title="Helping" drawerOpen={drawerOpen} />}
+                element={
+                  <Lobby
+                    title="Helping"
+                    drawerOpen={drawerOpen}
+                    socket={socket}
+                  />
+                }
               />
               <Route
                 path="/lending"
-                element={<Lobby title="Lending" drawerOpen={drawerOpen} />}
+                element={
+                  <Lobby
+                    title="Lending"
+                    drawerOpen={drawerOpen}
+                    socket={socket}
+                  />
+                }
               />
               <Route
                 path="/sharing/listing/:listingId"
@@ -156,13 +170,9 @@ export default function App() {
               />
               <Route
                 path="/chatroom/:chatroomId"
-                element={<Chatroom drawerOpen={drawerOpen} />}
+                element={<Chatroom drawerOpen={drawerOpen} socket={socket} />}
               />
               <Route path="/faq" element={<Faq />}></Route>
-              <Route
-                path="/testChat"
-                element={<ChatroomFE drawerOpen={drawerOpen} />}
-              ></Route>
               <Route
                 path="/overallChats"
                 element={<OverallChats drawerOpen={drawerOpen} />}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { renderMatches, useParams, useNavigate } from "react-router-dom";
 
 //import styling
-import { neighbourgoodTheme } from "../styles/Theme";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import {
   Card,
   Grid,
@@ -20,11 +20,11 @@ import {
   Container,
   ScrollArea,
 } from "@mantine/core";
-import { socket, UserContext } from "../App";
+import { socket, UserContext } from "../../App";
 import axios from "axios";
-import { BACKEND_URL } from "../constants";
+import { BACKEND_URL } from "../../constants";
 import { toast } from "react-toastify";
-import ProfileMenu from "./Profile/ProfileMenu";
+import ProfileMenu from "../Profile/ProfileMenu";
 
 export default function Listing(props) {
   // const { listingId } = useParams();
@@ -76,6 +76,9 @@ export default function Listing(props) {
         ownerId: props.listing.userId,
       })
       .then((res) => {
+        props.socket.emit("listing_updated", {
+          listingId: `${props.listing._id}`,
+        });
         navigate(`/chatroom/${res.data._id}`, {
           state: { fromRequestPage: true },
         });
@@ -100,9 +103,10 @@ export default function Listing(props) {
       draggable: false,
       progress: undefined,
     });
-    alert(
-      "need to socket emit here to make both owner's and requestor's dashboard/lobby update"
-    );
+    props.socket.emit("listing_updated", {
+      listingId: `${props.listing._id}`,
+    });
+    props.closeModal();
   };
 
   const deleteListing = async () => {
@@ -124,6 +128,7 @@ export default function Listing(props) {
     });
     props.setLoading(false);
     setOpened(false);
+
     props.closeModal();
   };
 
@@ -313,15 +318,28 @@ export default function Listing(props) {
                 {props.listing.requestorIds.includes(userData._id) &&
                   !(userData._id === props.listing.userId) && (
                     <div>
-                      <div>
-                        You have already requested this item. Click
-                        <button onClick={sendToChatroom}>here</button>
-                        to go to the chatroom!
-                      </div>
-                      <div>
-                        alternatively, click{" "}
-                        <button onClick={withdrawRequest}>here</button> to
-                        withdraw your interest
+                      <div style={{ textAlign: "right" }}>
+                        You have already sent in a request <br />
+                        <br />
+                        <span
+                          onClick={sendToChatroom}
+                          className="listing-modal-button"
+                          style={{
+                            color: "green",
+                          }}
+                        >
+                          Go to chatroom
+                        </span>
+                        <span
+                          className="listing-modal-button"
+                          onClick={withdrawRequest}
+                          style={{
+                            color: "red",
+                            marginLeft: "1rem",
+                          }}
+                        >
+                          Withdraw
+                        </span>
                       </div>
                     </div>
                   )}
