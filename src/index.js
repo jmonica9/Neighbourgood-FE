@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 import { createStyles } from "@mantine/core";
 import { neighbourgoodTheme } from "./styles/Theme";

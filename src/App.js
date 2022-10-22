@@ -31,6 +31,7 @@ import { Authentication } from "./Authentication";
 import { io } from "socket.io-client";
 import Chatroom from "./components/Chatroom";
 import ProfilePage from "./components/Profile/ProfilePage";
+import Community from "./components/Dashboard/Community/Community";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -153,6 +154,10 @@ export default function App() {
               <Route
                 path="/chatroom/:chatroomId"
                 element={<Chatroom drawerOpen={drawerOpen} />}
+              />
+              <Route
+                path="/community"
+                element={<Community drawerOpen={drawerOpen} />}
               />
             </Routes>
           </UserContext.Provider>

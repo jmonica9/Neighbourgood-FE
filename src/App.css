@@ -58,3 +58,8 @@
 .drawer-toggle:hover {
   cursor: pointer;
 }
+
+/* Claim Deposit */
+.claimDeposit-cardElement {
+  display: grid;
+}

@@ -95,7 +95,7 @@ export default function ProfilePage(props) {
       <Button
         variant="outline"
         onClick={() => {
-          navigate("/dashboard");
+          navigate(-1);
         }}
       >
         <ArrowLeftIcon />

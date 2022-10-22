@@ -13,10 +13,11 @@ import {
   Stack,
   Card,
   Grid,
+  Avatar,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
 import AuthModal from "../AuthModal";
-import EditProfileModal from "./EditProfileModal";
+import EditProfileModal from "./Profile/EditProfileModal";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
 
@@ -75,8 +76,10 @@ export default function SideDrawer(props) {
         <Drawer
           // select classnames from above to target specific sub-components
           classNames={{ drawer: classes.drawerPaper }}
+          trapFocus={false}
           sx={{
             transform: "translateX(50px)",
+            overflow: "auto",
           }}
           opened={opened}
           onClose={() => props.closeDrawer()}
@@ -89,7 +92,7 @@ export default function SideDrawer(props) {
           withCloseButton={false}
         >
           <Stack spacing={"1vh"} sx={{ height: "100%" }}>
-            <Card
+            {/* <Card
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,
                 borderRadius: 25,
@@ -99,19 +102,36 @@ export default function SideDrawer(props) {
               pt={5}
               pb={5}
             >
-              <Text
-                color={"white"}
-                align="left"
-                size="25px"
-                weight={"bold"}
-                mb="1"
-              >
-                Welcome Back,
-              </Text>
-              <Text color={"white"} align="left" size="25px" weight={"bold"}>
-                {props.userData.username}
-              </Text>
-            </Card>
+              <Grid>
+                <Grid.Col span={8}>
+                  <Text
+                    color={"white"}
+                    align="left"
+                    size="25px"
+                    weight={"bold"}
+                    mb="1"
+                  >
+                    Welcome Back,
+                  </Text>
+                  <Text
+                    color={"white"}
+                    align="left"
+                    size="25px"
+                    weight={"bold"}
+                  >
+                    {props.userData.username}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={4} mt={"auto"} mb={"auto"} p={0}>
+                  <Avatar
+                    src={`${userData.cloudimg?.url}`}
+                    alt="userprofile"
+                    radius={"50%"}
+                    sx={{ height: "5vw", width: "5vw" }}
+                  />
+                </Grid.Col>
+              </Grid>
+            </Card> */}
             <Card
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,
@@ -121,9 +141,27 @@ export default function SideDrawer(props) {
               pt={5}
               pb={5}
             >
-              <Text color={"white"} align="left" size="25px" weight={"bold"}>
-                Profile
-              </Text>
+              <Grid>
+                <Grid.Col span={8}>
+                  <Text
+                    color={"white"}
+                    align="left"
+                    size="25px"
+                    weight={"bold"}
+                  >
+                    Welcome Back,
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={4} mt={"auto"} mb={"auto"} p={0}>
+                  <Avatar
+                    src={`${userData.cloudimg?.url}`}
+                    alt="userprofile"
+                    radius={"50%"}
+                    sx={{ height: "5vw", width: "5vw" }}
+                  />
+                </Grid.Col>
+              </Grid>
+
               <Text color={"white"} align="left" size="xl" weight={"bold"}>
                 {props.userData.username}
               </Text>
@@ -174,6 +212,7 @@ export default function SideDrawer(props) {
               }}
               onClick={() => {
                 navigate("/sharing");
+                props.closeDrawer();
               }}
             >
               <Text align="left" size={"25px"}>
@@ -190,6 +229,7 @@ export default function SideDrawer(props) {
               }}
               onClick={() => {
                 navigate("/helping");
+                props.closeDrawer();
               }}
             >
               <Text align="left" size={"25px"}>
@@ -206,12 +246,14 @@ export default function SideDrawer(props) {
               }}
               onClick={() => {
                 navigate("/lending");
+                props.closeDrawer();
               }}
             >
               <Text align="left" size={"25px"}>
                 Lending
               </Text>
             </Button>
+
             <Card
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,
@@ -224,6 +266,7 @@ export default function SideDrawer(props) {
               <Text color={"white"} align="left" size="25px" weight={"bold"}>
                 {/* Current Chats -- need to socket refresh whenever there is a
                 change from chats */}
+                Current Chats
               </Text>
               <Grid>
                 {chats &&
@@ -250,6 +293,23 @@ export default function SideDrawer(props) {
                 {/* some stuff */}
               </Text>
             </Card>
+            <Button
+              sx={{
+                backgroundColor: neighbourgoodTheme.colors.lightGray,
+                borderRadius: 15,
+                display: "flex",
+                height: "7vh",
+                maxHeight: 55,
+              }}
+              onClick={() => {
+                navigate("/community");
+                props.closeDrawer();
+              }}
+            >
+              <Text align="left" size={"25px"}>
+                Community
+              </Text>
+            </Button>
             {/* <Card
               sx={{
                 backgroundColor: neighbourgoodTheme.colors.lightGray,

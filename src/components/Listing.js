@@ -20,20 +20,35 @@ import {
   Container,
   ScrollArea,
 } from "@mantine/core";
-import { socket, UserContext } from "../App";
+import { HeartIcon, HeartFilledIcon, DiscIcon } from "@radix-ui/react-icons";
+import { UserContext } from "../App";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
 import { toast } from "react-toastify";
 import ProfileMenu from "./Profile/ProfileMenu";
-
+import EditListing from "./EditListing";
+import { socket } from "../App";
+import DeopsitCheckout from "./Deposits/DepositCheckout";
+import ReturnDeposit from "./Deposits/ReturnDeposit";
+import ClaimDeposit from "./Deposits/ClaimDeposit";
+import ListingComments from "./ListingComments";
+import { format, formatDistance } from "date-fns";
 export default function Listing(props) {
   // const { listingId } = useParams();
   const [themeColor, setThemeColor] = useState(
     neighbourgoodTheme.colors.lightGray
   );
   const [opened, setOpened] = useState(props.openModal);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [listingDetails, setListingDetails] = useState(props.listing);
   const userData = useContext(UserContext);
   const navigate = useNavigate();
+
+  const getListingDetails = async (id) => {
+    const details = await axios.get(`${BACKEND_URL}/listing/single/${id}`);
+    console.log(details);
+    setListingDetails(details.data);
+  };
 
   useEffect(() => {
     if (props.listing) {
@@ -44,12 +59,18 @@ export default function Listing(props) {
       } else if (props.listing.type === "lending") {
         setThemeColor(neighbourgoodTheme.colors.lightBrown);
       }
+      setListingDetails(props.listing);
     }
+    setOpened(props.openModal);
   }, [props]);
 
-  useEffect(() => {
-    setOpened(props.openModal);
-  });
+  // useEffect(() => {
+  //   console.log("haha");
+  //   socket.on("updating listing info", () => {
+  //     console.log("here!!");
+  //     getListingDetails(props.listing._id);
+  //   });
+  // }, [props.listing._id, socket]);
 
   const sendRequest = async () => {
     // props.setLoading(true);
@@ -129,12 +150,43 @@ export default function Listing(props) {
 
   const sendToChatroom = async () => {
     const response = await axios.post(`${BACKEND_URL}/chatroom/join`, {
-      listing: props.listing,
+      listing: listingDetails,
       userId: userData._id,
     });
     navigate(`/chatroom/${response.data._id}`, {
       state: { fromRequestPage: false },
     });
+  };
+
+  const closeEditModal = () => {
+    setOpenEditModal(false);
+  };
+  //Likes and Comments
+  const updateLikes = async (listing) => {
+    console.log(listing);
+    if (!listing.usersLiked.includes(userData._id)) {
+      console.log("adding");
+      const addLikes = await axios.post(
+        `${BACKEND_URL}/listing/like/${listing._id}/add`,
+        { userId: userData._id }
+      );
+      console.log(addLikes);
+    } else {
+      console.log("removing");
+      const removeLikes = await axios.post(
+        `${BACKEND_URL}/listing/like/${listing._id}/remove`,
+        { userId: userData._id }
+      );
+      console.log(removeLikes);
+    }
+    await getListingDetails(listing._id);
+  };
+
+  const dateDistance = (listing) => {
+    if (listing) {
+      const time = formatDistance(new Date(), Date.parse(listing.createdAt));
+      return time;
+    }
   };
 
   return (
@@ -147,117 +199,14 @@ export default function Listing(props) {
         props.closeModal();
       }}
     >
-      {/* <div> */}
-      {/* <div>
-          {props.listing ? (
-            <Card
-              sx={{
-                width: "100%",
-                backgroundColor: themeColor,
-                height: "95vh",
-                borderRadius: 25,
-              }}
-            >
-              <CardSection>
-                <Grid sx={{ width: "100%" }}>
-                  <Grid.Col span={6}>
-                    <Text align="left">Listing {props.listing.title}</Text>
-                  </Grid.Col>
-                  <Grid.Col span={6}></Grid.Col>
-                </Grid>
-              </CardSection>
-              <br />
-              <CardSection>
-                <Image src={`${props.listing.image}`} height={"60vh"} />
-              </CardSection>
-              <CardSection>
-                <Stack>
-                  <Text align="left">Title : {props.listing.title}</Text>
-                  <Text align="left">
-                    Description : {props.listing.description}
-                  </Text>
-                  <Grid>
-                    <Grid.Col span={9}></Grid.Col>
-                    <Grid.Col span={3}>
-                      {!props.listing.requestorIds.includes(userData._id) && (
-                        <Button ml={"5rem"} onClick={sendRequest}>
-                          Request
-                        </Button>
-                      )}
-                      {userData._id === props.listing.userId ? (
-                        <Button onClick={deleteListing}>Delete</Button>
-                      ) : null}
-                    </Grid.Col>
-                  </Grid>
-                </Stack>
-              </CardSection>
-            </Card>
-          ) : (
-            "null"
-          )}
-        </div> */}
-      {/* {props.listing ? (
-          <Card
-            shadow="sm"
-            p="lg"
-            radius="md"
-            withBorder
-            height="100"
-            sx={{
-              width: "100%",
-              backgroundColor: themeColor,
-              height: "95vh",
-              borderRadius: 25,
-            }}
-          >
-            <Card.Section>
-              <Image
-                mt={3}
-                src={props.listing.cloudimg?.url}
-                alt={props.listing.title}
-                height="50vh"
-                fit="contain"
-              />
-              
-            </Card.Section>
-
-            
-            <Group inheritPadding position="right" mt="md" mb="xs">
-              {!props.listing.requestorIds.includes(userData._id) && (
-                <Button
-                  variant="light"
-                  color="blue"
-                  radius="md"
-                  onClick={sendRequest}
-                >
-                  {" "}
-                  Request
-                </Button>
-              )}
-              {userData._id === props.listing.userId ? (
-                <Button
-                  variant="light"
-                  color="blue"
-                  radius="md"
-                  onClick={deleteListing}
-                >
-                  Delete
-                </Button>
-              ) : null}
-            </Group>
-          </Card>
-        ) : (
-          "Loading.."
-        )}
-      </div> */}
-      {props.listing ? (
+      {listingDetails ? (
         <Container fluid className="SideBar-Content-body" px="xs">
           <Grid grow align="center">
             <Grid.Col span={6}>
               <Card radius="md" mr={3}>
                 <Card.Section mt="sm">
                   <Image
-                    src={props.listing.cloudimg?.url}
+                    src={listingDetails.cloudimg?.url}
                     height="50vh"
                     alt="photo display"
                     fit="contain"
@@ -280,38 +229,84 @@ export default function Listing(props) {
                 <ScrollArea style={{ height: "50vh" }}>
                   <Grid.Col span={6}>
                     <br />
-                    <Text size={28} weight={500} mb={4}>
-                      {props.listing.title}
-                    </Text>
-                    <Group grow>
-                      <Text size={20} color="dimmed" mb={4}>
-                        Posted by: {props.listing.username}
-                      </Text>
-                      <ProfileMenu userId={props.listing.userId} />
+                    <Grid>
+                      <Grid.Col span={8}>
+                        <Text size={28} weight={500} mb={4}>
+                          {listingDetails.title}
+                        </Text>
+                        <Text size={20} color="dimmed" mb={4}>
+                          Posted by: {listingDetails.username}
+                        </Text>
+                      </Grid.Col>
+                      <Grid.Col span={4}>
+                        <Text mb={"1rem"}>
+                          <DiscIcon /> {listingDetails.location}
+                        </Text>
+                        <Text>{dateDistance(listingDetails)} Ago</Text>
+                        <Stack>
+                          <ProfileMenu userId={listingDetails.userId} />
+                        </Stack>
+                      </Grid.Col>
+                    </Grid>
+
+                    <Group>
+                      <>
+                        {listingDetails.usersLiked.includes(userData._id) ? (
+                          <HeartFilledIcon
+                            onClick={() => {
+                              updateLikes(listingDetails);
+                            }}
+                          />
+                        ) : (
+                          <HeartIcon
+                            onClick={() => {
+                              updateLikes(listingDetails);
+                            }}
+                          />
+                        )}
+                        <Text>{listingDetails.usersLiked.length}</Text>
+                      </>
                     </Group>
 
                     <Text size={18} color="dimmed">
-                      {props.listing.description}
+                      {listingDetails.description}
                     </Text>
-
+                    <ClaimDeposit />
                     <br />
                   </Grid.Col>
                 </ScrollArea>
+              </Card.Section>
+              <Card.Section>
+                <ListingComments listing={listingDetails} />
               </Card.Section>
             </Card>
             <Grid.Col span={6}>
               <Group position="right" mt="md" mb="xs">
                 {/* User has not yet requested + user is not the owner of the listing*/}
-                {!props.listing.requestorIds.includes(userData._id) &&
-                  !(userData._id === props.listing.userId) && (
-                    <Button variant="dark" radius="md" onClick={sendRequest}>
-                      Request
-                    </Button>
+                {!listingDetails.requestorIds.includes(userData._id) &&
+                  !(userData._id === listingDetails.userId) && (
+                    <div>
+                      <Button variant="dark" radius="md" onClick={sendRequest}>
+                        Request
+                      </Button>
+                      <DeopsitCheckout
+                        listing={listingDetails}
+                        name={listingDetails.title}
+                        description={listingDetails.description}
+                        amount={5000.0}
+                      />
+                      <ReturnDeposit
+                        listing={listingDetails}
+                        name={listingDetails.title}
+                        description={listingDetails.description}
+                        amount={4.99}
+                      />
+                    </div>
                   )}
 
                 {/* User has requested already + user is not the owner of the listing */}
-                {props.listing.requestorIds.includes(userData._id) &&
-                  !(userData._id === props.listing.userId) && (
+                {listingDetails.requestorIds.includes(userData._id) &&
+                  !(userData._id === listingDetails.userId) && (
                     <div>
                       <div>
                         You have already requested this item. Click
@@ -327,10 +322,26 @@ export default function Listing(props) {
                   )}
 
                 {/* If i own this listing */}
-                {userData._id === props.listing.userId ? (
-                  <Button variant="dark" radius="md" onClick={deleteListing}>
-                    Delete
-                  </Button>
+                {userData._id === listingDetails.userId ? (
+                  <div>
+                    <Button
+                      variant="dark"
+                      radius="md"
+                      mr={"0.5rem"}
+                      onClick={() => setOpenEditModal(true)}
+                    >
+                      Edit Listing
+                    </Button>
+                    <EditListing
+                      opened={openEditModal}
+                      closed={() => closeEditModal()}
+                      listing={listingDetails}
+                      update={() => getListingDetails(props.listing._id)}
+                    />
+                    <Button variant="dark" radius="md" onClick={deleteListing}>
+                      Delete
+                    </Button>
+                  </div>
                 ) : null}
               </Group>
             </Grid.Col>
