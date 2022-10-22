@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import { useNavigate } from "react-router-dom";
-import Listing from "../Listing";
+import Listing from "../Lobby/Listing";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { Authentication } from "../../Authentication";
@@ -100,7 +100,6 @@ export default function LandingPageListings(props) {
         onClose={() => setAuthOpen(false)}
         overflow="inside"
       >
-        {/* <AuthForm /> */}
         <Authentication onClose={() => setAuthOpen(false)} />
       </Modal>
       <Grid>

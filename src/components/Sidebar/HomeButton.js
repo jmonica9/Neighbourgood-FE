@@ -1,7 +1,7 @@
 import { Button, Group } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { HouseHeartFill } from "react-bootstrap-icons";
-import { UserContext } from "../App";
+import { UserContext } from "../../App";
 import { useContext } from "react";
 
 export default function Home() {

@@ -14,13 +14,13 @@ import {
   Image,
   Center,
 } from "@mantine/core";
-import { neighbourgoodTheme } from "../styles/Theme";
+import { neighbourgoodTheme } from "../../styles/Theme";
 import NewListing from "./NewListing";
 import { useLocation, useNavigate } from "react-router-dom";
 import Listing from "./Listing";
-import { UserContext } from "../App";
+import { UserContext } from "../../App";
 import axios from "axios";
-import { BACKEND_URL } from "../constants";
+import { BACKEND_URL } from "../../constants";
 import { LoadingOverlay, Title } from "@mantine/core";
 import { HeartIcon, HeartFilledIcon } from "@radix-ui/react-icons";
 import { socket } from "../App";
@@ -330,6 +330,7 @@ export default function Lobby(props) {
                 // width: props.drawerOpen ? "35vw" : "45vw",
                 backgroundColor: themeColor,
                 height: "35vh",
+                minHeight: 280,
                 display: "flex",
                 borderRadius: 25,
               }}
@@ -441,6 +442,7 @@ export default function Lobby(props) {
             listing={selectedListing}
             loading={loading}
             setLoading={setLoading}
+            socket={props.socket}
           />
         </div>
       </div>

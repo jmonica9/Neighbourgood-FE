@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { UserContext } from "../App";
+import { socket, UserContext } from "../App";
 
 //import styling
 import {
@@ -16,8 +16,7 @@ import {
   Avatar,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
-import AuthModal from "../AuthModal";
-import EditProfileModal from "./Profile/EditProfileModal";
+import EditProfileModal from "./Profile/Profile/EditProfileModal";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
 
@@ -43,6 +42,9 @@ export default function SideDrawer(props) {
 
   useEffect(() => {
     setOpened(props.openDrawer);
+    if (userData) {
+      getChats();
+    }
   }, [props]);
 
   useEffect(() => {
@@ -51,12 +53,6 @@ export default function SideDrawer(props) {
       // console.log("close drawer");
     }
   });
-
-  useEffect(() => {
-    if (userData) {
-      getChats();
-    }
-  }, [userData]);
 
   useEffect(() => {
     if (chats) {
@@ -274,9 +270,10 @@ export default function SideDrawer(props) {
                     return (
                       <Grid.Col key={chat._id}>
                         <p style={{ fontSize: "1rem" }}>
-                          listingId: {chat.listingId}
+                          {/* listingId: {chat.listingId} */}
                         </p>
-                        <button
+                        <Button
+                          variant="dark"
                           onClick={() => {
                             navigate(`/chatroom/${chat._id}`, {
                               state: { fromRequestPage: false },
@@ -284,7 +281,7 @@ export default function SideDrawer(props) {
                           }}
                         >
                           go to chatroom
-                        </button>
+                        </Button>
                       </Grid.Col>
                     );
                   })}

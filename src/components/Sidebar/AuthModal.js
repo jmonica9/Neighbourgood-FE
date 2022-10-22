@@ -1,5 +1,4 @@
-// import AuthForm from "./AuthForm";
-import { Authentication } from "./Authentication";
+import { Authentication } from "../../Authentication";
 import { useState } from "react";
 import { Modal, Button, Group, useMantineTheme } from "@mantine/core";
 
@@ -20,7 +19,6 @@ export default function AuthModal() {
         onClose={() => setOpened(false)}
         overflow="inside"
       >
-        {/* <AuthForm /> */}
         <Authentication onClose={() => setOpened(false)} />
       </Modal>
 

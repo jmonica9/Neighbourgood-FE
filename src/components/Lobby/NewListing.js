@@ -10,7 +10,7 @@ import {
   Textarea,
   FileInput,
 } from "@mantine/core";
-import { BACKEND_URL } from "../constants";
+import { BACKEND_URL } from "../../constants";
 import { useParams, useLocation } from "react-router-dom";
 
 import { toast, ToastContainer } from "react-toastify";

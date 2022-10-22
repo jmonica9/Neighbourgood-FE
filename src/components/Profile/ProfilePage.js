@@ -5,7 +5,7 @@ import { BACKEND_URL } from "../../constants";
 import axios from "axios";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import { format } from "date-fns";
-import Listing from "../Listing";
+import Listing from "../Lobby/Listing";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
 export default function ProfilePage(props) {
