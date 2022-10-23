@@ -38,7 +38,7 @@ const GeoAPI = (props) => {
     //   .then((res) => console.log(res, "res from lat lon"));
     axios
       .get(
-        `https://api.geoapify.com/v2/places?categories=building.residential&filter=circle:${lon},${lat},5000&bias=proximity:${lon},${lat}&limit=20&apiKey=a1e4990d346a407f86d6128b66d52348`
+        `https://api.geoapify.com/v2/places?categories=building.residential&filter=circle:${lon},${lat},5000&bias=proximity:${lon},${lat}&limit=20&apiKey=${process.env.REACT_APP_GEO_APIKEY}`
       )
       .then((response) => response.json())
       .then((result) => console.log(result))
@@ -47,9 +47,10 @@ const GeoAPI = (props) => {
   // image.pn
   // categories: building , postal_code , accommodation
   return (
-    <GeoapifyContext apiKey="a1e4990d346a407f86d6128b66d52348">
+    <GeoapifyContext apiKey={`${process.env.REACT_APP_GEO_APIKEY}`}>
       <GeoapifyGeocoderAutocomplete
-        placeholder="Enter postalcode here"
+        className="geoapifytest"
+        placeholder="Enter your postal code"
         type={"postcode"}
         lang="en"
         countryCodes={"sg"}
