@@ -189,7 +189,9 @@ export default function Lobby(props) {
       );
       console.log(removeLikes);
     }
-    await getLobbyListings();
+    // await getLobbyListings();
+    // this only gets all listing -> use another state loading to reload based on sorting
+    setLoading(!loading);
 
     console.log("lobby listings CAT", lobbyListings);
   };
