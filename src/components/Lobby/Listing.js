@@ -97,9 +97,6 @@ export default function Listing(props) {
         ownerId: props.listing.userId,
       })
       .then((res) => {
-        props.socket.emit("listing_updated", {
-          listingId: `${props.listing._id}`,
-        });
         navigate(`/chatroom/${res.data._id}`, {
           state: { fromRequestPage: true },
         });
@@ -124,9 +121,6 @@ export default function Listing(props) {
       draggable: false,
       progress: undefined,
     });
-    props.socket.emit("listing_updated", {
-      listingId: `${props.listing._id}`,
-    });
     props.closeModal();
   };
 
@@ -149,7 +143,6 @@ export default function Listing(props) {
     });
     props.setLoading(false);
     setOpened(false);
-
     props.closeModal();
   };
 

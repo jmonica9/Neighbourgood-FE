@@ -58,10 +58,6 @@ function Chatroom(props) {
     props.socket.on("refresh_chatroom", (data) => {
       getChatroomInfo();
     });
-
-    props.socket.on("refresh_listing", (data) => {
-      getChatroomInfo();
-    });
   }, [props.socket]);
 
   /* --------------------end of socket stuff-------------------- */
@@ -207,7 +203,7 @@ function Chatroom(props) {
         setMessage("");
       });
     console.log("post received");
-    props.socket.emit("chatroom_updated", { room: `${chatroomId}` });
+    props.socket.emit("refresh_chatroom_trigger", { room: `${chatroomId}` });
   };
 
   useEffect(() => {
@@ -236,7 +232,7 @@ function Chatroom(props) {
       })
       .then(() => {
         getMessages();
-        props.socket.emit("chatroom_updated", {
+        props.socket.emit("refresh_chatroom_trigger", {
           room: `${chatroomId}`,
         });
         props.socket.emit("listing_updated", {
@@ -272,7 +268,7 @@ function Chatroom(props) {
       })
       .then(() => {
         getMessages();
-        props.socket.emit("chatroom_updated", {
+        props.socket.emit("refresh_chatroom_trigger", {
           room: `${chatroomId}`,
         });
       });
@@ -348,7 +344,7 @@ function Chatroom(props) {
         )}`,
       })
       .then((res) => {
-        props.socket.emit("chatroom_updated", {
+        props.socket.emit("refresh_chatroom_trigger", {
           room: `${chatroomId}`,
         });
 
@@ -382,7 +378,7 @@ function Chatroom(props) {
           .then(() => {
             setMessage("");
             getMessages();
-            props.socket.emit("chatroom_updated", {
+            props.socket.emit("refresh_chatroom_trigger", {
               room: `${chatroomId}`,
             });
           });
