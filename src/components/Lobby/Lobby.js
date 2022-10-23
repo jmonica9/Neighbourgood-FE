@@ -44,6 +44,7 @@ export default function Lobby(props) {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
   const [listLocations, setListLocations] = useState([]);
   const userData = useContext(UserContext);
 
@@ -173,6 +174,7 @@ export default function Lobby(props) {
 
   //Likes and Comments
   const updateLikes = async (listing) => {
+    setRefresh(true);
     console.log(listing);
     if (!listing.usersLiked.includes(userData._id)) {
       console.log("adding");
@@ -191,7 +193,7 @@ export default function Lobby(props) {
     }
     // await getLobbyListings();
     // this only gets all listing -> use another state loading to reload based on sorting
-    setLoading(!loading);
+    setRefresh(false);
 
     console.log("lobby listings CAT", lobbyListings);
   };

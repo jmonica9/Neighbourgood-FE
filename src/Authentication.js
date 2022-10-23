@@ -20,8 +20,8 @@ import { BACKEND_URL } from "./constants";
 
 import { socket } from "./App";
 import GeoAPI from "./components/GeoAPI";
-import Maps from "./components/Maps";
-import GoogleMaps from "./components/GoogleMaps";
+// import Maps from "./components/Maps";
+// import GoogleMaps from "./components/GoogleMaps";
 import axios from "axios";
 
 export function Authentication(props) {
