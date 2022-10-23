@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { BACKEND_URL } from "../constants";
+import { BACKEND_URL } from "../../constants";
 import { toast, ToastContainer } from "react-toastify";
 import { UploadIcon } from "@radix-ui/react-icons";
-import { socket } from "../App";
+import { socket } from "../../App";
 import {
   Modal,
   Button,

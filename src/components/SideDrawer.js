@@ -16,7 +16,7 @@ import {
   Avatar,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
-import EditProfileModal from "./Profile/Profile/EditProfileModal";
+import EditProfileModal from "./Profile/EditProfileModal";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
 

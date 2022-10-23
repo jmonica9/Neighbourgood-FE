@@ -31,7 +31,7 @@ export default function ReturnDeposit(props) {
     const response = await axios.get(
       `${BACKEND_URL}/payment/${props.listing._id}`
     );
-    console.log(response.data);
+    // console.log(response.data);
     setChargeId(response.data.chargeId);
   };
 

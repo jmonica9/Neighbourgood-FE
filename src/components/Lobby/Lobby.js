@@ -23,7 +23,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { LoadingOverlay, Title } from "@mantine/core";
 import { HeartIcon, HeartFilledIcon } from "@radix-ui/react-icons";
-import { socket } from "../App";
+import { socket } from "../../App";
 
 export default function Lobby(props) {
   const [lobbyListings, setLobbyListings] = useState([]);
