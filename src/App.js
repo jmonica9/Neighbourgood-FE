@@ -35,6 +35,8 @@ import { Faq } from "./components/Faq";
 import ChatroomFE from "./components/ChatroomFE";
 import { OverallChats } from "./components/OverallChat";
 import { Error } from "./components/Error";
+import ReviewDetails from "./components/ReviewDetails";
+import IndividualReview from "./components/IndividualReviews";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -166,6 +168,10 @@ export default function App() {
               <Route
                 path="/overallChats"
                 element={<OverallChats drawerOpen={drawerOpen} />}
+              ></Route>
+              <Route
+                path="/individualReview/:listingId"
+                element={<IndividualReview drawerOpen={drawerOpen} />}
               ></Route>
               <Route path="/*" element={<Error />}></Route>
             </Routes>

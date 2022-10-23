@@ -19,6 +19,10 @@ import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "./constants";
 
 import { socket } from "./App";
+import GeoAPI from "./components/GeoAPI";
+import Maps from "./components/Maps";
+import GoogleMaps from "./components/GoogleMaps";
+import axios from "axios";
 
 export function Authentication(props) {
   const [registerUsername, setRegisterUsername] = useState("");
@@ -27,6 +31,7 @@ export function Authentication(props) {
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [allUsers, setAllUsers] = useState(null);
+  const [county, setCounty] = useState("");
   const [myUser, setMyUser] = useState(null);
   const [jwtUser, setJwtUser] = useState(null);
   const [location, setLocation] = useState(null);
@@ -50,12 +55,16 @@ export function Authentication(props) {
 
   const register = () => {
     console.log(authMode, "authmode");
+    axios
+      .post(`${BACKEND_URL}/location/insert`, { location: county })
+      .then((res) => console.log(res));
     Axios({
       method: "POST",
       data: {
         email: registerEmail,
         username: registerUsername,
         password: registerPassword,
+        location: county,
       },
       withCredentials: true,
       url: `${BACKEND_URL}/auth/register`,
@@ -188,13 +197,11 @@ export function Authentication(props) {
               mt="md"
               required
             />
-            <TextInput
-              label="Location"
-              value={location}
-              placeholder="set your location"
-              onChange={(e) => setLocation(e.target.value)}
-              mt="md"
-            />
+
+            <GeoAPI setCounty={setCounty} />
+            <Text>{county}</Text>
+            {/* <GoogleMaps /> */}
+            {/* <Maps /> */}
             <PasswordInput
               label="Password"
               placeholder="Your password"

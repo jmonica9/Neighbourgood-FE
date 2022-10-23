@@ -62,16 +62,16 @@ export default function NewListing(props) {
   };
 
   // categories
-  const data = [
-    { value: "Kitchen Appliances", label: "Kitchen Appliances" },
-    { value: "Electronics", label: "Electronics" },
-    { value: "Clothes and Wearables", label: "Clothes and Apparel" },
-    { value: "Personal Care", label: "Personal Care" },
-    { value: "Furniture", label: "Furniture" },
-    { value: "Toys", label: "Toys" },
-    { value: "Hobby", label: "Hobby" },
-    { value: "Others", label: "Others" },
-  ];
+  // const data = [
+  //   { value: "Kitchen Appliances", label: "Kitchen Appliances" },
+  //   { value: "Electronics", label: "Electronics" },
+  //   { value: "Clothes and Wearables", label: "Clothes and Apparel" },
+  //   { value: "Personal Care", label: "Personal Care" },
+  //   { value: "Furniture", label: "Furniture" },
+  //   { value: "Toys", label: "Toys" },
+  //   { value: "Hobby", label: "Hobby" },
+  //   { value: "Others", label: "Others" },
+  // ];
 
   const closeModal = () => {
     setTitle("");
@@ -84,6 +84,7 @@ export default function NewListing(props) {
     e.preventDefault();
     await convertImage(e);
     props.setLoading(true);
+    console.log(userData, "userData");
     console.log(imageData, "imageData from submit");
     console.log(imageString, "imagestring from submit");
     //title, image, categories, description, type
@@ -94,6 +95,7 @@ export default function NewListing(props) {
       image: imageData,
       categories: listingCategories,
       description: description,
+      location: userData.location,
       type: location.pathname.split("/")[1],
     });
 
@@ -159,7 +161,7 @@ export default function NewListing(props) {
           /> */}
 
           <MultiSelect
-            data={data}
+            data={props.categoriess}
             label="Listing Category"
             required
             onChange={(e) => {

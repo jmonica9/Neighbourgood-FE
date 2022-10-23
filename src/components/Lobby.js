@@ -13,6 +13,7 @@ import {
   Button,
   Image,
   Center,
+  NativeSelect,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
 import NewListing from "./NewListing";
@@ -23,14 +24,17 @@ import axios from "axios";
 import { BACKEND_URL } from "../constants";
 import { LoadingOverlay, Title } from "@mantine/core";
 import { experimentalStyled } from "@mui/material";
+
 export default function Lobby(props) {
   const [lobbyListings, setLobbyListings] = useState([]);
+  const [locationCategories, setLocationCategories] = useState(["All"]);
   const [themeColor, setThemeColor] = useState(
     neighbourgoodTheme.colors.lightGray
   );
-
+  const [categoriess, setCategoriess] = useState([]);
   const [openNewModal, setOpenNewModal] = useState(false);
   const [chosenCategories, setChosenCategories] = useState([]);
+  const [chosenLocation, setChosenLocation] = useState("");
   const [myListings, setMyListings] = useState([]);
   const [openListingModal, setOpenListingModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -39,6 +43,7 @@ export default function Lobby(props) {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const [listLocations, setListLocations] = useState([]);
   const userData = useContext(UserContext);
 
   useEffect(() => {
@@ -65,32 +70,88 @@ export default function Lobby(props) {
         .then((res) => {
           setMyListings(res.data);
         });
+
+      getLocationCategories();
+      getCategories();
     }
+    console.log(categoriess);
   }, [userData, location, refresh]);
 
   useEffect(() => {
-    if (chosenCategories === [] || chosenCategories.length < 1) {
+    console.log(chosenCategories);
+    //if no chosen categories/locations then get all listings
+    if (
+      (chosenCategories === [] || chosenCategories.length < 1) &&
+      (chosenLocation === "" || chosenLocation === "All")
+    ) {
+      console.log("no sort");
       axios
         .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
         .then((res) => {
+          console.log(res);
           setLobbyListings(res.data);
         });
-    } else if (chosenCategories !== []) {
+    } else if (
+      // chose categories & location is nt initial state &  chosen All
+      chosenCategories.length > 0 &&
+      chosenLocation !== "All" &&
+      chosenLocation !== ""
+    ) {
+      console.log("sort by loc n cat");
+      sortByLocationAndCategories();
+    } else if (chosenLocation !== "" && chosenLocation !== "All") {
+      console.log(chosenLocation !== "All", "status");
+      console.log("sort by loc", chosenLocation);
+      sortByLocation();
+    } else if (chosenCategories !== [] || chosenCategories.length > 0) {
+      console.log("sort by cat");
       sortByCategories();
     }
-  }, [chosenCategories, location, loading]);
+  }, [chosenCategories, chosenLocation, location, locationCategories, loading]);
 
-  useEffect(() => {
+  const getCategories = () => {
+    console.log(props.title, "TESTTTTTTT");
     if (props.title === "Sharing") {
       setThemeColor(neighbourgoodTheme.colors.lightTeal);
+      // categories
+      setCategoriess([
+        { value: "Kitchen Appliances", label: "Kitchen Appliances" },
+        { value: "Electronics", label: "Electronics" },
+        { value: "Clothes and Wearables", label: "Clothes and Apparel" },
+        { value: "Personal Care", label: "Personal Care" },
+        { value: "Furniture", label: "Furniture" },
+        { value: "Toys", label: "Toys" },
+        { value: "Hobby", label: "Hobby" },
+        { value: "Others", label: "Others" },
+      ]);
     } else if (props.title === "Helping") {
       setThemeColor(neighbourgoodTheme.colors.lightPurple);
+      setCategoriess([
+        { value: "Animal rescue and care", label: "Animal rescue and care" },
+        { value: "Teaching", label: "Teaching" },
+        { value: "Household Help", label: "Household Help" },
+        { value: "Repair", label: "Repair" },
+        { value: "Delivery", label: "Delivery" },
+        { value: "Transport", label: "Transport" },
+        { value: "Food", label: "Food" },
+      ]);
     } else if (props.title === "Lending") {
       setThemeColor(neighbourgoodTheme.colors.lightBrown);
+      setCategoriess([
+        { value: "Kitchen Appliances", label: "Kitchen Appliances" },
+        { value: "Electronics", label: "Electronics" },
+        { value: "Clothes and Wearables", label: "Clothes and Apparel" },
+        { value: "Personal Care", label: "Personal Care" },
+        { value: "Furniture", label: "Furniture" },
+        { value: "Toys", label: "Toys" },
+        { value: "Hobby", label: "Hobby" },
+        { value: "Others", label: "Others" },
+      ]);
     }
-  });
+  };
 
   const sortByCategories = async () => {
+    console.log("sort by categories");
     await axios
       .post(
         `${BACKEND_URL}/listing/categories/${location.pathname.split("/")[1]}`,
@@ -99,13 +160,60 @@ export default function Lobby(props) {
       .then((res) => {
         setLobbyListings(res.data);
       });
+
+    console.log("lobby listings CAT", lobbyListings);
   };
-  // const TriggerOpenNewModal = () => {
-  //   setOpenNewModal(true);
-  // };
-  // const TriggerOpenListingModal = () => {
-  //   setOpenListingModal(true);
-  // };
+
+  const sortByLocation = async () => {
+    console.log("sort by location");
+    await axios
+      .post(
+        `${BACKEND_URL}/listing/locations/${location.pathname.split("/")[1]}`,
+        { location: chosenLocation }
+      )
+      .then((res) => {
+        setLobbyListings(res.data);
+      });
+    console.log("lobby listings LOC", lobbyListings);
+  };
+
+  const sortByLocationAndCategories = async () => {
+    console.log("sort by location+categories");
+    await axios
+      .post(
+        `${BACKEND_URL}/listing/locationscategories/${
+          location.pathname.split("/")[1]
+        }`,
+        { location: chosenLocation, categories: chosenCategories }
+      )
+      .then((res) => {
+        setLobbyListings(res.data);
+      });
+    console.log("lobby listings LOC+CAT", lobbyListings);
+  };
+
+  const getLocationCategories = async () => {
+    console.log("getting locations categories!");
+    await axios
+      .get(
+        "http://localhost:3000/location/"
+        // `http:/${BACKEND_URL}/location/`
+      )
+      .then((res) => {
+        // setLocationCategories(current=>
+        //  [current,res.data.map((item) => {
+        //     return item.location;
+        //   })]
+        // );
+        setLocationCategories([
+          "All",
+          ...res.data.map((item) => {
+            return item.location;
+          }),
+        ]);
+      });
+    console.log({ locationCategories });
+  };
 
   const closeNewModal = () => {
     setOpenNewModal(false);
@@ -116,7 +224,7 @@ export default function Lobby(props) {
     setRefresh(!refresh);
   };
 
-  // categories
+  // categories;
   const categories = [
     { value: "Kitchen Appliances", label: "Kitchen Appliances" },
     { value: "Electronics", label: "Electronics" },
@@ -347,7 +455,7 @@ export default function Lobby(props) {
                 </Grid.Col>
                 <Grid.Col span={6} pl={0}>
                   <MultiSelect
-                    data={categories}
+                    data={categories.length > 1 && categoriess}
                     placeholder="Categories"
                     onChange={(e) => {
                       setChosenCategories(e);
@@ -355,7 +463,15 @@ export default function Lobby(props) {
                   />
                 </Grid.Col>
                 <Grid.Col span={3} pl={0}>
-                  <MultiSelect data={categories} placeholder="Location" />
+                  <NativeSelect
+                    onChange={(event) => setChosenLocation(event.target.value)}
+                    data={
+                      locationCategories.length > 0
+                        ? locationCategories
+                        : ["All"]
+                    }
+                    placeholder="Location"
+                  />
                 </Grid.Col>
                 <Grid.Col
                   span={3}
@@ -386,6 +502,7 @@ export default function Lobby(props) {
             user={userData}
             loading={loading}
             setLoading={setLoading}
+            categoriess={categoriess}
           />
           <Listing
             openModal={openListingModal}

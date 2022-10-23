@@ -287,6 +287,12 @@ export default function Listing(props) {
                       <Text size={20} color="dimmed" mb={4}>
                         Posted by: {props.listing.username}
                       </Text>
+                      <Text size={20} color="dimmed" mb={4}>
+                        Location:{" "}
+                        {props.listing.location
+                          ? props.listing.location
+                          : "no location"}
+                      </Text>
                       <ProfileMenu userId={props.listing.userId} />
                     </Group>
 
