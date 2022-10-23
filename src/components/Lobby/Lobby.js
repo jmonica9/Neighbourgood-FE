@@ -14,6 +14,7 @@ import {
   Image,
   Center,
   NativeSelect,
+  Box,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import NewListing from "./NewListing";
@@ -25,6 +26,7 @@ import { BACKEND_URL } from "../../constants";
 import { LoadingOverlay, Title } from "@mantine/core";
 import { HeartIcon, HeartFilledIcon } from "@radix-ui/react-icons";
 import { socket } from "../../App";
+import { fontSize } from "@mui/system";
 
 export default function Lobby(props) {
   const [lobbyListings, setLobbyListings] = useState([]);
@@ -275,87 +277,147 @@ export default function Lobby(props) {
       return new Date(b.updatedAt) - new Date(a.updatedAt);
     })
     .map((listing) => (
-      <Card
+      <Grid.Col
+        span={"auto"}
         sx={{
-          width: "10rem",
-          height: "10rem",
-          marginTop: "2vh",
-          marginBottom: "2vh",
+          display: "flex",
+          justifyContent: "center",
         }}
-        target="_blank"
-        key={listing._id}
       >
-        <Card.Section width="10rem" height="10rem">
+        <Box
+          sx={{
+            width: "10rem",
+            height: "10rem",
+            marginTop: "2vh",
+            background: "white",
+            borderRadius: "1rem",
+          }}
+          target="_blank"
+          key={listing._id}
+        >
+          <div style={{ position: "absolute" }}></div>
           <Image
             src={listing.cloudimg?.url}
             width="10rem"
             max-width="10rem"
             max-height="10rem"
-            height={160}
+            height={"10rem"}
             alt="No way!"
+            radius="1rem"
+          />
+          <Box
+            className="watchlist-container"
+            sx={{
+              height: "100%",
+              position: "relative",
+              top: "-10rem",
+              backgroundColor: "rgba(17, 5, 5, 0.9)",
+              display: "flex",
+              flexFlow: "column nowrap",
+              justifyContent: "center",
+              opacity: 0,
+              borderRadius: "1rem",
+            }}
+            p="1rem"
             onClick={() => {
               setOpenListingModal(true);
               setSelectedListing(listing);
             }}
-          />
-        </Card.Section>
-
-        <Text weight={500} size="lg" mt="md">
-          {listing.title}
-        </Text>
-
-        <Text mt="xs" color="dimmed" size="sm">
-          {listing.description}
-        </Text>
-      </Card>
+          >
+            <Box
+              sx={{
+                color: "#fff",
+                whiteSpace: "wrap",
+                overflow: "hidden",
+                overflowWrap: "break-word",
+                fontSize: "1rem",
+              }}
+            >
+              {listing.title}
+            </Box>
+            {/* <div>
+              <p style={{ color: "white", fontSize: "1rem" }}>
+                
+              </p>
+              <p style={{ fontSize: "1rem" }}>{listing.description}</p>{" "}
+            </div> */}
+          </Box>
+        </Box>
+      </Grid.Col>
     ));
+
   const ListMyListings = myListings
     .sort((a, b) => {
       return new Date(b.updatedAt) - new Date(a.updatedAt);
     })
     .map((listing) => (
-      <Card
+      <Grid.Col
+        span={"auto"}
         sx={{
-          width: "10rem",
-          height: "10rem",
-          marginTop: "2vh",
-          marginBottom: "2vh",
-        }}
-        target="_blank"
-        onClick={() => {
-          // navigate(`/${props.title.toLowerCase()}/listing/1`);
-          setOpenListingModal(true);
-          setSelectedListing(listing);
+          display: "flex",
+          justifyContent: "center",
         }}
       >
-        <Card.Section width="10rem" height="10rem">
+        <Box
+          sx={{
+            width: "10rem",
+            height: "10rem",
+            marginTop: "2vh",
+            background: "white",
+            borderRadius: "1rem",
+          }}
+          target="_blank"
+          key={listing._id}
+        >
+          <div style={{ position: "absolute" }}></div>
           <Image
             src={listing.cloudimg?.url}
             width="10rem"
             max-width="10rem"
             max-height="10rem"
-            height={160}
+            height={"10rem"}
             alt="No way!"
+            radius="1rem"
           />
-        </Card.Section>
-
-        <Text weight={500} size="lg" mt="md">
-          {listing.title}
-        </Text>
-
-        <Text mt="xs" color="dimmed" size="sm">
-          {listing.description}
-        </Text>
-      </Card>
-      // <Card
-      //   sx={{ width: "10rem", height: "12rem" }}
-      //   onClick={(e) => {
-      //     setOpenListingModal(true);
-      //     setSelectedListing(listing);
-      //   }}
-      // >
-      //   {listing.title}
-      // </Card>
+          <Box
+            className="watchlist-container"
+            sx={{
+              height: "100%",
+              position: "relative",
+              top: "-10rem",
+              backgroundColor: "rgba(17, 5, 5, 0.9)",
+              display: "flex",
+              flexFlow: "column nowrap",
+              justifyContent: "center",
+              opacity: 0,
+              borderRadius: "1rem",
+            }}
+            p="1rem"
+            onClick={() => {
+              setOpenListingModal(true);
+              setSelectedListing(listing);
+            }}
+          >
+            <Box
+              sx={{
+                color: "white",
+                whiteSpace: "wrap",
+                overflow: "hidden",
+                overflowWrap: "break-word",
+                fontSize: "1rem",
+              }}
+            >
+              {listing.title}
+            </Box>
+            {/* <div>
+              <p style={{ color: "white", fontSize: "1rem" }}>
+                
+              </p>
+              <p style={{ fontSize: "1rem" }}>{listing.description}</p>{" "}
+            </div> */}
+          </Box>
+        </Box>
+      </Grid.Col>
     ));
 
   const ListAllListings = lobbyListings
@@ -363,63 +425,73 @@ export default function Lobby(props) {
       return new Date(b.createdAt) - new Date(a.createdAt);
     })
     .map((listing) => (
-      <Card
+      <Grid.Col
+        span={"auto"}
         sx={{
-          width: "15rem",
-          height: "17rem",
-          marginTop: "2vh",
-          marginBottom: "2vh",
+          display: "flex",
+          justifyContent: "center",
+          padding: "0",
+          margin: "0",
         }}
-        target="_blank"
-        key={listing._id}
       >
-        <Card.Section width="13rem" height="15rem">
-          <Image
-            src={listing.cloudimg?.url}
-            width="15rem"
-            max-width="15rem"
-            max-height="15rem"
-            height={160}
-            alt=""
-            onClick={() => {
-              setOpenListingModal(true);
-              setSelectedListing(listing);
-            }}
-            sx={{ cursor: "pointer" }}
-          />
-        </Card.Section>
-        <Grid>
-          <Grid.Col span={8}>
-            <Text weight={500} size="lg" mt="md">
-              {listing.title}
-            </Text>
+        <Card
+          sx={{
+            width: "16rem",
+            height: "17rem",
+            marginTop: "2vh",
+            marginBottom: "2vh",
+          }}
+          target="_blank"
+          key={listing._id}
+        >
+          <Card.Section width="13rem" height="16rem">
+            <Image
+              src={listing.cloudimg?.url}
+              width="16rem"
+              max-width="16rem"
+              max-height="16rem"
+              height={160}
+              alt=""
+              onClick={() => {
+                setOpenListingModal(true);
+                setSelectedListing(listing);
+              }}
+              sx={{ cursor: "pointer" }}
+            />
+          </Card.Section>
+          <Grid>
+            <Grid.Col span={8}>
+              <Text weight={500} size="lg" mt="md">
+                {listing.title}
+              </Text>
 
-            <Text mt="xs" color="dimmed" size="sm">
-              {listing.description}
-            </Text>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Text mt="md" size={"sm"}>
-              {listing.usersLiked.includes(userData._id) ? (
-                <HeartFilledIcon
-                  style={{ marginRight: "1vw" }}
-                  onClick={() => {
-                    updateLikes(listing);
-                  }}
-                />
-              ) : (
-                <HeartIcon
-                  style={{ marginRight: "1vw" }}
-                  onClick={() => {
-                    updateLikes(listing);
-                  }}
-                />
-              )}
-              {listing.usersLiked.length}
-            </Text>
-          </Grid.Col>
-        </Grid>
-      </Card>
+              <Text mt="xs" color="dimmed" size="sm">
+                {listing.description}
+              </Text>
+            </Grid.Col>
+            <Grid.Col span={4}>
+              <Text mt="md" size={"sm"}>
+                {listing.usersLiked.includes(userData._id) ? (
+                  <HeartFilledIcon
+                    style={{ marginRight: "1vw" }}
+                    onClick={() => {
+                      updateLikes(listing);
+                    }}
+                  />
+                ) : (
+                  <HeartIcon
+                    style={{ marginRight: "1vw" }}
+                    onClick={() => {
+                      updateLikes(listing);
+                    }}
+                  />
+                )}
+                {listing.usersLiked.length}
+              </Text>
+            </Grid.Col>
+          </Grid>
+        </Card>
+      </Grid.Col>
     ));
 
   return (
@@ -444,7 +516,7 @@ export default function Lobby(props) {
             <Card
               sx={{
                 // width: props.drawerOpen ? "35vw" : "45vw",
-                backgroundColor: themeColor,
+                backgroundColor: "lightgrey",
                 height: "35vh",
                 minHeight: 280,
                 display: "flex",
@@ -452,102 +524,170 @@ export default function Lobby(props) {
               }}
             >
               {/* Contents in here */}
-              <Stack>
-                <Text align="left">{props.title} Watchlist</Text>
-
-                <ScrollArea style={{ height: "18rem", width: "100%" }}>
-                  <Group spacing={"xs"}>
-                    {/* map out the listings here */}
-                    {myWatchlist && myWatchlist.length > 0 ? (
-                      ListWatchlist
-                    ) : (
-                      <Text>Watchlist is empty</Text>
-                    )}
-                  </Group>
-                </ScrollArea>
+              <Stack sx={{ width: " 100%" }}>
+                <Text align="left">
+                  <b>{props.title} Watchlist</b>
+                </Text>
+                <Box
+                  sx={{
+                    background: themeColor,
+                    width: " 100%",
+                    borderRadius: "1rem",
+                  }}
+                >
+                  <ScrollArea style={{ height: "12rem", width: "100%" }}>
+                    <Group>
+                      {/* map out the listings here */}
+                      {myWatchlist && myWatchlist.length > 0 ? (
+                        <Grid sx={{ width: "100%" }}>{ListWatchlist}</Grid>
+                      ) : (
+                        <Text
+                          size="md"
+                          sx={{ color: "#000", padding: "1rem 0 0 1rem" }}
+                        >
+                          There are no listings in your watchlist currently...
+                        </Text>
+                      )}
+                    </Group>
+                  </ScrollArea>
+                </Box>
               </Stack>
             </Card>
 
             <Card
               sx={{
                 // width: props.drawerOpen ? "35vw" : "45vw",
-                backgroundColor: themeColor,
+                backgroundColor: "lightgrey",
                 height: "35vh",
                 minHeight: 280,
                 display: "flex",
                 borderRadius: 25,
               }}
             >
-              <Stack>
-                <Text align="left"> Your {props.title} Activities</Text>
-                <ScrollArea style={{ height: "18rem", width: "100%" }}>
-                  <Group spacing={"xs"}>
-                    {myListings && myListings.length > 0 ? (
-                      ListMyListings
-                    ) : (
-                      <Text>You have no Listings</Text>
-                    )}
-                  </Group>
-                </ScrollArea>
+              <Stack sx={{ width: " 100%" }}>
+                <Text align="left">
+                  <b>Your {props.title} Activities</b>
+                </Text>
+                <Box
+                  sx={{
+                    background: themeColor,
+                    width: " 100%",
+                    borderRadius: "1rem",
+                  }}
+                >
+                  <ScrollArea style={{ height: "12rem", width: "100%" }}>
+                    <Group>
+                      {/* map out the listings here */}
+                      {myListings && myListings.length > 0 ? (
+                        <Grid sx={{ width: "100%" }}>{ListMyListings}</Grid>
+                      ) : (
+                        <Text
+                          size="md"
+                          sx={{ color: "#000", padding: "1rem 0 0 1rem" }}
+                        >
+                          You have not posted any listings yet
+                        </Text>
+                      )}
+                    </Group>
+                  </ScrollArea>
+                </Box>
               </Stack>
             </Card>
           </Group>
+          {/* <ScrollArea style={{ height: "18rem", width: "100%" }}>
+            <Group spacing={"xs"}>
+              {myListings && myListings.length > 0 ? (
+                ListMyListings
+              ) : (
+                <Text>You have no Listings</Text>
+              )}
+            </Group>
+          </ScrollArea> */}
 
           <Group>
             <Card
+              grey
+              light
               sx={{
                 width: props.drawerOpen ? "70vw" : "90vw",
-                backgroundColor: themeColor,
+                backgroundColor: "lightgrey",
                 height: "100%",
-
                 display: "block",
                 borderRadius: 25,
                 marginBottom: "5vh",
               }}
             >
               <Grid>
-                <Grid.Col span={12} sx={{ display: "flex" }}>
-                  Latest {props.title}s
-                </Grid.Col>
-                <Grid.Col span={6} pl={0}>
-                  <MultiSelect
-                    data={categories.length > 1 && categoriess}
-                    placeholder="Categories"
-                    onChange={(e) => {
-                      setChosenCategories(e);
-                    }}
-                  />
-                </Grid.Col>
-                <Grid.Col span={3} pl={0}>
-                  <NativeSelect
-                    onChange={(event) => setChosenLocation(event.target.value)}
-                    data={
-                      locationCategories.length > 0
-                        ? locationCategories
-                        : ["All"]
-                    }
-                    placeholder="Location"
-                  />
-                </Grid.Col>
                 <Grid.Col
-                  span={3}
-                  pl={0}
+                  span={12}
                   sx={{ display: "flex", justifyContent: "center" }}
                 >
-                  <Button radius={"xl"} onClick={() => setOpenNewModal(true)}>
-                    Add a Listing
-                  </Button>
+                  <b>Latest {props.title}s</b>
                 </Grid.Col>
-                {/* 
-                <ScrollArea style={{ height: "50vh", width: "auto" }}> */}
-                <Group spacing={"xs"} sx={{ marginBottom: "7vh" }}>
-                  {lobbyListings ? (
-                    ListAllListings
-                  ) : (
-                    <Text>No Listing Exists Yet</Text>
-                  )}
-                </Group>
-                {/* </ScrollArea> */}
+                <Grid
+                  sx={{ background: themeColor, borderRadius: "1rem" }}
+                  m="1rem"
+                  px="3rem"
+                  pt="2rem"
+                >
+                  <Grid.Col span={5} px="0">
+                    <MultiSelect
+                      data={categories.length > 1 && categoriess}
+                      placeholder="Categories"
+                      onChange={(e) => {
+                        setChosenCategories(e);
+                      }}
+                    />
+                  </Grid.Col>
+                  <Grid.Col
+                    span={5}
+                    pl={"2rem"}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <NativeSelect
+                      onChange={(event) =>
+                        setChosenLocation(event.target.value)
+                      }
+                      data={
+                        locationCategories.length > 0
+                          ? locationCategories
+                          : ["All"]
+                      }
+                      placeholder="Location"
+                      sx={{ width: "100%" }}
+                    />
+                  </Grid.Col>
+                  <Grid.Col
+                    span={"auto"}
+                    px={0}
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    <Button
+                      color="black"
+                      radius={"xl"}
+                      onClick={() => setOpenNewModal(true)}
+                    >
+                      Add a Listing
+                    </Button>
+                  </Grid.Col>
+                  <Group
+                    spacing={"xs"}
+                    sx={{
+                      marginBottom: "7vh",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {lobbyListings ? (
+                      ListAllListings
+                    ) : (
+                      <Text>No Listing Exists Yet</Text>
+                    )}
+                  </Group>
+                </Grid>
               </Grid>
             </Card>
           </Group>
