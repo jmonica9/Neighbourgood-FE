@@ -47,14 +47,14 @@ export default function Dashboard(props) {
             }}
             p={15}
           >
-            <Text
+            {/* <Text
               align="left"
               size={25}
               weight={"semibold"}
               classNames={classes.text}
             >
               Friend's Listings
-            </Text>
+            </Text> */}
             {/* Contents in here */}
             <DashboardFriendsListings user={userData} />
           </Card>

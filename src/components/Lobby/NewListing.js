@@ -85,7 +85,7 @@ export default function NewListing(props) {
     await convertImage(e);
     props.setLoading(true);
     console.log(imageData, "imageData from submit");
-    console.log(imageString, "imagestring from submit");
+    // console.log(imageString, "imagestring from submit");
     //title, image, categories, description, type
     const response = await axios.post(`${BACKEND_URL}/listing`, {
       userId: userData._id,

@@ -274,3 +274,8 @@ main::-webkit-scrollbar-thumb {
 }
 
 /*------------------------------ end of darren chatroom styling --------------------------*/
+
+/* Claim Deposit */
+.claimDeposit-cardElement {
+  display: grid;
+}

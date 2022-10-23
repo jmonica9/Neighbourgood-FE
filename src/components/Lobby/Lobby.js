@@ -22,7 +22,9 @@ import { UserContext } from "../../App";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { LoadingOverlay, Title } from "@mantine/core";
-import { experimentalStyled } from "@mui/material";
+import { HeartIcon, HeartFilledIcon } from "@radix-ui/react-icons";
+import { socket } from "../../App";
+
 export default function Lobby(props) {
   const [lobbyListings, setLobbyListings] = useState([]);
   const [themeColor, setThemeColor] = useState(
@@ -42,9 +44,6 @@ export default function Lobby(props) {
   const userData = useContext(UserContext);
 
   useEffect(() => {
-    //WAIT FOR USERDATA
-    //according to lobby type:
-    //query for listings watchlist
     if (userData) {
       axios
         .get(
@@ -70,15 +69,29 @@ export default function Lobby(props) {
 
   useEffect(() => {
     if (chosenCategories === [] || chosenCategories.length < 1) {
-      axios
-        .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
-        .then((res) => {
-          setLobbyListings(res.data);
-        });
+      // axios
+      //   .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
+      //   .then((res) => {
+      //     setLobbyListings(res.data);
+      //   });
+      getLobbyListings();
     } else if (chosenCategories !== []) {
       sortByCategories();
     }
   }, [chosenCategories, location, loading]);
+
+  const getLobbyListings = async () => {
+    const updatedListings = await axios.get(
+      `${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`
+    );
+    setLobbyListings(updatedListings.data);
+  };
+
+  // useEffect(() => {
+  //   socket.on("updating listing info", () => {
+  //     getLobbyListings();
+  //   });
+  // });
 
   useEffect(() => {
     if (props.title === "Sharing") {
@@ -91,21 +104,34 @@ export default function Lobby(props) {
   });
 
   const sortByCategories = async () => {
-    await axios
-      .post(
-        `${BACKEND_URL}/listing/categories/${location.pathname.split("/")[1]}`,
-        { categories: chosenCategories }
-      )
-      .then((res) => {
-        setLobbyListings(res.data);
-      });
+    const listings = await axios.post(
+      `${BACKEND_URL}/listing/categories/${location.pathname.split("/")[1]}`,
+      { categories: chosenCategories }
+    );
+    console.log(listings.data);
+    setLobbyListings(listings.data);
   };
-  // const TriggerOpenNewModal = () => {
-  //   setOpenNewModal(true);
-  // };
-  // const TriggerOpenListingModal = () => {
-  //   setOpenListingModal(true);
-  // };
+
+  //Likes and Comments
+  const updateLikes = async (listing) => {
+    console.log(listing);
+    if (!listing.usersLiked.includes(userData._id)) {
+      console.log("adding");
+      const addLikes = await axios.post(
+        `${BACKEND_URL}/listing/like/${listing._id}/add`,
+        { userId: userData._id }
+      );
+      console.log(addLikes);
+    } else {
+      console.log("removing");
+      const removeLikes = await axios.post(
+        `${BACKEND_URL}/listing/like/${listing._id}/remove`,
+        { userId: userData._id }
+      );
+      console.log(removeLikes);
+    }
+    await getLobbyListings();
+  };
 
   const closeNewModal = () => {
     setOpenNewModal(false);
@@ -141,11 +167,6 @@ export default function Lobby(props) {
           marginBottom: "2vh",
         }}
         target="_blank"
-        onClick={() => {
-          // navigate(`/${props.title.toLowerCase()}/listing/1`);
-          setOpenListingModal(true);
-          setSelectedListing(listing);
-        }}
         key={listing._id}
       >
         <Card.Section width="10rem" height="10rem">
@@ -156,6 +177,10 @@ export default function Lobby(props) {
             max-height="10rem"
             height={160}
             alt="No way!"
+            onClick={() => {
+              setOpenListingModal(true);
+              setSelectedListing(listing);
+            }}
           />
         </Card.Section>
 
@@ -219,7 +244,7 @@ export default function Lobby(props) {
 
   const ListAllListings = lobbyListings
     .sort((a, b) => {
-      return new Date(b.updatedAt) - new Date(a.updatedAt);
+      return new Date(b.createdAt) - new Date(a.createdAt);
     })
     .map((listing) => (
       <Card
@@ -230,11 +255,6 @@ export default function Lobby(props) {
           marginBottom: "2vh",
         }}
         target="_blank"
-        onClick={() => {
-          // navigate(`/${props.title.toLowerCase()}/listing/1`);
-          setOpenListingModal(true);
-          setSelectedListing(listing);
-        }}
         key={listing._id}
       >
         <Card.Section width="13rem" height="15rem">
@@ -244,17 +264,45 @@ export default function Lobby(props) {
             max-width="15rem"
             max-height="15rem"
             height={160}
-            alt="No way!"
+            alt=""
+            onClick={() => {
+              setOpenListingModal(true);
+              setSelectedListing(listing);
+            }}
+            sx={{ cursor: "pointer" }}
           />
         </Card.Section>
+        <Grid>
+          <Grid.Col span={8}>
+            <Text weight={500} size="lg" mt="md">
+              {listing.title}
+            </Text>
 
-        <Text weight={500} size="lg" mt="md">
-          {listing.title}
-        </Text>
-
-        <Text mt="xs" color="dimmed" size="sm">
-          {listing.description}
-        </Text>
+            <Text mt="xs" color="dimmed" size="sm">
+              {listing.description}
+            </Text>
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Text mt="md" size={"sm"}>
+              {listing.usersLiked.includes(userData._id) ? (
+                <HeartFilledIcon
+                  style={{ marginRight: "1vw" }}
+                  onClick={() => {
+                    updateLikes(listing);
+                  }}
+                />
+              ) : (
+                <HeartIcon
+                  style={{ marginRight: "1vw" }}
+                  onClick={() => {
+                    updateLikes(listing);
+                  }}
+                />
+              )}
+              {listing.usersLiked.length}
+            </Text>
+          </Grid.Col>
+        </Grid>
       </Card>
     ));
 
@@ -289,7 +337,7 @@ export default function Lobby(props) {
             >
               {/* Contents in here */}
               <Stack>
-                <Text> {props.title} Watchlist</Text>
+                <Text align="left">{props.title} Watchlist</Text>
 
                 <ScrollArea style={{ height: "18rem", width: "100%" }}>
                   <Group spacing={"xs"}>
@@ -321,7 +369,7 @@ export default function Lobby(props) {
                     {myListings && myListings.length > 0 ? (
                       ListMyListings
                     ) : (
-                      <Text>U have no listings</Text>
+                      <Text>You have no Listings</Text>
                     )}
                   </Group>
                 </ScrollArea>
@@ -372,7 +420,7 @@ export default function Lobby(props) {
                   {lobbyListings ? (
                     ListAllListings
                   ) : (
-                    <Text>No Listing Exist Yet</Text>
+                    <Text>No Listing Exists Yet</Text>
                   )}
                 </Group>
                 {/* </ScrollArea> */}
