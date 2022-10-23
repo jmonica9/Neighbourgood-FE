@@ -31,6 +31,8 @@ import ProfilePage from "./components/Profile/ProfilePage";
 import { Faq } from "./components/Miscellaneous/Faq";
 import { OverallChats } from "./components/OverallChat";
 import { Error } from "./components/Miscellaneous/Error";
+import ReviewDetails from "./components/ReviewDetails";
+import IndividualReview from "./components/IndividualReviews";
 import Community from "./components/Dashboard/Community/Community";
 export const socket = io("http://localhost:3000");
 
@@ -177,6 +179,10 @@ export default function App() {
               <Route
                 path="/overallChats"
                 element={<OverallChats drawerOpen={drawerOpen} />}
+              ></Route>
+              <Route
+                path="/individualReview/:listingId"
+                element={<IndividualReview drawerOpen={drawerOpen} />}
               ></Route>
               <Route path="/*" element={<Error />}></Route>
               <Route
