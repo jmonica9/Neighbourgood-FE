@@ -398,24 +398,52 @@ function Chatroom(props) {
         {listing && requestor && owner && (
           <>
             <Box className="chatroom-postedby-container">
-              <Text size="lg">
-                <b>Title: {listing.title}</b>
-                <Text size="xs"> Listing type: {listing.type}</Text>
-              </Text>
-              <Text size="lg" sx={{ textAlign: "center" }}>
-                <b>
-                  <u>
-                    {requestor.username} & {owner.username}
-                  </u>
-                </b>
-                <Text size="xs" sx={{ textAlign: "center" }}>
+              <Grid
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-around",
+                }}
+              >
+                <Grid.Col span={4}>
                   {" "}
-                  Posted: {`${time_ago(new Date(listing.createdAt))}`}
-                </Text>
-              </Text>
-              <button className="chatroom-end-button" onClick={deleteChatroom}>
-                End Chat
-              </button>
+                  <Text size="lg">
+                    <b>Title: {listing.title}</b>
+                    <Text size="xs"> Listing type: {listing.type}</Text>
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  {" "}
+                  <Text size="lg" sx={{ textAlign: "center" }}>
+                    <b>
+                      <u>
+                        {requestor.username} & {owner.username}
+                      </u>
+                    </b>
+                    <Text size="xs" sx={{ textAlign: "center" }}>
+                      {" "}
+                      Posted: {`${time_ago(new Date(listing.createdAt))}`}
+                    </Text>
+                  </Text>
+                </Grid.Col>
+                <Grid.Col
+                  span={4}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}
+                  pr="0"
+                >
+                  {" "}
+                  <button
+                    className="chatroom-end-button"
+                    onClick={deleteChatroom}
+                  >
+                    End Chat
+                  </button>
+                </Grid.Col>
+              </Grid>
             </Box>
           </>
         )}
