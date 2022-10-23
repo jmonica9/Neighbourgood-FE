@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { renderMatches, useParams, useNavigate } from "react-router-dom";
 
 //import styling
-import { neighbourgoodTheme } from "../../styles/Theme";
+import { neighbourgoodTheme } from "../styles/Theme";
 import {
   Card,
   Grid,
@@ -21,17 +21,17 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import { HeartIcon, HeartFilledIcon, DiscIcon } from "@radix-ui/react-icons";
-import { UserContext } from "../../App";
+import { UserContext } from "../App";
 import axios from "axios";
-import { BACKEND_URL } from "../../constants";
+import { BACKEND_URL } from "../constants";
 import { toast } from "react-toastify";
-import ProfileMenu from "../Profile/ProfileMenu";
-import EditListing from "./EditListing";
-import { socket } from "../../App";
-import DeopsitCheckout from "../Deposits/DepositCheckout";
-import ReturnDeposit from "../Deposits/ReturnDeposit";
-import ClaimDeposit from "../Deposits/ClaimDeposit";
-import ListingComments from "./ListingComments";
+import ProfileMenu from "./Profile/ProfileMenu";
+import EditListing from "./Lobby/EditListing";
+import { socket } from "../App";
+import DeopsitCheckout from "./Deposits/DepositCheckout";
+import ReturnDeposit from "./Deposits/ReturnDeposit";
+import ClaimDeposit from "./Deposits/ClaimDeposit";
+import ListingComments from "./Lobby/ListingComments";
 import { format, formatDistance } from "date-fns";
 export default function Listing(props) {
   // const { listingId } = useParams();
@@ -121,7 +121,9 @@ export default function Listing(props) {
       draggable: false,
       progress: undefined,
     });
-    props.closeModal();
+    alert(
+      "need to socket emit here to make both owner's and requestor's dashboard/lobby update"
+    );
   };
 
   const deleteListing = async () => {
@@ -151,7 +153,6 @@ export default function Listing(props) {
       listing: listingDetails,
       userId: userData._id,
     });
-    console.log(response.data);
     navigate(`/chatroom/${response.data._id}`, {
       state: { fromRequestPage: false },
     });
@@ -276,10 +277,7 @@ export default function Listing(props) {
                 </ScrollArea>
               </Card.Section>
               <Card.Section>
-                <ListingComments
-                  listing={listingDetails}
-                  open={props.openModal}
-                />
+                <ListingComments listing={listingDetails} />
               </Card.Section>
             </Card>
             <Grid.Col span={6}>
@@ -310,28 +308,15 @@ export default function Listing(props) {
                 {listingDetails.requestorIds.includes(userData._id) &&
                   !(userData._id === listingDetails.userId) && (
                     <div>
-                      <div style={{ textAlign: "right" }}>
-                        You have already sent in a request <br />
-                        <br />
-                        <span
-                          onClick={sendToChatroom}
-                          className="listing-modal-button"
-                          style={{
-                            color: "green",
-                          }}
-                        >
-                          Go to chatroom
-                        </span>
-                        <span
-                          className="listing-modal-button"
-                          onClick={withdrawRequest}
-                          style={{
-                            color: "red",
-                            marginLeft: "1rem",
-                          }}
-                        >
-                          Withdraw
-                        </span>
+                      <div>
+                        You have already requested this item. Click
+                        <button onClick={sendToChatroom}>here</button>
+                        to go to the chatroom!
+                      </div>
+                      <div>
+                        alternatively, click{" "}
+                        <button onClick={withdrawRequest}>here</button> to
+                        withdraw your interest
                       </div>
                     </div>
                   )}

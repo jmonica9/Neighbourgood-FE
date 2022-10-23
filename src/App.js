@@ -31,6 +31,7 @@ import ProfilePage from "./components/Profile/ProfilePage";
 import { Faq } from "./components/Miscellaneous/Faq";
 import { OverallChats } from "./components/OverallChat";
 import { Error } from "./components/Miscellaneous/Error";
+import Community from "./components/Dashboard/Community/Community";
 export const socket = io("http://localhost:3000");
 
 export const UserContext = createContext();
@@ -178,6 +179,10 @@ export default function App() {
                 element={<OverallChats drawerOpen={drawerOpen} />}
               ></Route>
               <Route path="/*" element={<Error />}></Route>
+              <Route
+                path="/community"
+                element={<Community drawerOpen={drawerOpen} />}
+              />
             </Routes>
           </UserContext.Provider>
           <ToastContainer

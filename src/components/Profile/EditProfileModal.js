@@ -1,9 +1,20 @@
 import { useContext, useEffect, useState } from "react";
-import { Modal, Button, Group, TextInput, MultiSelect } from "@mantine/core";
+
+import {
+  Modal,
+  Button,
+  Group,
+  TextInput,
+  MultiSelect,
+  Avatar,
+  FileInput,
+} from "@mantine/core";
+import { UploadIcon } from "@radix-ui/react-icons";
 import { UserContext } from "../../App";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants";
 import { socket } from "../../App";
+import { width } from "@mui/system";
 
 export default function EditProfileModal(props) {
   const [opened, setOpened] = useState(false);
@@ -11,11 +22,15 @@ export default function EditProfileModal(props) {
   const [email, setEmail] = useState("");
   const [accountsFollowing, setAccountsFollowing] = useState([]);
   const [followingData, setFollowingData] = useState([]);
+  const [fileInputFile, setFileInputFile] = useState();
+  const [fileInputValue, setFileInputValue] = useState();
+  const [imageDataString, setimageDataString] = useState("");
 
   const user = useContext(UserContext);
 
   useEffect(() => {
     setOpened(props.opened);
+    console.log(user);
   }, [props]);
 
   useEffect(() => {
@@ -35,12 +50,28 @@ export default function EditProfileModal(props) {
     }
   }, []);
 
+  const convertImage = async (e) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(e);
+    reader.onloadend = () => {
+      setimageDataString(reader.result);
+      console.log(imageDataString);
+    };
+  };
+
   const submitEdit = async () => {
     const response = await axios.put(`${BACKEND_URL}/users/${user._id}`, {
       username: username,
       email: email,
     });
     console.log(response);
+    if (fileInputFile) {
+      const uploadImage = await axios.post(
+        `${BACKEND_URL}/users/${user._id}/profilepicture`,
+        { file: imageDataString }
+      );
+      console.log(uploadImage);
+    }
     setOpened(false);
     props.closeModal();
     // lift up state to recheck JWT to refresh user data
@@ -60,6 +91,23 @@ export default function EditProfileModal(props) {
         }}
         title="Edit Profile"
       >
+        <Avatar
+          src={`${user.cloudimg?.url}`}
+          alt="userprofile"
+          radius={"50%"}
+          sx={{ height: "20vh", width: "20vh" }}
+        />
+        <FileInput
+          label="Upload Profile Picture"
+          icon={<UploadIcon />}
+          onChange={(e) => {
+            console.log(e);
+            setFileInputValue(e.name);
+            setFileInputFile(e);
+            convertImage(e);
+          }}
+        />
+
         <TextInput
           label="Username"
           placeholder="Username"
@@ -72,15 +120,7 @@ export default function EditProfileModal(props) {
           value={email}
           onChange={(e) => setUsername(e.target.value)}
         />
-        {/* <MultiSelect
-          data={followingData}
-          label="Following"
-          value={followingData}
-          required
-          onChange={(e) => {
-            setAccountsFollowing(e);
-          }}
-        /> */}
+
         <Button
           onClick={() => {
             submitEdit();
