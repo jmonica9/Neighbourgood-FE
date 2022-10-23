@@ -3,13 +3,14 @@ import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import { BACKEND_URL } from "../../constants";
-import Listing from "../Listing";
+import Listing from "../Lobby/Listing";
 import { UserContext } from "../../App";
 
 export default function DashboardFriendsListings(props) {
   const [friendsListings, setFriendsListings] = useState([]);
   const [openListingModal, setOpenListingModal] = useState(false);
   const [listingOpened, setListingOpened] = useState();
+  const [searchField, setSearchField] = useState("");
 
   const user = useContext(UserContext);
 
@@ -32,59 +33,6 @@ export default function DashboardFriendsListings(props) {
     // console.log(response.data);
     return response.data;
   };
-
-  // const friendsListings = [
-  //   {
-  //     userId: "User 1",
-  //     title: "Sharing Listing Title",
-  //     type: "Sharing",
-  //     category: "",
-  //     image:
-  //       "https://images.unsplash.com/photo-1665344287455-d28131b732b8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzOHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=60",
-  //     reserved: false,
-  //     dateOfTransaction: "",
-  //   },
-  //   {
-  //     userId: "User 2",
-  //     title: "Helping Listing Title",
-  //     type: "Helping",
-  //     category: "",
-  //     image:
-  //       "https://images.unsplash.com/photo-1665141530020-6df603c446c1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1Mnx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=60",
-  //     reserved: false,
-  //     dateOfTransaction: "",
-  //   },
-  //   {
-  //     userId: "User 2",
-  //     title: "Lending Listing Title",
-  //     type: "Lending",
-  //     category: "",
-  //     image:
-  //       "https://images.unsplash.com/photo-1665329929710-644672e5b705?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3MXx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=60",
-  //     reserved: false,
-  //     dateOfTransaction: "",
-  //   },
-  //   {
-  //     userId: "User 3",
-  //     title: "Helping Listing Title",
-  //     type: "Helping",
-  //     category: "",
-  //     image:
-  //       "https://images.unsplash.com/photo-1665329929710-644672e5b705?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3MXx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=60",
-  //     reserved: false,
-  //     dateOfTransaction: "",
-  //   },
-  //   {
-  //     userId: "User 3",
-  //     title: "Lending Listing Title",
-  //     type: "Lending",
-  //     category: "",
-  //     image:
-  //       "https://images.unsplash.com/photo-1665329929710-644672e5b705?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3MXx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=60",
-  //     reserved: false,
-  //     dateOfTransaction: "",
-  //   },
-  // ];
 
   const friendsListingsSorted = friendsListings.sort((a, b) => {
     return new Date(b.updatedAt) - new Date(a.updatedAt);
@@ -139,6 +87,14 @@ export default function DashboardFriendsListings(props) {
   });
   return (
     <div>
+      <Text
+        align="left"
+        size={25}
+        weight={"semibold"}
+        // classNames={classes.text}
+      >
+        Friend's Listings
+      </Text>
       <ScrollArea style={{ width: "100%", height: "30vh" }}>
         <Grid>{displayFriendsListings}</Grid>
       </ScrollArea>

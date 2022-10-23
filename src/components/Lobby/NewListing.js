@@ -10,7 +10,7 @@ import {
   Textarea,
   FileInput,
 } from "@mantine/core";
-import { BACKEND_URL } from "../constants";
+import { BACKEND_URL } from "../../constants";
 import { useParams, useLocation } from "react-router-dom";
 
 import { toast, ToastContainer } from "react-toastify";
@@ -86,7 +86,7 @@ export default function NewListing(props) {
     props.setLoading(true);
     console.log(userData, "userData");
     console.log(imageData, "imageData from submit");
-    console.log(imageString, "imagestring from submit");
+    // console.log(imageString, "imagestring from submit");
     //title, image, categories, description, type
     const response = await axios.post(`${BACKEND_URL}/listing`, {
       userId: userData._id,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AppointmentModal from "../AppointmentModal";
+import AppointmentModal from "./AppointmentModal";
 
 import {
   ViewState,
