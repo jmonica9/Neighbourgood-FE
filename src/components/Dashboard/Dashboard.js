@@ -77,7 +77,7 @@ export default function Dashboard(props) {
                   Dashboard
                 </Text>
               </Grid.Col>
-              <Grid.Col span={8} pt={0} pb={0}>
+              <Grid.Col span={12} pt={0} pb={0}>
                 <Card
                   sx={{
                     display: "block",
@@ -99,29 +99,6 @@ export default function Dashboard(props) {
 
                   {/* </Stack> */}
                 </Card>
-              </Grid.Col>
-              <Grid.Col span={4} p={0} pr={10} sx={{ height: "100%" }}>
-                <Stack spacing={"xs"} sx={{ height: "100%" }}>
-                  <Card
-                    sx={{ height: "60%", display: "flex", borderRadius: 25 }}
-                    p={10}
-                  >
-                    <Stack spacing={"1vh"}>
-                      <Text align="left" size="xl">
-                        Reviews
-                      </Text>
-                      <DashboardReviews />
-                    </Stack>
-                  </Card>
-                  <Card
-                    sx={{ height: "15vh", display: "flex", borderRadius: 25 }}
-                    p={10}
-                  >
-                    <Text align="left" size="xl">
-                      Chat History
-                    </Text>
-                  </Card>
-                </Stack>
               </Grid.Col>
             </Grid>
           </Card>
