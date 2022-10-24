@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import StripeCheckout from "react-stripe-checkout";
 import { BACKEND_URL } from "../../constants";
-import { Button, Modal } from "@mantine/core";
+import { Button, Modal, Grid, Group } from "@mantine/core";
 import { UserContext } from "../../App";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -19,7 +19,7 @@ const stripe = loadStripe(
   "pk_test_51LtpoUD8YIibmjV3cftm7kCT6kYkMOV1PgTh0iRW7deqgUbhiJySG443S0Ir6jrdAVRGIMQgphnLdYe5sFEUQYYq00dU6tQJcT"
 );
 
-export default function ClaimDeposit() {
+export default function ClaimDeposit(props) {
   const options = { showIcon: true, iconStyle: "default" };
   const navigate = useNavigate();
 
@@ -27,12 +27,32 @@ export default function ClaimDeposit() {
     let adding = await axios.post(`${BACKEND_URL}/payment/addBalance`);
   };
 
+  const paymentSuccess = () => {
+    alert("Claim Successful!");
+  };
+  const paymentError = () => {
+    alert("Claim Error!");
+  };
+
   const claimDeposit = async () => {
     let accountId = JSON.parse(localStorage.getItem("account"));
     console.log(accountId.data.account.id);
     const response = await axios.post(`${BACKEND_URL}/payment/claimDeposit`, {
       accountId: accountId.data.account.id,
+      amount: amountInDollars(props.amount),
     });
+    if (response.status === 200) {
+      const payment = await axios.put(
+        `${BACKEND_URL}/payment/${props.listing._id}`,
+        { status: "Deposit Returned" }
+      );
+      console.log(payment);
+      props.updatePaymentStatus();
+      props.refresh();
+      return paymentSuccess();
+    } else {
+      return paymentError();
+    }
     console.log(response);
   };
 
@@ -126,14 +146,34 @@ export default function ClaimDeposit() {
         >
           Add Balance
         </Button> */}
-        <Button
-          onClick={() => {
-            claimDeposit();
-          }}
-        >
-          Claim Deposit
-        </Button>
-        <Button onClick={() => createStripeAccount()}>Create Account</Button>
+        <Grid>
+          <Grid.Col span={6}>
+            <Button
+              radius="xl"
+              disabled={
+                props.status === "Deposit Claimed" ||
+                props.status === "Deposit Returned"
+              }
+              onClick={() => {
+                claimDeposit();
+              }}
+            >
+              Claim Deposit
+            </Button>{" "}
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <Button
+              radius={"xl"}
+              disabled={
+                props.status === "Deposit Claimed" ||
+                props.status === "Deposit Returned"
+              }
+              onClick={() => createStripeAccount()}
+            >
+              Create Account
+            </Button>
+          </Grid.Col>
+        </Grid>
       </Elements>
     </div>
   );

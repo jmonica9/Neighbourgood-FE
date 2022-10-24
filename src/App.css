@@ -173,7 +173,8 @@ main::-webkit-scrollbar-thumb {
   align-items: center;
   border-radius: 1rem;
   padding-left: 0.9rem;
-  margin-top: 4rem;
+  margin-top: 0rem;
+  margin-bottom: 1rem;
   color: #fff;
 }
 

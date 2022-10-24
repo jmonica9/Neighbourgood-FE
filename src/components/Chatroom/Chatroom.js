@@ -18,6 +18,9 @@ import { Select } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
 import "../../App.css";
 import LendingTermsAndConditions from "./LendingTermsConditionsModal";
+import DeopsitCheckout from "../Deposits/DepositCheckout";
+import ReturnDeposit from "../Deposits/ReturnDeposit";
+import ClaimDeposit from "../Deposits/ClaimDeposit";
 // import { socket } from ".././App";
 // import { io } from "socket.io-client";
 // const socket = io("http://localhost:3000");
@@ -42,6 +45,7 @@ function Chatroom(props) {
   const [appointment, setAppointment] = useState();
   const [appointmentProposed, setAppointmentProposed] = useState();
   const [confirmedTransactionDate, setConfirmedTransactionDate] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
   const templatedConfirmedMessage = `We've left this chatroom open for you to work out any additional details.`;
   const bottomRef = useRef(null);
 
@@ -52,8 +56,16 @@ function Chatroom(props) {
     props.socket.emit("join_room", { room: `${chatroomId}` });
   }, [chatroomId]);
 
+  const paymentStatusChange = (status) => {
+    setPaymentStatus(status);
+  };
+
   //when socket says to refresh, chatroom should re-get the following things:
   //messages, appointment, listing
+  const refreshChatroom = () => {
+    props.socket.emit("refresh_chatroom_trigger", { room: `${chatroomId}` });
+    console.log("refresh");
+  };
   useEffect(() => {
     props.socket.on("refresh_chatroom", (data) => {
       if (chatroomId) {
@@ -91,7 +103,6 @@ function Chatroom(props) {
           setListing(res.data);
         });
     });
-    console.log("getchatroominfo ran");
   };
 
   /* once listing details and users IDs are gotten, get full users info + all chat messages and check on status of appointment */
@@ -109,10 +120,6 @@ function Chatroom(props) {
     } else setAppointmentProposed(false);
   }, [appointment]);
 
-  useEffect(() => {
-    console.log("appointment proposed?", appointmentProposed);
-  }, [appointmentProposed]);
-
   const getUsersInfo = () => {
     axios.get(`${BACKEND_URL}/users/${ownerId}`).then((res) => {
       setOwner(res.data);
@@ -120,7 +127,6 @@ function Chatroom(props) {
         setRequestor(res.data);
       });
     });
-    console.log("getusersinfo ran");
   };
 
   /* when user selects a month, update the days to be the number of days in that month */
@@ -146,7 +152,6 @@ function Chatroom(props) {
     axios.get(`${BACKEND_URL}/messages/${chatroomId}`).then((res) => {
       setAllMessages(res.data);
     });
-    console.log("getmessages ran");
   };
 
   const getAppointmentInfo = () => {
@@ -171,7 +176,6 @@ function Chatroom(props) {
           setAppointment(res.data);
         }
       });
-    console.log("getappointmentinfo ran");
   };
 
   const deleteChatroom = () => {
@@ -193,7 +197,6 @@ function Chatroom(props) {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    console.log("button fired off");
     axios
       .post(`${BACKEND_URL}/messages/${chatroomId}/${userData._id}`, {
         messageText: message,
@@ -202,7 +205,6 @@ function Chatroom(props) {
       .then((res) => {
         setMessage("");
       });
-    console.log("post received");
     props.socket.emit("refresh_chatroom_trigger", { room: `${chatroomId}` });
   };
 
@@ -457,11 +459,65 @@ function Chatroom(props) {
             {listing.reservedBy && requestor ? (
               <span>
                 <Grid>
-                  <Grid.Col span={9}>
+                  <Grid.Col span={10}>
                     <Text size="xl">
                       Description: <br />
                       <Text size="md">{listing.description}</Text>
                     </Text>
+                    {listing.type === "lending" && requestorId == userData._id && (
+                      <>
+                        <DeopsitCheckout
+                          listing={listing}
+                          name={listing.title}
+                          description={listing.description}
+                          amount={listing.depositAmount} //  to change!!!
+                          status={paymentStatus}
+                          updatePaymentStatus={() =>
+                            paymentStatusChange("Deposit Paid")
+                          }
+                          refresh={refreshChatroom}
+                        />
+                        {paymentStatus === "Deposit Paid" ? (
+                          <Text size="sm">Deposit has been Submitted.</Text>
+                        ) : null}
+                      </>
+                    )}
+                    {listing.type === "lending" && ownerId == userData._id && (
+                      // listing.completed &&
+                      <Grid>
+                        <Grid.Col span={4}>
+                          {" "}
+                          <ReturnDeposit
+                            listing={listing}
+                            name={listing.title}
+                            description={listing.description}
+                            amount={listing.depositAmount}
+                            status={paymentStatus}
+                            updatePaymentStatus={() =>
+                              paymentStatusChange("Deposit Returned")
+                            }
+                            refresh={refreshChatroom}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={8}>
+                          <ClaimDeposit
+                            amount={listing.depositAmount}
+                            listing={listing}
+                            status={paymentStatus}
+                            updatePaymentStatus={() =>
+                              paymentStatusChange("Deposit Claimed")
+                            }
+                            refresh={refreshChatroom}
+                          />
+                        </Grid.Col>
+                        {paymentStatus === "Deposit Paid" ? (
+                          <Text size="sm">Deposit has been Returned.</Text>
+                        ) : null}
+                        {paymentStatus === "Deposit Claimed" ? (
+                          <Text size="sm">Deposit has been Claimed.</Text>
+                        ) : null}
+                      </Grid>
+                    )}
                   </Grid.Col>
                   <span>
                     <Grid.Col

@@ -39,14 +39,14 @@ export default function Community(props) {
             borderRadius: 25,
           }}
         >
-          <Text
+          {/* <Text
             align="left"
             size={25}
             weight={"semibold"}
             classNames={classes.text}
           >
             Friend's Listings
-          </Text>
+          </Text> */}
           <DashboardFriendsListings user={userData} />
         </Card>
       </Grid>
