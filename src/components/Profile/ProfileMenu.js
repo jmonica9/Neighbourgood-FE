@@ -56,7 +56,7 @@ export default function ProfileMenu(props) {
         <Menu
           shadow="md"
           width={200}
-          position="bottom-end"
+          position="left"
           closeOnClickOutside
           withArrow
         >
