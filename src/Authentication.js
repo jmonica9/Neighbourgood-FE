@@ -162,79 +162,102 @@ export function Authentication(props) {
         >
           Welcome to Neighbourgood
         </Title>
-        <Text color="dimmed" size="sm" align="center" mt={5}>
-          Do you have an account yet?{" "}
-          <Anchor
-            href="#"
-            size="sm"
-            onClick={(event) => {
-              event.preventDefault();
-              if (authMode === REGISTER_MODE) {
-                setAuthMode(LOGIN_MODE);
-              } else if (authMode === LOGIN_MODE) {
-                setAuthMode(REGISTER_MODE);
-              }
-            }}
-          >
-            {authMode === REGISTER_MODE ? "Login" : "Register"}
-          </Anchor>
-        </Text>
+
         {authMode === REGISTER_MODE ? (
-          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-            <TextInput
-              label="Username"
-              autoComplete="false"
-              value={registerUsername}
-              placeholder="register username here"
-              onChange={(e) => setRegisterUsername(e.target.value)}
-              required
-            />
-            <TextInput
-              label="Email"
-              value={registerEmail}
-              placeholder="register email here"
-              onChange={(e) => setRegisterEmail(e.target.value)}
-              mt="md"
-              required
-            />
-
-            <GeoAPI setCounty={setCounty} />
-            <Text>{county}</Text>
-            {/* <GoogleMaps /> */}
-            {/* <Maps /> */}
-            <PasswordInput
-              label="Password"
-              placeholder="Your password"
-              mt="md"
-              onChange={(e) => setRegisterPassword(e.target.value)}
-              required
-            />
-
-            <Button fullWidth mt="xl" onClick={register}>
-              Register
-            </Button>
-          </Paper>
+          <>
+            <Text color="dimmed" size="sm" align="center" mt={"2rem"}>
+              Already have an account?{" "}
+              <Anchor
+                href="#"
+                size="sm"
+                onClick={(event) => {
+                  event.preventDefault();
+                  if (authMode === REGISTER_MODE) {
+                    setAuthMode(LOGIN_MODE);
+                  } else if (authMode === LOGIN_MODE) {
+                    setAuthMode(REGISTER_MODE);
+                  }
+                }}
+              >
+                {authMode === REGISTER_MODE ? "Login" : "Register"}
+              </Anchor>
+            </Text>
+            <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+              <TextInput
+                label="Username"
+                autoComplete="false"
+                value={registerUsername}
+                placeholder="Register username here"
+                onChange={(e) => setRegisterUsername(e.target.value)}
+                required
+              />
+              <TextInput
+                label="Email"
+                value={registerEmail}
+                placeholder="Register email here"
+                onChange={(e) => setRegisterEmail(e.target.value)}
+                mt="md"
+                required
+              />
+              <br />
+              <Text size="sm">Address</Text>
+              <GeoAPI setCounty={setCounty} />
+              <Text>{county}</Text>
+              {/* <GoogleMaps /> */}
+              {/* <Maps /> */}
+              <PasswordInput
+                label="Password"
+                placeholder="Your password"
+                mt="md"
+                onChange={(e) => setRegisterPassword(e.target.value)}
+                required
+              />
+              <Button fullWidth mt="xl" onClick={register} color="black">
+                Register
+              </Button>
+            </Paper>
+          </>
         ) : (
-          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-            <TextInput
-              label="username"
-              value={loginUsername}
-              placeholder="login username here"
-              onChange={(e) => setLoginUsername(e.target.value)}
-              required
-            />
-            <PasswordInput
-              label="Password"
-              placeholder="Your password"
-              onChange={(e) => setLoginPassword(e.target.value)}
-              required
-              mt="md"
-            />
+          <>
+            {" "}
+            <Text color="dimmed" size="sm" align="center" mt={"2rem"}>
+              Dont have an account yet? {""}
+              <Anchor
+                href="#"
+                size="sm"
+                onClick={(event) => {
+                  event.preventDefault();
+                  if (authMode === REGISTER_MODE) {
+                    setAuthMode(LOGIN_MODE);
+                  } else if (authMode === LOGIN_MODE) {
+                    setAuthMode(REGISTER_MODE);
+                  }
+                }}
+              >
+                {authMode === REGISTER_MODE ? "Login" : "Register Now"}
+              </Anchor>
+            </Text>
+            <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+              <TextInput
+                label="Username"
+                value={loginUsername}
+                placeholder="Login username here"
+                onChange={(e) => setLoginUsername(e.target.value)}
+                required
+              />
+              <PasswordInput
+                label="Password"
+                placeholder="Your password"
+                onChange={(e) => setLoginPassword(e.target.value)}
+                required
+                mt="md"
+              />
 
-            <Button fullWidth mt="xl" onClick={login}>
-              Login
-            </Button>
-          </Paper>
+              <Button fullWidth mt="xl" onClick={login} color="black">
+                Login
+              </Button>
+            </Paper>
+          </>
         )}
       </Container>
     </div>
