@@ -14,6 +14,7 @@ import {
   Image,
   Center,
   NativeSelect,
+  TextInput,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import NewListing from "./NewListing";
@@ -42,6 +43,7 @@ export default function Lobby(props) {
   const [selectedListing, setSelectedListing] = useState();
   const [myWatchlist, setMyWatchlist] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -106,7 +108,27 @@ export default function Lobby(props) {
       console.log("sort by cat");
       sortByCategories();
     }
-  }, [chosenCategories, chosenLocation, location, locationCategories, loading]);
+  }, [
+    chosenCategories,
+    chosenLocation,
+    location,
+    locationCategories,
+    loading,
+    search,
+  ]);
+
+  const searchListings = (listingsArray) => {
+    if (search !== "") {
+      const listings = listingsArray.filter(
+        (listing) =>
+          listing.title.toLowerCase().includes(search.toLowerCase()) ||
+          listing.username.toLowerCase().includes(search.toLowerCase())
+      );
+      return listings;
+    } else {
+      return listingsArray;
+    }
+  };
 
   const getLobbyListings = async () => {
     const updatedListings = await axios.get(
@@ -169,7 +191,8 @@ export default function Lobby(props) {
       { categories: chosenCategories }
     );
     console.log(listings.data);
-    setLobbyListings(listings.data);
+    const listingsArray = searchListings(listings.data);
+    setLobbyListings(listingsArray);
   };
 
   //Likes and Comments
@@ -206,7 +229,8 @@ export default function Lobby(props) {
         { location: chosenLocation }
       )
       .then((res) => {
-        setLobbyListings(res.data);
+        const listingsArray = searchListings(res.data);
+        setLobbyListings(listingsArray);
       });
     console.log("lobby listings LOC", lobbyListings);
   };
@@ -221,7 +245,8 @@ export default function Lobby(props) {
         { location: chosenLocation, categories: chosenCategories }
       )
       .then((res) => {
-        setLobbyListings(res.data);
+        const listingsArray = searchListings(res.data);
+        setLobbyListings(listingsArray);
       });
     console.log("lobby listings LOC+CAT", lobbyListings);
   };
@@ -506,8 +531,17 @@ export default function Lobby(props) {
               }}
             >
               <Grid>
-                <Grid.Col span={12} sx={{ display: "flex" }}>
+                <Grid.Col span={6} sx={{ display: "flex" }}>
                   Latest {props.title}s
+                </Grid.Col>
+                <Grid.Col span={6} pl={0} sx={{ display: "flex" }}>
+                  <TextInput
+                    placeholder="Search"
+                    onChange={(e) => {
+                      setSearch(e.target.value);
+                    }}
+                    sx={{ width: "100%" }}
+                  />
                 </Grid.Col>
                 <Grid.Col span={6} pl={0}>
                   <MultiSelect
@@ -518,19 +552,19 @@ export default function Lobby(props) {
                     }}
                   />
                 </Grid.Col>
-                <Grid.Col span={3} pl={0}>
+                <Grid.Col span={4} pl={0}>
                   <NativeSelect
                     onChange={(event) => setChosenLocation(event.target.value)}
                     data={
                       locationCategories.length > 0
                         ? locationCategories
-                        : ["All"]
+                        : ["Locations: All"]
                     }
                     placeholder="Location"
                   />
                 </Grid.Col>
                 <Grid.Col
-                  span={3}
+                  span={2}
                   pl={0}
                   sx={{ display: "flex", justifyContent: "center" }}
                 >

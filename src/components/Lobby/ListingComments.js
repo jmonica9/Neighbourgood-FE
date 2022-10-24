@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../App";
 import { BACKEND_URL } from "../../constants";
 import { neighbourgoodTheme } from "../../styles/Theme";
-import ListingCommentsDisplay from "./ListingCommentsDisplay";
 
 export default function ListingComments(props) {
   const [comment, setComment] = useState("");
@@ -52,7 +51,6 @@ export default function ListingComments(props) {
       const user = await axios.get(`${BACKEND_URL}/users/${comment.senderId}`);
       commentDetails.push(Object.assign(comment, { userInfo: user.data }));
       if (commentDetails.length === comments.data.comment.length) {
-        console.log(props.listing.comment.length);
         setCommentsInfo(commentDetails);
       }
     });
