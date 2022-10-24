@@ -87,12 +87,7 @@ export default function DashboardFriendsListings(props) {
   });
   return (
     <div>
-      <Text
-        align="left"
-        size={25}
-        weight={"semibold"}
-        // classNames={classes.text}
-      >
+      <Text align="left" size={25} weight={"semibold"}>
         Friend's Listings
       </Text>
       <ScrollArea style={{ width: "100%", height: "30vh" }}>
