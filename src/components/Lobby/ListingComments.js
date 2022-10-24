@@ -6,6 +6,7 @@ import {
   Text,
   Badge,
   Avatar,
+  ScrollArea,
 } from "@mantine/core";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
@@ -83,7 +84,7 @@ export default function ListingComments(props) {
       // if (Object.keys(comment).includes("userInfo")) {
       // console.log("key true");
       return (
-        <Grid key={index}>
+        <Grid key={index} mt={"0.5em"} m={0}>
           <Badge
             p={0}
             sx={{
@@ -113,15 +114,10 @@ export default function ListingComments(props) {
 
   return (
     <Stack>
-      {/* {commentsInfo && commentsInfo.length > 0
-        ? commentsInfo.map((comment) => (
-            <div>
-              <Text>{comment.userInfo.username}</Text>
-            </div>
-          ))
-        : null} */}
-      {/* <ListingCommentsDisplay comments={commentsInfo} />; */}
-      {commentsInfo !== undefined ? commentsInfo && showComments : "loading"}
+      <ScrollArea style={{ height: "10em" }} offsetScrollbars>
+        {commentsInfo !== undefined ? commentsInfo && showComments : null}
+      </ScrollArea>
+
       <Grid>
         <Grid.Col span={10} pr={0}>
           <Textarea

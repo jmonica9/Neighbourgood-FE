@@ -78,7 +78,7 @@ export default function ProfilePage(props) {
           </Text>
           <Text size={"sm"}>By: {listing.username}</Text>
           <Image
-            src={listing.image}
+            src={listing.cloudimg?.url}
             height={"15vh"}
             sx={{ maxHeight: "15vh" }}
           />

@@ -28,6 +28,7 @@ import { LoadingOverlay, Title } from "@mantine/core";
 import { HeartIcon, HeartFilledIcon } from "@radix-ui/react-icons";
 import { socket } from "../../App";
 import { fontSize } from "@mui/system";
+import { formatDistance, formatDistanceToNow } from "date-fns";
 
 export default function Lobby(props) {
   const [lobbyListings, setLobbyListings] = useState([]);
@@ -87,12 +88,13 @@ export default function Lobby(props) {
       (chosenCategories === [] || chosenCategories.length < 1) &&
       (chosenLocation === "" || chosenLocation === "All")
     ) {
-      console.log("no sort");
       axios
         .get(`${BACKEND_URL}/listing/${location.pathname.split("/")[1]}`)
         .then((res) => {
           console.log(res);
-          setLobbyListings(res.data);
+
+          const listingsArray = searchListings(res.data);
+          setLobbyListings(listingsArray);
         });
     } else if (
       // chose categories & location is nt initial state &  chosen All
@@ -460,6 +462,7 @@ export default function Lobby(props) {
         }}
       >
         <Card
+          radius={"xl"}
           sx={{
             width: "16rem",
             height: "17rem",
@@ -469,30 +472,49 @@ export default function Lobby(props) {
           target="_blank"
           key={listing._id}
         >
-          <Card.Section width="13rem" height="16rem">
-            <Image
-              src={listing.cloudimg?.url}
-              width="16rem"
-              max-width="16rem"
-              max-height="16rem"
-              height={160}
-              alt=""
-              onClick={() => {
-                setOpenListingModal(true);
-                setSelectedListing(listing);
-              }}
-              sx={{ cursor: "pointer" }}
-            />
-          </Card.Section>
+          {/* <Card.Section width="13rem" height="16rem"> */}
           <Grid>
-            <Grid.Col span={8}>
-              <Text weight={500} size="lg" mt="md">
+            <Grid.Col span={5} pt={0}>
+              <Text size="xs" align="left">
+                @{listing.username}
+              </Text>
+            </Grid.Col>
+            <Grid.Col span={7} pt={0}>
+              <Text size="xs" align="right">
+                {formatDistanceToNow(Date.parse(listing.createdAt))} ago
+              </Text>
+            </Grid.Col>
+          </Grid>
+          <Image
+            src={listing.cloudimg?.url}
+            // width="16rem"
+            max-width="16rem"
+            max-height="16rem"
+            height={160}
+            alt=""
+            onClick={() => {
+              setOpenListingModal(true);
+              setSelectedListing(listing);
+            }}
+            sx={{ cursor: "pointer" }}
+          />
+          {/* </Card.Section> */}
+          <Grid>
+            <Grid.Col span={8} pr={0}>
+              <Text
+                weight={500}
+                size="lg"
+                mt="xs"
+                align="left"
+                mb="xs"
+                lineClamp={2}
+              >
                 {listing.title}
               </Text>
 
-              <Text mt="xs" color="dimmed" size="sm">
+              {/* <Text mt="xs" color="dimmed" size="sm">
                 {listing.description}
-              </Text>
+              </Text> */}
             </Grid.Col>
             <Grid.Col span={4}>
               <Text mt="md" size={"sm"}>
@@ -541,7 +563,7 @@ export default function Lobby(props) {
             <Card
               sx={{
                 // width: props.drawerOpen ? "35vw" : "45vw",
-                backgroundColor: "lightgrey",
+                backgroundColor: themeColor,
                 height: "35vh",
                 minHeight: 280,
                 display: "flex",
@@ -550,9 +572,7 @@ export default function Lobby(props) {
             >
               {/* Contents in here */}
               <Stack sx={{ width: " 100%" }}>
-                <Text align="left">
-                  <b>{props.title} Watchlist</b>
-                </Text>
+                <Text align="left">{props.title} Watchlist</Text>
                 <Box
                   sx={{
                     background: themeColor,
@@ -582,7 +602,7 @@ export default function Lobby(props) {
             <Card
               sx={{
                 // width: props.drawerOpen ? "35vw" : "45vw",
-                backgroundColor: "lightgrey",
+                backgroundColor: themeColor,
                 height: "35vh",
                 minHeight: 280,
                 display: "flex",
@@ -590,9 +610,7 @@ export default function Lobby(props) {
               }}
             >
               <Stack sx={{ width: " 100%" }}>
-                <Text align="left">
-                  <b>Your {props.title} Activities</b>
-                </Text>
+                <Text align="left">Your {props.title} Activities</Text>
                 <Box
                   sx={{
                     background: themeColor,
@@ -635,7 +653,7 @@ export default function Lobby(props) {
               light
               sx={{
                 width: props.drawerOpen ? "70vw" : "90vw",
-                backgroundColor: "lightgrey",
+                backgroundColor: themeColor,
                 height: "100%",
                 display: "block",
                 borderRadius: 25,
@@ -644,14 +662,25 @@ export default function Lobby(props) {
             >
               <Grid>
                 <Grid.Col
-                  span={12}
-                  sx={{ display: "flex", justifyContent: "center" }}
+                  span={6}
+                  pl={0}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "start",
+                  }}
                 >
-                  <b>Latest {props.title}s</b>
+                  <Text align="left" p={0} m={0}>
+                    Latest {props.title}s
+                  </Text>
                 </Grid.Col>
-                <Grid.Col span={6} pl={0} sx={{ display: "flex" }}>
+                <Grid.Col
+                  span={4}
+                  pl={0}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
                   <TextInput
                     placeholder="Search"
+                    radius={"xl"}
                     onChange={(e) => {
                       setSearch(e.target.value);
                     }}

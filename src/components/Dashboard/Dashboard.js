@@ -94,7 +94,7 @@ export default function Dashboard(props) {
                     // style={{ height: "20rem", padding: 0 }}
                     offsetScrollbars
                   > */}
-                  <DashboardCalendar />
+                  <DashboardCalendar user={userData} />
                   {/* </ScrollArea> */}
 
                   {/* </Stack> */}

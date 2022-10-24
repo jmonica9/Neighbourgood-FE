@@ -14,10 +14,14 @@ import { format } from "date-fns";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import { ClockIcon } from "@radix-ui/react-icons";
 import { height } from "@mui/system";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function AppointmentModal(props) {
   const [opened, setOpened] = useState(props.open);
-  const { title, startDate, endDate, details, type } = props.data;
+  const { title, startDate, endDate, details, type, listingId, chatroomId } =
+    props.data;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setOpened(props.open);
@@ -28,13 +32,13 @@ export default function AppointmentModal(props) {
 
   let color;
   switch (type) {
-    case "Sharing":
+    case "sharing":
       color = neighbourgoodTheme.colors.lightTeal;
       break;
-    case "Helping":
+    case "helping":
       color = neighbourgoodTheme.colors.lightPurple;
       break;
-    case "Lending":
+    case "lending":
       color = neighbourgoodTheme.colors.lightBrown;
       break;
     default:
@@ -92,6 +96,9 @@ export default function AppointmentModal(props) {
           <Text ml={"2rem"} mt={"1rem"}>
             {details}
           </Text>
+          {/* <Button onClick={() => navigate(`/chatroom/${chatroomId}`)}>
+            Go To Chatroom
+          </Button> */}
         </Modal>
       ) : null}
     </>
