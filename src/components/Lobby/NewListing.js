@@ -9,6 +9,7 @@ import {
   MultiSelect,
   Textarea,
   FileInput,
+  NumberInput,
 } from "@mantine/core";
 import { BACKEND_URL } from "../../constants";
 import { useParams, useLocation } from "react-router-dom";
@@ -25,6 +26,7 @@ export default function NewListing(props) {
   const [fileInputFile, setFileInputFile] = useState();
   const [fileInputValue, setFileInputValue] = useState(null);
   const [description, setDescription] = useState();
+  const [depositAmount, setDepositAmount] = useState(1);
   const [listingCategories, setListingCategories] = useState([]);
   const location = useLocation();
 
@@ -34,6 +36,7 @@ export default function NewListing(props) {
   }, [props]);
   //convert image to string
   let imageData;
+  let type = location.pathname.split("/")[1];
   const convertImage = async (event) => {
     try {
       const convertedImage = await Convert(imageFile);
@@ -61,18 +64,6 @@ export default function NewListing(props) {
     }
   };
 
-  // categories
-  // const data = [
-  //   { value: "Kitchen Appliances", label: "Kitchen Appliances" },
-  //   { value: "Electronics", label: "Electronics" },
-  //   { value: "Clothes and Wearables", label: "Clothes and Apparel" },
-  //   { value: "Personal Care", label: "Personal Care" },
-  //   { value: "Furniture", label: "Furniture" },
-  //   { value: "Toys", label: "Toys" },
-  //   { value: "Hobby", label: "Hobby" },
-  //   { value: "Others", label: "Others" },
-  // ];
-
   const closeModal = () => {
     setTitle("");
     setFileInputFile();
@@ -95,8 +86,9 @@ export default function NewListing(props) {
       image: imageData,
       categories: listingCategories,
       description: description,
+      depositAmount: depositAmount,
       location: userData.location,
-      type: location.pathname.split("/")[1],
+      type: type,
     });
 
     toast.success("You have created a new listing!", {
@@ -173,6 +165,14 @@ export default function NewListing(props) {
             required
             onChange={(e) => setDescription(e.target.value)}
           />
+
+          {type == "lending" ? (
+            <NumberInput
+              label="Deposit Amount ($SGD)"
+              value={depositAmount}
+              onChange={(e) => setDepositAmount(e)}
+            />
+          ) : null}
 
           <Button type="submit" radius={"xl"} mt={"xs"}>
             Submit
