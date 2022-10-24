@@ -41,7 +41,7 @@ function Chatroom(props) {
   const [proposedTime, setProposedTime] = useState(new Date());
   const [appointment, setAppointment] = useState();
   const [appointmentProposed, setAppointmentProposed] = useState();
-  const [confirmedTransactioNDate, setConfirmedTransactionDate] = useState("");
+  const [confirmedTransactionDate, setConfirmedTransactionDate] = useState("");
   const templatedConfirmedMessage = `We've left this chatroom open for you to work out any additional details.`;
   const bottomRef = useRef(null);
 
@@ -56,7 +56,9 @@ function Chatroom(props) {
   //messages, appointment, listing
   useEffect(() => {
     props.socket.on("refresh_chatroom", (data) => {
-      getChatroomInfo();
+      if (chatroomId) {
+        getChatroomInfo();
+      }
     });
   }, [props.socket]);
 
@@ -64,12 +66,12 @@ function Chatroom(props) {
 
   /* if user came from a lending "request", then show etiquette modala */
   useEffect(() => {
-    if (state.fromRequestPage && listing) {
-      if (listing.type === "lending") {
+    if (state.fromRequestPage && listing && allMessages) {
+      if (listing.type === "lending" && allMessages.length === 0) {
         setOpened(true);
       }
     }
-  }, [listing]);
+  }, [allMessages]);
 
   /* once userData is in, get chatroom info --> listingId, ownerId, requestorId */
   useEffect(() => {
@@ -157,15 +159,13 @@ function Chatroom(props) {
       .then((res) => {
         if (res.data) {
           if (res.data.confirmed) {
-            setConfirmedTransactionDate(
-              `${proposedDay} of ${proposedMonth} at ${proposedTime.toLocaleTimeString(
-                [],
-                {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }
-              )} hrs`
-            );
+            axios.get(`${BACKEND_URL}/chatroom/${chatroomId}`).then((res) => {
+              axios
+                .get(`${BACKEND_URL}/chatroom/listing/${res.data.listingId}`)
+                .then((res) => {
+                  setConfirmedTransactionDate(res.data.dateOfTransaction);
+                });
+            });
           }
 
           setAppointment(res.data);
@@ -178,7 +178,7 @@ function Chatroom(props) {
     //delete the chatroom, navigate to dashboard
     axios.post(`${BACKEND_URL}/listing/withdraw`, {
       listing: listing,
-      userId: userData._id,
+      userId: requestorId,
     });
     axios.delete(
       `${BACKEND_URL}/chatroom/delete/${listing._id}/${userData._id}`
@@ -213,8 +213,9 @@ function Chatroom(props) {
 
   /*------------------------------ appointment functions ----------------------------------*/
 
-  const acceptAppointment = () => {
+  const acceptAppointment = (message) => {
     //set appointment to true
+    setConfirmedTransactionDate(message.proposedDate);
     axios
       .put(`${BACKEND_URL}/appointment`, {
         listingId: listing._id,
@@ -245,6 +246,7 @@ function Chatroom(props) {
       .put(`${BACKEND_URL}/listing/reserve`, {
         listingId: listing._id,
         requestorId: requestorId,
+        dateOfTransaction: message.proposedDate,
       })
       .then((res) => {
         console.log(res.data);
@@ -344,10 +346,6 @@ function Chatroom(props) {
         )}`,
       })
       .then((res) => {
-        props.socket.emit("refresh_chatroom_trigger", {
-          room: `${chatroomId}`,
-        });
-
         axios
           .post(
             `${BACKEND_URL}/messages/appointment/${chatroomId}/${userData._id}`,
@@ -451,7 +449,7 @@ function Chatroom(props) {
           <Box className="chatroom-listingimage-container">
             <img
               style={{ maxHeight: "90%", maxWidth: "90%" }}
-              src={listing.image}
+              src={listing.cloudimg?.url}
               alt={listing.title}
             />
           </Box>
@@ -477,7 +475,7 @@ function Chatroom(props) {
                               size="md"
                               className="chatroom-description-appointment confirmed"
                             >
-                              {`${requestor.username} has agreed to help you on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                              {`${requestor.username} has agreed to help you on ${confirmedTransactionDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           </>
                         ) : (
@@ -486,7 +484,7 @@ function Chatroom(props) {
                               size="md"
                               className="chatroom-description-appointment confirmed"
                             >
-                              {`You have agreed to pass this item to ${requestor.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                              {`You have agreed to pass this item to ${requestor.username} on ${confirmedTransactionDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           </>
                         )
@@ -497,7 +495,7 @@ function Chatroom(props) {
                               size="md"
                               className="chatroom-description-appointment confirmed"
                             >
-                              {`You have agreed to help ${owner.username} on ${confirmedTransactioNDate}!
+                              {`You have agreed to help ${owner.username} on ${confirmedTransactionDate}!
                               ${templatedConfirmedMessage}`}
                             </Text>
                           ) : (
@@ -516,7 +514,7 @@ function Chatroom(props) {
                               size="md"
                               className="chatroom-description-appointment confirmed"
                             >
-                              {`You have agreed to pick up this item from ${owner.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                              {`You have agreed to pick up this item from ${owner.username} on ${confirmedTransactionDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           ) : (
                             <Text
