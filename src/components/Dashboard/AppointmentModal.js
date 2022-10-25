@@ -15,6 +15,7 @@ import { neighbourgoodTheme } from "../../styles/Theme";
 import { ClockIcon } from "@radix-ui/react-icons";
 import { height } from "@mui/system";
 import { Navigate, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function AppointmentModal(props) {
   const [opened, setOpened] = useState(props.open);

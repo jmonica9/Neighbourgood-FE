@@ -76,11 +76,12 @@ export default function DashboardCalendar(props) {
         const details = await axios.get(
           `${BACKEND_URL}/listing/single/${appt.listingId}`
         );
+        console.log(details);
         apptDetails.push({
           startDate: appt.proposedDateAndTime,
-          title: details.data.title,
-          details: details.data.description,
-          type: details.data.type,
+          title: details.data?.title,
+          details: details.data?.description,
+          type: details.data?.type,
           listingId: appt.listingId,
           chatroomId: appt.chatroomId,
         });
