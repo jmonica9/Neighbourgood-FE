@@ -13,6 +13,8 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import { UserContext } from "../../../App";
 import DashboardFriendsListings from "../DashboardFriendsListings";
 import CommunityPosts from "./CommunityPosts";
+import DashboardCalendar from "../DashboardCalendar";
+import { ChatBubbleIcon, Pencil2Icon } from "@radix-ui/react-icons";
 import { Send } from "react-bootstrap-icons";
 import axios from "axios";
 import { BACKEND_URL } from "../../../constants";
@@ -76,39 +78,37 @@ export default function Community(props) {
   }));
   const classes = useStyles();
   return (
-    <Stack>
-      <Grid ml={drawerOpen ? "23vw" : "3vw"} mb={"2vh"}>
-        <Card
-          sx={{
-            width: drawerOpen ? "73vw" : "93vw",
-            backgroundColor: neighbourgoodTheme.colors.lightGray,
-            minHeight: 280,
-            height: "35vh",
-            display: "block",
-            borderRadius: 25,
-          }}
-        >
-          {/* <Text
-            align="left"
-            size={25}
-            weight={"semibold"}
-            classNames={classes.text}
-          >
-            Friend's Listings
-          </Text> */}
-          <DashboardFriendsListings user={userData} />
-        </Card>
-      </Grid>
-
-      <Grid ml={drawerOpen ? "23vw" : "3vw"} gutter="lg" p={0}>
-        <Grid.Col span={12} p={0} grow>
+    <>
+      <Stack
+        spacing={"1vh"}
+        sx={{ height: "100%", marginTop: 10, paddingTop: 10 }}
+      >
+        <Grid ml={drawerOpen ? "23vw" : "3vw"} mb={"2vh"}>
           <Card
             sx={{
+              width: drawerOpen ? "73vw" : "93vw",
+              backgroundColor: neighbourgoodTheme.colors.lightGray,
+              minHeight: 280,
+              height: "35vh",
+              display: "block",
+              borderRadius: 25,
+            }}
+            p={15}
+          >
+            <DashboardFriendsListings user={userData} />
+          </Card>
+        </Grid>
+
+        <Grid ml={drawerOpen ? "23vw" : "3vw"}>
+          <Card
+            sx={{
+              width: drawerOpen ? "73vw" : "93vw",
               backgroundColor: neighbourgoodTheme.colors.lightGray,
               height: "35rem",
               display: "block",
               borderRadius: 25,
             }}
+            p={15}
           >
             <Grid gutter={"xs"} sx={{ display: "flex" }}>
               <Grid.Col span={8}>

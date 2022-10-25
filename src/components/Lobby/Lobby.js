@@ -221,8 +221,6 @@ export default function Lobby(props) {
     // await getLobbyListings();
     // this only gets all listing -> use another state loading to reload based on sorting
     setRefresh(false);
-
-    console.log("lobby listings CAT", lobbyListings);
   };
 
   const sortByLocation = async () => {
