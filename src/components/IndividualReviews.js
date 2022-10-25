@@ -16,7 +16,12 @@ import { BACKEND_URL } from "../constants";
 import ReviewDetails from "./ReviewDetails";
 import ReviewForm from "./ReviewForm";
 import { UserContext } from "../App";
+import { SimpleGrid, Skeleton, useMantineTheme } from "@mantine/core";
+
+const PRIMARY_COL_HEIGHT = 300;
 function IndividualReview(props) {
+  const theme = useMantineTheme();
+  const SECONDARY_COL_HEIGHT = PRIMARY_COL_HEIGHT / 2 - theme.spacing.md / 2;
   const { listingId } = useParams();
   const [reviews, setReviews] = useState([]);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -101,7 +106,7 @@ function IndividualReview(props) {
               height="100vh"
             >
               <Grid grow align="center" width="100%" height="100%">
-                <Grid.Col span={6}>
+                <Grid.Col span={12}>
                   <Card radius="md" mr={3}>
                     <Card.Section mt="sm">
                       <Image
@@ -115,7 +120,7 @@ function IndividualReview(props) {
                 </Grid.Col>
                 <Card
                   sx={{
-                    width: "50%",
+                    width: "100%",
                     // width: "100%",
                     // backgroundColor: themeColor,
                     height: "100%",
@@ -124,7 +129,7 @@ function IndividualReview(props) {
                   }}
                 >
                   <Card.Section>
-                    <Grid.Col span={6}>
+                    <Grid.Col span={12}>
                       <br />
                       <Grid>
                         <Grid.Col span={12}>
@@ -132,7 +137,7 @@ function IndividualReview(props) {
                             {listingDets.title}
                           </Text>
                           <Text size={20} color="dimmed" mb={4}>
-                            Desc: {listingDets.description}
+                            Description: {listingDets.description}
                           </Text>
                         </Grid.Col>
                         {/* <Grid.Col span={4}>
@@ -204,23 +209,23 @@ function IndividualReview(props) {
                 alignContent: "center",
               }}
             >
-              {/* <Group
+              <Group
                 sx={{
                   display: "flex",
                   align: "center",
                   alignContent: "center",
                 }}
-              > */}
-              {combined &&
-                combined.map((review) => {
-                  console.log("RUNNING");
-                  return <ReviewDetails review={review} />;
-                })}
-              {/* {combinedDetails.length > 0 && (
+              >
+                {combined &&
+                  combined.map((review) => {
+                    console.log("RUNNING");
+                    return <ReviewDetails review={review} />;
+                  })}
+                {/* {combinedDetails.length > 0 && (
         <ReviewDetails reviews={combinedDetails} />
       )} */}
-              <Button onClick={(e) => navigate(-1)}>Go back</Button>
-              {/* </Group> */}
+                <Button onClick={(e) => navigate(-1)}>Go back</Button>
+              </Group>
             </Grid.Col>
           </Grid>
         </Grid.Col>

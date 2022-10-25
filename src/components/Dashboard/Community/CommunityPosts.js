@@ -58,7 +58,7 @@ export default function CommunityPosts() {
         info.push({
           ...post,
           username: userData.data.username,
-          userPic: userData.data.cloudimg.url,
+          userPic: userData.data.cloudimg?.url,
         });
         if (info.length == posts.length) {
           setPostsInfo(info);
