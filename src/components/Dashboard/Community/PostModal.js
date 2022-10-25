@@ -21,6 +21,7 @@ import ProfileMenu from "../../Profile/ProfileMenu";
 export default function PostModal(props) {
   const [opened, setOpened] = useState(props.opened);
   const [postInfo, setPostInfo] = useState(props.post);
+  const [userInfo, setUserInfo] = useState();
   const [openEditModal, setOpenEditModal] = useState(false);
 
   const user = useContext(UserContext);
@@ -28,6 +29,7 @@ export default function PostModal(props) {
   useEffect(() => {
     setOpened(props.opened);
     getPost();
+    getUserInfo();
     console.log(props);
     console.log(props.post);
   }, [props]);
@@ -40,6 +42,12 @@ export default function PostModal(props) {
     const updatedPost = await axios.get(`${BACKEND_URL}/post/${postInfo._id}`);
     setPostInfo(updatedPost.data);
     // props.refreshAllPosts();
+  };
+
+  const getUserInfo = async () => {
+    const userData = await axios.get(`${BACKEND_URL}/users/${postInfo.userId}`);
+    console.log(userData);
+    setUserInfo(userData.data);
   };
 
   // const updateLikes = async (post) => {
@@ -86,6 +94,7 @@ export default function PostModal(props) {
     <div>
       {/* {postInfo && postInfo.postUsersLiked ? ( */}
       <Modal
+        withCloseButton={false}
         opened={opened}
         onClose={() => {
           setOpened(false);
@@ -132,10 +141,10 @@ export default function PostModal(props) {
           <Grid.Col span={4}>
             <Grid>
               <Grid.Col span={3}>
-                <Avatar src={postInfo.userPic} size={24} radius={25} />
+                <Avatar src={userInfo?.cloudimg?.url} size={24} radius={25} />
               </Grid.Col>
               <Grid.Col span={9}>
-                <Text size="sm">{postInfo.username}</Text>
+                <Text size="sm">{userInfo?.username}</Text>
               </Grid.Col>
               <ProfileMenu userId={postInfo.userId} />
             </Grid>

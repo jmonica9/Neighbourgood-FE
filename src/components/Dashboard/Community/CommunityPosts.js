@@ -6,6 +6,7 @@ import {
   Text,
   ScrollArea,
   Group,
+  Avatar,
 } from "@mantine/core";
 import { HeartIcon, HeartFilledIcon } from "@radix-ui/react-icons";
 import axios from "axios";
@@ -15,10 +16,12 @@ import { neighbourgoodTheme } from "../../../styles/Theme";
 import AddPost from "./AddPost";
 import PostModal from "./PostModal";
 import { UserContext } from "../../../App";
+import { formatDistanceToNow } from "date-fns";
 
 export default function CommunityPosts() {
   const [addPostOpen, setAddPostOpen] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [postsInfo, setPostsInfo] = useState([]);
   const [selectedPostOpen, setSelectedPostOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState();
 
@@ -27,6 +30,10 @@ export default function CommunityPosts() {
   useEffect(() => {
     getPosts();
   }, []);
+
+  useEffect(() => {
+    getUserInfo();
+  }, [posts]);
 
   const getPosts = async () => {
     const returnedPosts = await axios.get(`${BACKEND_URL}/post`);
@@ -39,6 +46,24 @@ export default function CommunityPosts() {
       );
       console.log(thePost);
       setSelectedPost(thePost);
+      getUserInfo();
+    }
+  };
+
+  const getUserInfo = async () => {
+    if (posts && posts.length > 0) {
+      let info = [];
+      posts.forEach(async (post) => {
+        const userData = await axios.get(`${BACKEND_URL}/users/${post.userId}`);
+        info.push({
+          ...post,
+          username: userData.data.username,
+          userPic: userData.data.cloudimg.url,
+        });
+        if (info.length == posts.length) {
+          setPostsInfo(info);
+        }
+      });
     }
   };
 
@@ -79,7 +104,7 @@ export default function CommunityPosts() {
   };
 
   const showPosts = () => {
-    const postList = posts.map((post) => {
+    const postList = postsInfo.map((post) => {
       return (
         <Card
           sx={{
@@ -89,6 +114,23 @@ export default function CommunityPosts() {
           mb={"0.5em"}
         >
           <Grid>
+            <Grid sx={{ width: "100%" }}>
+              {/* <Grid.Col span={3}>
+                <Avatar src={post.userPic} size={24} radius={25} />
+              </Grid.Col> */}
+              <Grid.Col span={5}>
+                <Text size="xs" align="left">
+                  @{post.username}
+                </Text>
+              </Grid.Col>
+              <Grid.Col span={7}>
+                <Text size="xs" align="right">
+                  <Text size={"xs"}>
+                    {formatDistanceToNow(Date.parse(post.createdAt))} ago
+                  </Text>
+                </Text>
+              </Grid.Col>
+            </Grid>
             <Image
               alt=""
               src={post.cloudimg.url}
@@ -103,9 +145,6 @@ export default function CommunityPosts() {
             <Grid.Col span={8}>
               <Text size="xs" align="left">
                 {post.postTitle}
-              </Text>
-              <Text size="xs" align="left">
-                By: {post.username}
               </Text>
             </Grid.Col>
             <Grid.Col span={4}>
@@ -150,11 +189,13 @@ export default function CommunityPosts() {
 
   return (
     <div>
-      <ScrollArea style={{ height: "45vh" }} offsetScrollbars>
+      <ScrollArea style={{ height: "45vh" }} m={"1vh"}>
         {showPosts()}
       </ScrollArea>
 
-      <Button onClick={() => setAddPostOpen(true)}>Add Post</Button>
+      <Button radius={"xl"} onClick={() => setAddPostOpen(true)}>
+        Add Post
+      </Button>
       <AddPost opened={addPostOpen} closed={addPostClosed} />
       {selectedPost ? (
         <PostModal
