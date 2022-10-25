@@ -212,7 +212,8 @@ export default function Lobby(props) {
   };
 
   const sortByLocationAndCategories = async () => {
-    console.log("sort by location+categories");
+    console.log("THIS RAN LOC N CAT");
+    console.log(chosenLocation, chosenCategories);
     await axios
       .post(
         `${BACKEND_URL}/listing/locationscategories/${
@@ -432,11 +433,11 @@ export default function Lobby(props) {
     >
       {/* <Text color="black">{props.title}</Text> */}
       <div>
-        <div style={{ width: "100%", position: "relative" }}>
+        <div style={{ width: "100vh", position: "relative" }}>
           <LoadingOverlay
             visible={loading}
-            overlayBlur={6}
-            loaderProps={{ size: "xl" }}
+            overlayBlur={2}
+            // loaderProps={{ size: "lg" }}
           />
           <Group position="center" grow spacing={"xs"} mb={"xs"}>
             {/* <Grid>

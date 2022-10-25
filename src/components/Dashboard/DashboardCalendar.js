@@ -136,34 +136,39 @@ export default function DashboardCalendar() {
   return (
     <ThemeProvider theme={theme}>
       {/* <Paper sx={{ overflow: "auto", overflowY: true }}> */}
-      <ScrollArea
+      {/* <ScrollArea
         style={{ height: schedulerHeight, padding: 0 }}
         // style={{ height: "20rem", padding: 0 }}
         offsetScrollbars
+      > */}
+      <Scheduler
+        // height={schedulerHeight}
+        height="80vh"
+        width="90%"
+        data={appointmentData}
       >
-        <Scheduler height={schedulerHeight} data={appointmentData}>
-          <ViewState />
+        <ViewState />
 
-          <WeekView startDayHour={6} endDayHour={24} cellDuration={30} />
-          <Appointments appointmentComponent={calendarAppointment} />
+        <WeekView startDayHour={6} endDayHour={24} cellDuration={30} />
+        <Appointments appointmentComponent={calendarAppointment} />
 
-          {/* <AllDayPanel /> */}
-          <Toolbar />
-          <DateNavigator />
-          <TodayButton
-            buttonComponent={todayButton}
-            messages={{ today: <CalendarIcon /> }}
-          />
-          <AppointmentModal
-            data={chosenAppointment}
-            open={openAppointmentModal}
-            close={() => setOpenAppointmentModal(false)}
-          />
-        </Scheduler>
-      </ScrollArea>
-      <Text align="left" size={"xl"} ml={"2vh"} mb={"1vh"}>
+        {/* <AllDayPanel /> */}
+        <Toolbar />
+        <DateNavigator />
+        <TodayButton
+          buttonComponent={todayButton}
+          messages={{ today: <CalendarIcon /> }}
+        />
+        <AppointmentModal
+          data={chosenAppointment}
+          open={openAppointmentModal}
+          close={() => setOpenAppointmentModal(false)}
+        />
+      </Scheduler>
+      {/* </ScrollArea> */}
+      {/* <Text align="left" size={"xl"} ml={"2vh"} mb={"1vh"}>
         Calendar
-      </Text>
+      </Text> */}
     </ThemeProvider>
   );
 }

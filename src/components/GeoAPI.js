@@ -5,10 +5,10 @@ import {
 } from "@geoapify/react-geocoder-autocomplete";
 import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 import axios from "axios";
-import { Text } from "@mantine/core";
-
+import { Box, Container, Text } from "@mantine/core";
+import { useStyles } from "../Authentication";
 const GeoAPI = (props) => {
-  console.log(process.env.REACT_APP_GEO_APIKEY);
+  const { classes } = useStyles();
   const [lon, setLon] = useState("");
   const [lat, setLat] = useState("");
   // const [county, setCounty] = useState("");
@@ -20,6 +20,8 @@ const GeoAPI = (props) => {
       setLon(value.properties.lon);
       setLat(value.properties.lat);
       props.setCounty(value.properties.county);
+      props.setLocationError(false);
+      props.setUserPostcode(value.properties.postcode);
       setFormatted(value.properties.formatted);
       // getPlaceName(lon, lat);
     }
@@ -38,7 +40,7 @@ const GeoAPI = (props) => {
     //   .then((res) => console.log(res, "res from lat lon"));
     axios
       .get(
-        `https://api.geoapify.com/v2/places?categories=building.residential&filter=circle:${lon},${lat},5000&bias=proximity:${lon},${lat}&limit=20&apiKey=a1e4990d346a407f86d6128b66d52348`
+        `https://api.geoapify.com/v2/places?categories=building.residential&filter=circle:${lon},${lat},5000&bias=proximity:${lon},${lat}&limit=20&apiKey=${process.env.REACT_APP_GEO_APIKEY}`
       )
       .then((response) => response.json())
       .then((result) => console.log(result))
@@ -47,20 +49,25 @@ const GeoAPI = (props) => {
   // image.pn
   // categories: building , postal_code , accommodation
   return (
-    <GeoapifyContext apiKey="a1e4990d346a407f86d6128b66d52348">
+    <GeoapifyContext apiKey={`${process.env.REACT_APP_GEO_APIKEY}`}>
       <GeoapifyGeocoderAutocomplete
         placeholder="Enter postalcode here"
         type={"postcode"}
         lang="en"
-        countryCodes={"sg"}
+        // countryCodes={"singapore"}
+        // filter="countrycode:sg"
+        // filterByCountryCode={"sg"}
         // position={position}
-        // countryCodes={countryCodes}
+        countryCodes={"sg"}
         limit={10}
         // value={displayValue}
         placeSelect={onPlaceSelect}
         suggestionsChange={onSuggectionChange}
       />
       <Text>{formatted && formatted}</Text>
+      {props.locationError ? (
+        <Text className={classes.icon}>Invalid location </Text>
+      ) : null}
     </GeoapifyContext>
   );
 };

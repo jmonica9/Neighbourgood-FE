@@ -54,11 +54,11 @@ export default function SideDrawer(props) {
     }
   });
 
-  useEffect(() => {
-    if (chats) {
-      console.log(chats);
-    }
-  }, [chats]);
+  // useEffect(() => {
+  //   if (chats) {
+  //     console.log(chats);
+  //   }
+  // }, [chats]);
 
   const getChats = () => {
     axios.get(`${BACKEND_URL}/chatroom/user/${userData._id}`).then((res) => {

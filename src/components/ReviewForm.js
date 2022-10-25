@@ -4,7 +4,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Button, Paper, TextInput } from "@mantine/core";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useRouteLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 // import {
 //   TextInput,
@@ -44,7 +44,7 @@ import { toast } from "react-toastify";
 //   );
 // }
 
-export default function ReviewForm() {
+export default function ReviewForm(props) {
   const [reviewText, setReviewText] = useState("");
   const { listingId } = useParams();
   const navigate = useNavigate();
@@ -52,6 +52,7 @@ export default function ReviewForm() {
     await axios
       .post(`${BACKEND_URL}/review/insertOne/${listingId}`, {
         reviewText: reviewText,
+        postedBy: props.userData._id,
       })
       .then((res) => {
         console.log(res.data, "review submitted");
@@ -64,6 +65,7 @@ export default function ReviewForm() {
           draggable: false,
           progress: undefined,
         });
+        props.setRefresh(!props.refresh);
         navigate(`/individualReview/${listingId}`);
       });
   };
