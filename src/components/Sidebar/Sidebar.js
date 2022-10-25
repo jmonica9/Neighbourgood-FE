@@ -62,6 +62,7 @@ export default function Sidebar(props) {
         </Navbar.Section>
       </Navbar>
       <SideDrawer
+        refresh={() => props.refresh()}
         userData={userData}
         logout={props.logout}
         openDrawer={props.drawer}

@@ -31,6 +31,10 @@ export default function DashboardFriendsListings(props) {
     }
   }, [user, refresh, openListingModal]);
 
+  useEffect(() => {
+    console.log(props.drawerOpen);
+  }, [props]);
+
   const getFriendsListings = async (id) => {
     const response = await axios.get(`${BACKEND_URL}/listing/user/${id}`);
     // console.log(response.data);
@@ -67,7 +71,15 @@ export default function DashboardFriendsListings(props) {
     setRefresh(false);
   };
 
-  const searchListings = () => {};
+  const searchListings = () => {
+    const filteredList = friendsListings.filter(
+      (listing) =>
+        listing.title.toLowerCase().includes(searchField.toLowerCase()) ||
+        listing.username.toLowerCase.includes(searchField.toLowerCase())
+    );
+    console.log(filteredList);
+    setFriendsListings(filteredList);
+  };
 
   const displayFriendsListings = friendsListingsSorted.map((listing, index) => {
     let color;
@@ -163,12 +175,15 @@ export default function DashboardFriendsListings(props) {
             radius="xl"
             placeholder="Search"
             value={searchField}
-            onChange={(e) => setSearchField(e)}
+            onChange={(e) => {
+              setSearchField(e.target.value);
+              searchListings();
+            }}
           />
         </Grid.Col>
       </Grid>
 
-      <ScrollArea style={{ width: "100%", height: "30vh" }}>
+      <ScrollArea style={{ width: "100%", height: "30vh" }} p={0}>
         <Grid p={0} m={0}>
           {displayFriendsListings}
         </Grid>

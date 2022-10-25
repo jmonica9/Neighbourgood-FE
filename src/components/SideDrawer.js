@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { ChatBubbleIcon } from "@radix-ui/react-icons";
 import { socket, UserContext } from "../App";
 
 //import styling
@@ -14,11 +14,13 @@ import {
   Card,
   Grid,
   Avatar,
+  ScrollArea,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../styles/Theme";
 import EditProfileModal from "./Profile/EditProfileModal";
 import axios from "axios";
 import { BACKEND_URL } from "../constants";
+import { createChainedFunction } from "@mui/material";
 
 const useStyles = createStyles((theme) => ({
   drawerPaper: {
@@ -34,6 +36,7 @@ export default function SideDrawer(props) {
   const [user, setUser] = useState(userData);
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
   const [chats, setChats] = useState();
+  const [chatsInfo, setChatsInfo] = useState();
 
   const navigate = useNavigate();
   const { classes } = useStyles();
@@ -57,13 +60,32 @@ export default function SideDrawer(props) {
   useEffect(() => {
     if (chats) {
       console.log(chats);
+      getChatsInfo();
     }
   }, [chats]);
 
-  const getChats = () => {
-    axios.get(`${BACKEND_URL}/chatroom/user/${userData._id}`).then((res) => {
-      setChats(res.data);
-    });
+  const getChats = async () => {
+    const chats = await axios.get(
+      `${BACKEND_URL}/chatroom/user/${userData._id}`
+    );
+    const chatsSorted = chats.data.sort((a, b) => a.createdAt - b.createdAt);
+    console.log(chatsSorted);
+    setChats(chatsSorted);
+  };
+
+  const getChatsInfo = () => {
+    if (chats && chats.length > 0) {
+      let chatData = [];
+      chats.forEach(async (chat) => {
+        const data = await axios.get(
+          `${BACKEND_URL}/listing/single/${chat.listingId}`
+        );
+        chatData.push({ ...chat, listingInfo: data.data });
+        if (chatData.length === chats.length) {
+          setChatsInfo(chatData);
+        }
+      });
+    }
   };
 
   return (
@@ -256,6 +278,7 @@ export default function SideDrawer(props) {
                 borderRadius: 25,
                 height: "30vh",
               }}
+              px={12}
               pt={5}
               pb={5}
             >
@@ -264,31 +287,34 @@ export default function SideDrawer(props) {
                 change from chats */}
                 Current Chats
               </Text>
-              <Grid>
-                {chats &&
-                  chats.map((chat) => {
-                    return (
-                      <Grid.Col key={chat._id}>
-                        <p style={{ fontSize: "1rem" }}>
-                          {/* listingId: {chat.listingId} */}
-                        </p>
-                        <Button
-                          variant="dark"
-                          onClick={() => {
-                            navigate(`/chatroom/${chat._id}`, {
-                              state: { fromRequestPage: false },
-                            });
-                          }}
-                        >
-                          go to chatroom
-                        </Button>
-                      </Grid.Col>
-                    );
-                  })}
-              </Grid>
-              <Text color={"white"} align="left" size="xl" weight={"bold"}>
-                {/* some stuff */}
-              </Text>
+              <ScrollArea style={{ height: "80%", width: "100%" }} p={1}>
+                <Grid>
+                  {chatsInfo &&
+                    chatsInfo.map((chat) => {
+                      return (
+                        <Grid.Col key={chat._id} span={4}>
+                          <Avatar
+                            radius="50%"
+                            src={chat.listingInfo?.cloudimg?.url}
+                            size={60}
+                            sx={{ cursor: "pointer" }}
+                            onClick={() => {
+                              navigate(`/chatroom/${chat._id}`, {
+                                state: { fromRequestPage: false },
+                              });
+                              console.log("navigating to chatroom");
+                              props.refresh();
+                            }}
+                          >
+                            <ChatBubbleIcon style={{ zIndex: "100" }} />
+                          </Avatar>
+
+                          {/* <Text size="xs">Enter Chat</Text> */}
+                        </Grid.Col>
+                      );
+                    })}
+                </Grid>
+              </ScrollArea>
             </Card>
             <Button
               sx={{

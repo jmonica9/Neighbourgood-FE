@@ -104,6 +104,7 @@ export default function App() {
         <header className="App-header">
           <UserContext.Provider value={userData}>
             <Sidebar
+              refresh={() => checkJWT()}
               drawer={drawerOpen}
               logout={logout}
               drawerOpen={() => {
