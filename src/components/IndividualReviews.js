@@ -92,49 +92,50 @@ function IndividualReview(props) {
         spacing="sm"
         sx={{ marginLeft: props.drawerOpen ? "26vw" : "4vw", display: "flex" }}
       >
-        {listingDets && (
-          <Container
-            fluid
-            className="SideBar-Content-body"
-            px="xs"
-            height="100vh"
-          >
-            <Grid grow align="center" width="100%" height="100%">
-              <Grid.Col span={6}>
-                <Card radius="md" mr={3}>
-                  <Card.Section mt="sm">
-                    <Image
-                      src={listingDets?.cloudimg?.url}
-                      height="20vh"
-                      alt="photo display"
-                      fit="contain"
-                    />
-                  </Card.Section>
-                </Card>
-              </Grid.Col>
-              <Card
-                sx={{
-                  width: "50%",
-                  // width: "100%",
-                  // backgroundColor: themeColor,
-                  height: "100%",
-                  // minHeight: "50vh",
-                  borderRadius: 25,
-                }}
-              >
-                <Card.Section>
-                  <Grid.Col span={6}>
-                    <br />
-                    <Grid>
-                      <Grid.Col span={8}>
-                        <Text size={28} weight={500} mb={4}>
-                          {listingDets.title}
-                        </Text>
-                        <Text size={20} color="dimmed" mb={4}>
-                          Desc: {listingDets.description}
-                        </Text>
-                      </Grid.Col>
-                      {/* <Grid.Col span={4}>
+        <Grid.Col span={12}>
+          {listingDets && (
+            <Container
+              fluid
+              className="SideBar-Content-body"
+              px="xs"
+              height="100vh"
+            >
+              <Grid grow align="center" width="100%" height="100%">
+                <Grid.Col span={6}>
+                  <Card radius="md" mr={3}>
+                    <Card.Section mt="sm">
+                      <Image
+                        src={listingDets?.cloudimg?.url}
+                        height="20vh"
+                        alt="photo display"
+                        fit="contain"
+                      />
+                    </Card.Section>
+                  </Card>
+                </Grid.Col>
+                <Card
+                  sx={{
+                    width: "50%",
+                    // width: "100%",
+                    // backgroundColor: themeColor,
+                    height: "100%",
+                    // minHeight: "50vh",
+                    borderRadius: 25,
+                  }}
+                >
+                  <Card.Section>
+                    <Grid.Col span={6}>
+                      <br />
+                      <Grid>
+                        <Grid.Col span={12}>
+                          <Text size={28} weight={500} mb={4}>
+                            {listingDets.title}
+                          </Text>
+                          <Text size={20} color="dimmed" mb={4}>
+                            Desc: {listingDets.description}
+                          </Text>
+                        </Grid.Col>
+                        {/* <Grid.Col span={4}>
                         <Text mb={"1rem"}>
                           <DiscIcon /> {listingDetails.location}
                         </Text>
@@ -143,73 +144,86 @@ function IndividualReview(props) {
                           <ProfileMenu userId={listingDetails.userId} />
                         </Stack>
                       </Grid.Col> */}
-                    </Grid>
-                  </Grid.Col>
-                </Card.Section>
-              </Card>{" "}
-            </Grid>
-          </Container>
-        )}
-        <Grid
-          grow
+                      </Grid>
+                    </Grid.Col>
+                  </Card.Section>
+                </Card>{" "}
+              </Grid>
+            </Container>
+          )}
+        </Grid.Col>
+        <Grid.Col
+          className="testt"
+          span={12}
           align="center"
-          width="70%"
-          height="100%"
           sx={{
             display: "flex",
             align: "center",
             alignContent: "center",
+            justifyContent: "center",
             // marginLeft: "8rem",
           }}
         >
-          <Grid.Col span={12} width="50%">
-            {!showReviewForm ? null : ( // ) //   </Text> //     Your review exists //   <Text color="black" size="sm"> //  (
-              <ReviewForm
-                refresh={refresh}
-                setRefresh={setRefresh}
-                userData={userData}
-              />
-            )}
-          </Grid.Col>
-          <Grid.Col
-            span={12}
+          <Grid
+            grow
+            align="center"
+            width="70%"
+            height="100%"
             sx={{
               display: "flex",
-              align: "center",
+              // align: "center",
+              // justifyItems: "center",
               alignContent: "center",
+              // marginLeft: "8rem",
             }}
           >
-            <Group
+            <Grid.Col
+              span={12}
               sx={{
                 display: "flex",
                 align: "center",
                 alignContent: "center",
+                // marginLeft: "8rem",
+              }}
+              width="100%"
+            >
+              {!showReviewForm ? null : ( // ) //   </Text> //     Your review exists //   <Text color="black" size="sm"> //  (
+                <ReviewForm
+                  refresh={refresh}
+                  setRefresh={setRefresh}
+                  userData={userData}
+                />
+              )}
+            </Grid.Col>
+            <Grid.Col
+              span={12}
+              sx={{
+                display: "flex",
+                justifyItems: "center",
+                // align: "center",
+                alignContent: "center",
               }}
             >
+              {/* <Group
+                sx={{
+                  display: "flex",
+                  align: "center",
+                  alignContent: "center",
+                }}
+              > */}
               {combined &&
                 combined.map((review) => {
                   console.log("RUNNING");
                   return <ReviewDetails review={review} />;
                 })}
-
               {/* {combinedDetails.length > 0 && (
         <ReviewDetails reviews={combinedDetails} />
       )} */}
               <Button onClick={(e) => navigate(-1)}>Go back</Button>
-            </Group>
-          </Grid.Col>
-          {/* <Grid.Col
-          span={12}
-          sx={{
-            display: "flex",
-            align: "center",
-            alignContent: "center",
-            marginLeft: "20rem",
-          }}
-        >
-          <Button onClick={(e) => navigate(-1)}>Go back</Button>
-        </Grid.Col> */}
-        </Grid>
+              {/* </Group> */}
+            </Grid.Col>
+          </Grid>
+        </Grid.Col>
       </Grid>
     </Box>
   );

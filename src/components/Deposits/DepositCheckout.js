@@ -4,6 +4,7 @@ import StripeCheckout from "react-stripe-checkout";
 import { BACKEND_URL } from "../../constants";
 import { Button } from "@mantine/core";
 import { UserContext } from "../../App";
+import { toast } from "react-toastify";
 
 const CURRENCY = "SGD";
 const amountInDollars = (amount) => parseInt(amount * 100);
@@ -16,10 +17,26 @@ export default function DeopsitCheckout(props) {
   const user = useContext(UserContext);
 
   const paymentSuccess = () => {
-    alert("Payment Successful!");
+    toast.success("Payment successful!", {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
   };
   const paymentError = () => {
-    alert("Payment Error!");
+    toast.error("Payment error!", {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
   };
 
   const onToken = (amount, description) => async (token) => {

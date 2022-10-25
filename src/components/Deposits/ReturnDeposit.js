@@ -4,6 +4,7 @@ import StripeCheckout from "react-stripe-checkout";
 import { BACKEND_URL } from "../../constants";
 import { Button } from "@mantine/core";
 import { UserContext } from "../../App";
+import { toast } from "react-toastify";
 
 const CURRENCY = "SGD";
 const amountInDollars = (amount) => parseInt(amount * 100);
@@ -17,10 +18,26 @@ export default function ReturnDeposit(props) {
   const user = useContext(UserContext);
 
   const paymentSuccess = () => {
-    alert("Return Successful!");
+    toast.success("Return successful!", {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
   };
   const paymentError = () => {
-    alert("Return Error!");
+    toast.error("Return error!", {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
   };
 
   useEffect(() => {

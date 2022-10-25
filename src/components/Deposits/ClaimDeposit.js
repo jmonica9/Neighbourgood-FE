@@ -12,6 +12,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CURRENCY = "SGD";
 const amountInDollars = (amount) => parseInt(amount * 100);
@@ -28,10 +29,26 @@ export default function ClaimDeposit(props) {
   };
 
   const paymentSuccess = () => {
-    alert("Claim Successful!");
+    toast.success("Claim successful", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
   };
   const paymentError = () => {
-    alert("Claim Error!");
+    toast.error("Claim error!", {
+      position: "top-right",
+      autoClose: 4500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
   };
 
   const claimDeposit = async () => {
