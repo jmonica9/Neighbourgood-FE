@@ -152,6 +152,7 @@ export function Authentication(props) {
     } else setLoginPasswordError(false);
   };
   const login = () => {
+    validateLogin();
     console.log(authMode, "authmode");
     if (!loginUsernameError && !loginPasswordError) {
       Axios({
@@ -279,7 +280,7 @@ export function Authentication(props) {
               placeholder="register username here"
               onChange={(e) => {
                 setRegisterUsername(e.target.value);
-                validate();
+                // validate();
               }}
               // error={usernameError ? "Invalid username" : null}
               classNames={usernameError ? { input: classes.invalid } : null}
@@ -303,7 +304,7 @@ export function Authentication(props) {
               placeholder="register email here"
               onChange={(e) => {
                 setRegisterEmail(e.target.value);
-                validate();
+                // validate();
               }}
               mt="md"
               withAsterisk
@@ -334,7 +335,7 @@ export function Authentication(props) {
               mt="md"
               onChange={(e) => {
                 setRegisterPassword(e.target.value);
-                validate();
+                // validate();
               }}
               withAsterisk
               // error={passwordError ? "Invalid password" : null}
@@ -373,7 +374,7 @@ export function Authentication(props) {
               value={loginUsername}
               placeholder="login username here"
               onChange={(e) => {
-                validateLogin();
+                // validateLogin();
                 setLoginUsername(e.target.value);
               }}
               withAsterisk
@@ -398,7 +399,7 @@ export function Authentication(props) {
               label="Password"
               placeholder="Your password"
               onChange={(e) => {
-                validateLogin();
+                // validateLogin();
                 setLoginPassword(e.target.value);
               }}
               required
