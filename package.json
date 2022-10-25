@@ -40,6 +40,7 @@
     "socket.io": "^4.5.2",
     "socket.io-client": "^4.5.2",
     "tabler-icons-react": "^1.55.0",
+    "validator": "^13.7.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

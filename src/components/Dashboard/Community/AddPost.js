@@ -15,7 +15,7 @@ import { BACKEND_URL } from "../../../constants";
 export default function AddPost(props) {
   const [opened, setOpened] = useState(false);
   const [postTitle, setPostTitle] = useState("");
-  const [fileInputFile, setFileInputFile] = useState();
+  const [fileInputFile, setFileInputFile] = useState(null);
   const [fileInputValue, setFileInputValue] = useState();
   const [imageDataString, setImageDataString] = useState();
   const [postCategories, setPostCategories] = useState([]);
@@ -85,6 +85,7 @@ export default function AddPost(props) {
     >
       <TextInput
         label="Title"
+        required
         onChange={(e) => {
           setPostTitle(e.target.value);
         }}
@@ -92,6 +93,7 @@ export default function AddPost(props) {
       <FileInput
         label="Upload Profile Picture"
         icon={<UploadIcon />}
+        required
         onChange={(e) => {
           console.log(e);
           setFileInputValue(e.name);
@@ -102,6 +104,7 @@ export default function AddPost(props) {
       <MultiSelect
         data={data}
         label="Category"
+        required
         onChange={(e) => {
           console.log(e);
           setPostCategories(e);
@@ -109,12 +112,16 @@ export default function AddPost(props) {
       />
       <Textarea
         label="Description"
+        required
         onChange={(e) => {
           setPostDescription(e.target.value);
         }}
       />
       <Button
         mt={"1em"}
+        disabled={
+          postTitle === "" || postDescription === "" || fileInputFile === null
+        }
         onClick={() => {
           submitPost();
         }}

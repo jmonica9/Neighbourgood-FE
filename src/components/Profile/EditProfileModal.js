@@ -30,7 +30,7 @@ export default function EditProfileModal(props) {
 
   useEffect(() => {
     setOpened(props.opened);
-    console.log(user);
+    // console.log(user);
   }, [props]);
 
   useEffect(() => {

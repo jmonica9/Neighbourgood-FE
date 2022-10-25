@@ -72,6 +72,7 @@ export function OverallChats(props) {
   const userData = useContext(UserContext);
   const theme = useMantineTheme();
   const [chats, setChats] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
   const [listChat, setListChat] = useState([]);
   // const getChatroomInfo = () => {
@@ -92,15 +93,23 @@ export function OverallChats(props) {
 
   const chatDetails = [];
   const getChatsDetails = async (chats) => {
-    await chats.forEach((chat) =>
+    await chats.forEach((chat) => {
       axios
         .get(`${BACKEND_URL}/chatroom/listing/${chat.listingId}`)
         .then((res) => {
-          chatDetails.push(Object.assign(res.data, { chatId: chat._id }));
-        })
-    );
+          chatDetails.push(
+            Object.assign(res.data, {
+              chatId: chat._id,
+              listingId: chat.listingId,
+            })
+          );
+          // if (chats.length === chatDetails.length) {
+          setListChat(chatDetails);
+          // }
+        });
+    });
     console.log(chatDetails);
-    setListChat(chatDetails);
+
     return chatDetails;
   };
 
@@ -123,9 +132,20 @@ export function OverallChats(props) {
     }
   };
   useEffect(() => {
-    getChats();
-    console.log("got chats?");
-  }, [userData]);
+    if (userData) {
+      getChats();
+      console.log("got chats?");
+    }
+  }, [refresh]);
+
+  const markComplete = (listingId) => {
+    axios
+      .get(`${BACKEND_URL}/listing/markcomplete/${listingId}`)
+      .then((res) => {
+        console.log(res);
+        setRefresh(!refresh);
+      });
+  };
 
   const rows =
     listChat &&
@@ -135,27 +155,45 @@ export function OverallChats(props) {
       })
       .map((item) => {
         return (
-          <div>
-            <Grid
-              mt={"1.5rem"}
-              sx={{
-                display: "flex",
-                alignContent: "center",
-                marginLeft: props.drawerOpen ? "25vw" : "5vw",
-              }}
-            >
+          <Grid
+            mt={"1.5rem"}
+            sx={{
+              display: "flex",
+              alignContent: "center",
+              // marginLeft: props.drawerOpen ? "25vw" : "5vw",
+            }}
+          >
+            <Group>
               <Grid.Col
                 span={3}
                 sx={{ display: "flex", alignContent: "center" }}
               >
-                <Image maxHeight={20} src={item.cloudimg?.url} mr={"5rem"} />
-                <Text size="sm" weight={500} ml={5} color="black">
-                  {item.title}
-                </Text>
+                <Group
+                // sx={{ maxWidth: "15", minWidth: "15", width: "15" }}
+                >
+                  <Image
+                    // maxHeight={20}
+                    width="150px"
+                    src={item.cloudimg?.url}
+                    mr={"5rem"}
+                    // sx={{ maxWidth: "15", minWidth: "15", width: "15" }}
+                  />
+                  <Text
+                    size="sm"
+                    sx={{ width: "300px" }}
+                    weight={500}
+                    ml={5}
+                    color="black"
+                    align="left"
+                  >
+                    {item.title}
+                  </Text>
+                </Group>
               </Grid.Col>
               <Grid.Col
                 span={1}
                 sx={{
+                  width: "300px",
                   display: "flex",
                   align: "center",
                   alignContent: "center",
@@ -166,41 +204,52 @@ export function OverallChats(props) {
                 </Badge>
               </Grid.Col>
               <Grid.Col span={1} sx={{ display: "flex" }}>
-                <Text size="sm" weight={500} ml={"4rem"} color="black">
-                  {item.username === userData.username ? "You" : item.username}
-                </Text>
+                <Group maxWidth={15}>
+                  <Text size="sm" weight={500} ml={"3rem"} color="black">
+                    {item.username === userData.username
+                      ? "You"
+                      : item.username}
+                  </Text>
+                </Group>
               </Grid.Col>
-              <Grid.Col span={2} sx={{ display: "centre" }}>
-                <Text size="sm" color="black" ml={"2rem"}>
-                  {/* STATUS */}
-                  {item.completed === undefined ? "No status" : item.completed}
-                </Text>
-              </Grid.Col>
-              <Grid.Col span={1} sx={{ display: "flex" }}>
-                <Button
-                  onClick={() => {
-                    navigate(`/chatroom/${item.chatId}`, {
-                      state: { fromRequestPage: false },
-                    });
-                  }}
-                >
-                  {">"}
-                </Button>
+              <Grid.Col span={2} sx={{ display: "flex" }}>
+                <Group maxWidth={15}>
+                  <Text size="sm" color="black" ml={"4rem"}>
+                    {/* STATUS */}
+                    {item.completed === false ? "Open" : "Completed"}
+                  </Text>
+                </Group>
               </Grid.Col>
               <Grid.Col span={1} sx={{ display: "flex" }}>
-                <Button>{"✓"}</Button>
+                <Group maxWidth={15}>
+                  <Button
+                    onClick={() => {
+                      navigate(`/chatroom/${item.chatId}`, {
+                        state: { fromRequestPage: false },
+                      });
+                    }}
+                  >
+                    {"Go to Chatroom"}
+                  </Button>
+                  {item.username === userData.username && !item.completed ? (
+                    <Button onClick={(e) => markComplete(item.listingId)}>
+                      {"✓ Mark Complete"}
+                    </Button>
+                  ) : null}
+                  {item.completed ? (
+                    <Button
+                      span={1}
+                      sx={{ display: "flex" }}
+                      onClick={() => navigate(`/individualReview/${item._id}`)}
+                    >
+                      Review
+                    </Button>
+                  ) : null}
+                </Group>
               </Grid.Col>
-              <Grid.Col>
-                <Button
-                  span={1}
-                  sx={{ display: "flex" }}
-                  onClick={() => navigate(`/individualReview/${item._id}`)}
-                >
-                  R
-                </Button>
-              </Grid.Col>
-            </Grid>
-          </div>
+              {/* <Grid.Col></Grid.Col> */}
+            </Group>
+          </Grid>
         );
       });
   // <Group spacing="sm">
@@ -234,7 +283,7 @@ export function OverallChats(props) {
   return (
     <Grid
       spacing="sm"
-      sx={{ marginLeft: props.drawerOpen ? "26vw" : "8vw", display: "flex" }}
+      sx={{ marginLeft: props.drawerOpen ? "26vw" : "4vw", display: "flex" }}
     >
       <Table
         style={{
@@ -248,7 +297,7 @@ export function OverallChats(props) {
         verticalSpacing="sm"
       >
         <Grid
-          ml={"7rem"}
+          ml={"5rem"}
           sx={{
             display: "flex",
             alignContent: "center",
