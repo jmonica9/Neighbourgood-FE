@@ -103,9 +103,9 @@ export function OverallChats(props) {
               listingId: chat.listingId,
             })
           );
-          if (chats.length === chatDetails.length) {
-            setListChat(chatDetails);
-          }
+          // if (chats.length === chatDetails.length) {
+          setListChat(chatDetails);
+          // }
         });
     });
     console.log(chatDetails);

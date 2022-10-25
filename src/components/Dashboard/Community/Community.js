@@ -270,9 +270,9 @@ export default function Community(props) {
               </Grid.Col>
             </Grid>
           </Card>
-        </Grid.Col>
-      </Grid>
-    </Stack>
+        </Grid>
+      </Stack>
+    </>
   );
 }
 

@@ -205,7 +205,7 @@ export default function NewListing(props) {
           {descriptionError ? (
             <Text className={classes.icon}>Invalid Description </Text>
           ) : null}
-          {type == "lending" ? (
+          {type === "lending" ? (
             <NumberInput
               label="Deposit Amount ($SGD)"
               value={depositAmount}
