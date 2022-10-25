@@ -187,7 +187,7 @@ export default function App() {
               <Route path="/*" element={<Error />}></Route>
               <Route
                 path="/community"
-                element={<Community drawerOpen={drawerOpen} />}
+                element={<Community drawerOpen={drawerOpen} socket={socket} />}
               />
             </Routes>
           </UserContext.Provider>
