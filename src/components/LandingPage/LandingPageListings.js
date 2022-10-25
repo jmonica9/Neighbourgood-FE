@@ -97,7 +97,7 @@ export default function LandingPageListings(props) {
           <Card
             sx={{
               width: props.drawerOpen ? "70vw" : "90vw",
-              backgroundColor: themeColor,
+              backgroundColor: "#3E3E3E",
               height: "100%",
               display: "block",
               borderRadius: 25,
@@ -109,13 +109,14 @@ export default function LandingPageListings(props) {
                 sx={{
                   display: "flex",
                   justifyContent: "center",
+                  color: "white",
                 }}
               >
                 Latest {props.title} type listings
               </Grid.Col>
               <Grid
                 mt={"1em"}
-                sx={{ background: "#B7B7C9", borderRadius: "1rem" }}
+                sx={{ background: themeColor, borderRadius: "1rem" }}
                 mx="1rem"
                 px=" 0.9rem"
               >
@@ -201,12 +202,6 @@ export default function LandingPageListings(props) {
                               >
                                 {listing.description}
                               </Box>
-                              {/* <div>
-              <p style={{ color: "white", fontSize: "1rem" }}>
-                
-              </p>
-              <p style={{ fontSize: "1rem" }}>{listing.description}</p>{" "}
-            </div> */}
                             </Box>
                           </Box>
                         </Grid.Col>
