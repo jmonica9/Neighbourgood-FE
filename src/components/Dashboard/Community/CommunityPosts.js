@@ -58,7 +58,7 @@ export default function CommunityPosts() {
         info.push({
           ...post,
           username: userData.data.username,
-          userPic: userData.data.cloudimg.url,
+          userPic: userData.data.cloudimg?.url,
         });
         if (info.length == posts.length) {
           setPostsInfo(info);
@@ -193,7 +193,11 @@ export default function CommunityPosts() {
         {showPosts()}
       </ScrollArea>
 
-      <Button radius={"xl"} onClick={() => setAddPostOpen(true)}>
+      <Button
+        radius={"xl"}
+        sx={{ backgroundColor: neighbourgoodTheme.colors.darkGray }}
+        onClick={() => setAddPostOpen(true)}
+      >
         Add Post
       </Button>
       <AddPost opened={addPostOpen} closed={addPostClosed} />

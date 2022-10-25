@@ -84,14 +84,18 @@ export default function CommunityChat(props) {
     <>
       {/* <Grid gutter={"xs"} sx={{ display: "flex" }}> */}
       {/* <Grid.Col span={12}> */}
-      <Card sx={{ height: "50.3vh" }} p={0}>
+      <Card sx={{ height: "17em" }} p={0}>
+        {/* <hr /> */}
         <ScrollArea
           type="hover"
-          style={{ height: "45vh" }}
+          style={{ height: "12.5em", borderTop: "solid lightgray 1px" }}
           offsetScrollbars
-          pt={"1em"}
+          // pt={"1em"}
           m={0}
         >
+          {/* <Box
+          sx={{ overflowY: "scroll", maxHeight: "30em", minHeight: "30rem" }}
+        > */}
           {allMessages.length > 0 &&
             userData &&
             allMessages.map((message) => {
@@ -169,6 +173,7 @@ export default function CommunityChat(props) {
                 </Box>
               );
             })}
+          {/* </Box> */}
         </ScrollArea>
         <hr style={{ margin: "0" }} />
         <Box
@@ -177,10 +182,10 @@ export default function CommunityChat(props) {
             display: "flex",
           }}
         >
-          <Textarea
+          <textarea
             className="community-chat-container"
-            sx={{
-              width: "80%",
+            style={{
+              width: "90%",
               height: "9.5rem",
               textAlign: "left",
               resize: "none",
@@ -200,24 +205,30 @@ export default function CommunityChat(props) {
             sx={{
               width: "20%",
               height: "9.5rem",
-              display: "flex",
+              // display: "flex",
               alignItems: "flex-end",
               justifyContent: "flex-end",
             }}
             pb="1rem"
             pr="1rem"
+            pt={"1.5rem"}
           >
-            <Send
-              style={{
-                background: neighbourgoodTheme.colors.darkGray,
-                color: "white",
-                borderRadius: "0.5rem",
-                padding: "0.5rem",
-              }}
-              size="2rem"
-              className="community-chat-sendbutton"
-              onClick={sendMessage}
-            />
+            <Button
+              radius={25}
+              sx={{ backgroundColor: neighbourgoodTheme.colors.darkGray }}
+            >
+              <Send
+                style={{
+                  background: neighbourgoodTheme.colors.darkGray,
+                  color: "white",
+                  borderRadius: "0.5rem",
+                  padding: "0.5rem",
+                }}
+                size="2rem"
+                className="community-chat-sendbutton"
+                onClick={sendMessage}
+              />
+            </Button>
           </Box>
         </Box>
       </Card>

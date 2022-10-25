@@ -20,37 +20,6 @@ import { Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { neighbourgoodTheme } from "../../styles/Theme";
 
-// const data = [
-//   {
-//     avatar: airfryer,
-//     name: "listing1",
-//     user: "bob",
-//     type: "giving",
-//     status: "open",
-//   },
-//   {
-//     avatar: airfryer,
-//     name: "listing2",
-//     user: "joe",
-//     type: "lending",
-//     status: "close",
-//   },
-//   {
-//     avatar: airfryer,
-//     name: "listing3",
-//     user: "tim",
-//     type: "sharing",
-//     status: "open",
-//   },
-//   {
-//     avatar: airfryer,
-//     name: "listing4",
-//     user: "lala",
-//     type: "giving",
-//     status: "close",
-//   },
-// ];
-
 export function OverallChats(props) {
   const userData = useContext(UserContext);
   const theme = useMantineTheme();
@@ -119,7 +88,7 @@ export function OverallChats(props) {
       getChats();
       console.log("got chats?");
     }
-  }, [refresh]);
+  }, [refresh, userData]);
 
   const markComplete = (listingId) => {
     axios
@@ -165,7 +134,7 @@ export function OverallChats(props) {
                   sx={{
                     minWidth: "15rem",
                     maxWidth: "15rem",
-                    background: "white",
+                    background: "transparent",
                   }}
                 />
               </Group>

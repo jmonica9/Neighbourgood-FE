@@ -70,15 +70,19 @@ export default function AppointmentModal(props) {
           {/* Modal content */}
 
           <Grid pb={"2rem"}>
-            <Badge
-              m={0}
-              p={0}
-              sx={{ width: "2vw", height: "2vw", borderRadius: "25" }}
-              classNames={{ root: classes.badgePaper }}
-            ></Badge>
-            <Text size={"xl"} ml={"1rem"} weight={700}>
-              {title}
-            </Text>
+            <Grid.Col span={1}>
+              <Badge
+                m={0}
+                p={0}
+                sx={{ width: "2vw", height: "2vw", borderRadius: "25" }}
+                classNames={{ root: classes.badgePaper }}
+              ></Badge>
+            </Grid.Col>
+            <Grid.Col span={11}>
+              <Text size={"xl"} ml={"1rem"} weight={700}>
+                {title}
+              </Text>
+            </Grid.Col>
           </Grid>
           {/* <Stack sx={{ gap: 0 }}> */}
           <Grid>
