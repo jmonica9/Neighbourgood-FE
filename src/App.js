@@ -29,7 +29,7 @@ import { io } from "socket.io-client";
 import Chatroom from "./components/Chatroom/Chatroom";
 import ProfilePage from "./components/Profile/ProfilePage";
 import { Faq } from "./components/Miscellaneous/Faq";
-import { OverallChats } from "./components/OverallChat";
+import { OverallChats } from "./components/Dashboard/OverallChat";
 import { Error } from "./components/Miscellaneous/Error";
 import ReviewDetails from "./components/ReviewDetails";
 import IndividualReview from "./components/IndividualReviews";

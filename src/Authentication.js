@@ -421,11 +421,10 @@ export function Authentication(props) {
               <Text className={classes.icon}>Invalid Password </Text>
             ) : null}
 
-              <Button fullWidth mt="xl" onClick={login} color="black">
-                Login
-              </Button>
-            </Paper>
-          </>
+            <Button fullWidth mt="xl" onClick={login} color="black">
+              Login
+            </Button>
+          </Paper>
         )}
       </Container>
     </div>
