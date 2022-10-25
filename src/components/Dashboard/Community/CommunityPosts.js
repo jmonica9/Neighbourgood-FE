@@ -114,16 +114,16 @@ export default function CommunityPosts() {
           mb={"0.5em"}
         >
           <Grid>
-            <Grid sx={{ width: "100%" }}>
+            <Grid sx={{ width: "100%" }} grow>
               {/* <Grid.Col span={3}>
                 <Avatar src={post.userPic} size={24} radius={25} />
               </Grid.Col> */}
-              <Grid.Col span={5}>
+              <Grid.Col span={5} grow>
                 <Text size="xs" align="left">
                   @{post.username}
                 </Text>
               </Grid.Col>
-              <Grid.Col span={7}>
+              <Grid.Col span={7} grow>
                 <Text size="xs" align="right">
                   <Text size={"xs"}>
                     {formatDistanceToNow(Date.parse(post.createdAt))} ago
