@@ -13,6 +13,7 @@ import {
   Modal,
   useMantineTheme,
   Text,
+  Box,
 } from "@mantine/core";
 import { neighbourgoodTheme } from "../../styles/Theme";
 import { useNavigate } from "react-router-dom";
@@ -69,24 +70,13 @@ export default function LandingPageListings(props) {
     console.log(selectedListing);
   }, [selectedListing]);
 
-  const categories = [
-    { value: "Kitchen Appliances", label: "Kitchen Appliances" },
-    { value: "Electronics", label: "Electronics" },
-    { value: "Clothes and Wearables", label: "Clothes and Apparel" },
-    { value: "Personal Care", label: "Personal Care" },
-    { value: "Furniture", label: "Furniture" },
-    { value: "Toys", label: "Toys" },
-    { value: "Hobby", label: "Hobby" },
-    { value: "Others", label: "Others" },
-  ];
-
   return (
     <Grid
       sx={{
         justifyContent: "center",
       }}
       mt={"1rem"}
-      mb={"10rem"}
+      mb={"5rem"}
     >
       <Modal
         overlayColor={
@@ -103,7 +93,7 @@ export default function LandingPageListings(props) {
         <Authentication onClose={() => setAuthOpen(false)} />
       </Modal>
       <Grid>
-        <Group sx={{ minHeight: "50vh" }}>
+        <Group sx={{ minHeight: "70vh" }}>
           <Card
             sx={{
               width: props.drawerOpen ? "70vw" : "90vw",
@@ -121,21 +111,14 @@ export default function LandingPageListings(props) {
                   justifyContent: "center",
                 }}
               >
-                Latest {props.title}s
+                Latest {props.title} type listings
               </Grid.Col>
-              <Grid.Col span={6} pl={0}>
-                <MultiSelect
-                  data={categories}
-                  placeholder="Categories"
-                  onChange={(e) => {
-                    setChosenCategories(e);
-                  }}
-                />
-              </Grid.Col>
-              <Grid.Col span={6} pl={0}>
-                <MultiSelect data={categories} placeholder="Categories" />
-              </Grid.Col>
-              <Grid mt={"1em"}>
+              <Grid
+                mt={"1em"}
+                sx={{ background: "#B7B7C9", borderRadius: "1rem" }}
+                mx="1rem"
+                px=" 0.9rem"
+              >
                 <Group
                   spacing={"xs"}
                   sx={{
@@ -149,45 +132,93 @@ export default function LandingPageListings(props) {
                         return new Date(b.updatedAt) - new Date(a.updatedAt);
                       })
                       .map((listing) => (
-                        <Card
+                        <Grid.Col
+                          span={"auto"}
                           sx={{
-                            width: "15rem",
-                            height: "17rem",
-                            marginTop: "2vh",
-                            marginBottom: "2vh",
+                            display: "flex",
+                            justifyContent: "center",
                           }}
-                          target="_blank"
-                          onClick={() => {
-                            setAuthOpen(true);
-                          }}
-                          key={listing._id}
                         >
-                          <Card.Section width="13rem" height="15rem">
+                          <Box
+                            sx={{
+                              width: "20rem",
+                              height: "20rem",
+                              marginTop: "2vh",
+                              background: "white",
+                              borderRadius: "1rem",
+                            }}
+                            target="_blank"
+                            key={listing._id}
+                          >
+                            <div style={{ position: "absolute" }}></div>
                             <Image
                               src={listing.cloudimg?.url}
-                              width="15rem"
-                              max-width="15rem"
-                              max-height="15rem"
-                              height={160}
+                              width="20rem"
+                              max-width="20rem"
+                              max-height="20rem"
+                              height={"20rem"}
                               alt="No way!"
+                              radius="1rem"
                             />
-                          </Card.Section>
-
-                          <Text weight={500} size="lg" mt="md">
-                            {listing.title}
-                          </Text>
-
-                          <Text mt="xs" color="dimmed" size="sm">
-                            {listing.description}
-                          </Text>
-                        </Card>
+                            <Box
+                              className="watchlist-container"
+                              sx={{
+                                height: "100%",
+                                position: "relative",
+                                top: "-20rem",
+                                backgroundColor: "rgba(17, 5, 5, 0.9)",
+                                display: "flex",
+                                flexFlow: "column nowrap",
+                                justifyContent: "center",
+                                opacity: 0,
+                                borderRadius: "1rem",
+                              }}
+                              p="1rem"
+                              onClick={() => {
+                                setAuthOpen(true);
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  color: "white",
+                                  whiteSpace: "wrap",
+                                  overflow: "hidden",
+                                  overflowWrap: "break-word",
+                                  fontSize: "1.5rem",
+                                }}
+                              >
+                                {listing.title}
+                              </Box>
+                              <Box
+                                sx={{
+                                  color: "white",
+                                  whiteSpace: "wrap",
+                                  overflow: "hidden",
+                                  overflowWrap: "break-word",
+                                  fontSize: "0.8rem",
+                                }}
+                                pt="1rem"
+                              >
+                                {listing.description}
+                              </Box>
+                              {/* <div>
+              <p style={{ color: "white", fontSize: "1rem" }}>
+                
+              </p>
+              <p style={{ fontSize: "1rem" }}>{listing.description}</p>{" "}
+            </div> */}
+                            </Box>
+                          </Box>
+                        </Grid.Col>
                       ))
                   ) : (
                     <Grid>
-                      <Grid.Col px="17rem" py="5rem">
-                        There are no listings matching your selected categories.
-                        Please try a different selection or check back again in
-                        a few days!
+                      <Grid.Col
+                        px="17rem"
+                        py="5rem"
+                        sx={{ textAlign: "center" }}
+                      >
+                        {null}
                       </Grid.Col>
                     </Grid>
                   )}

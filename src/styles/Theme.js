@@ -7,6 +7,7 @@ export const neighbourgoodTheme = {
     lightBrown: ["#DDCBB7"],
     lightGray: ["#D3D3D3"],
     darkGray: ["#3E3E3E"],
+    black: ["#000"],
   },
 
   primaryColor: "lightGray",

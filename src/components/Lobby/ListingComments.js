@@ -6,6 +6,7 @@ import {
   Text,
   Badge,
   Avatar,
+  ScrollArea,
 } from "@mantine/core";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
@@ -13,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../App";
 import { BACKEND_URL } from "../../constants";
 import { neighbourgoodTheme } from "../../styles/Theme";
-import ListingCommentsDisplay from "./ListingCommentsDisplay";
 
 export default function ListingComments(props) {
   const [comment, setComment] = useState("");
@@ -52,7 +52,6 @@ export default function ListingComments(props) {
       const user = await axios.get(`${BACKEND_URL}/users/${comment.senderId}`);
       commentDetails.push(Object.assign(comment, { userInfo: user.data }));
       if (commentDetails.length === comments.data.comment.length) {
-        console.log(props.listing.comment.length);
         setCommentsInfo(commentDetails);
       }
     });
@@ -85,7 +84,7 @@ export default function ListingComments(props) {
       // if (Object.keys(comment).includes("userInfo")) {
       // console.log("key true");
       return (
-        <Grid key={index}>
+        <Grid key={index} mt={"0.5em"} m={0}>
           <Badge
             p={0}
             sx={{
@@ -115,15 +114,10 @@ export default function ListingComments(props) {
 
   return (
     <Stack>
-      {/* {commentsInfo && commentsInfo.length > 0
-        ? commentsInfo.map((comment) => (
-            <div>
-              <Text>{comment.userInfo.username}</Text>
-            </div>
-          ))
-        : null} */}
-      {/* <ListingCommentsDisplay comments={commentsInfo} />; */}
-      {commentsInfo !== undefined ? commentsInfo && showComments : "loading"}
+      <ScrollArea style={{ height: "10em" }} offsetScrollbars>
+        {commentsInfo !== undefined ? commentsInfo && showComments : null}
+      </ScrollArea>
+
       <Grid>
         <Grid.Col span={10} pr={0}>
           <Textarea

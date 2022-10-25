@@ -77,9 +77,6 @@ export default function EditListing(props) {
       );
       console.log(response.data);
     }
-    // socket.emit("listing updated", () => {
-    //   console.log("emitting data");
-    // });
 
     toast.success("Listing Successfully Edited", {
       position: "top-right",
@@ -101,6 +98,8 @@ export default function EditListing(props) {
   return (
     <>
       <Modal
+        centered
+        withCloseButton={false}
         opened={opened}
         onClose={() => {
           setOpened(false);
@@ -143,7 +142,10 @@ export default function EditListing(props) {
           }}
         />
         <Textarea
-          label={`Description of ${props.type} Listing`}
+          label={`Description of ${
+            props.listing.type.charAt(0).toUpperCase() +
+            props.listing.type.slice(1)
+          } Listing`}
           value={description}
           required
           onChange={(e) => setDescription(e.target.value)}

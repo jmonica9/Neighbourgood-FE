@@ -111,7 +111,7 @@ main::-webkit-scrollbar-thumb {
   justify-content: space-between;
   align-items: center;
   text-align: left;
-  padding: 0 2.5rem 0 2.5rem;
+  padding: 0 1.5rem 0 2.5rem;
   margin: 1rem 0;
 }
 
@@ -173,7 +173,8 @@ main::-webkit-scrollbar-thumb {
   align-items: center;
   border-radius: 1rem;
   padding-left: 0.9rem;
-  margin-top: 4rem;
+  margin-top: 0rem;
+  margin-bottom: 1rem;
   color: #fff;
 }
 
@@ -273,9 +274,34 @@ main::-webkit-scrollbar-thumb {
   border: none;
 }
 
-/*------------------------------ end of darren chatroom styling --------------------------*/
+/*------------------------------ darren geoapify styling --------------------------*/
+
+.geoapify-autocomplete-input {
+  width: 100% !important;
+  border-radius: 0.2rem !important;
+  border: 1px solid #d2d2d2 !important;
+}
+
+.geoapify-autocomplete-input::placeholder {
+  color: #bababa;
+  font-size: 0.85rem;
+  padding-left: 0.3rem;
+}
+
+/*------------------------------ end of darren geoapify styling --------------------------*/
 
 /* Claim Deposit */
 .claimDeposit-cardElement {
   display: grid;
+}
+
+/*------------------------------ darren misc styling --------------------------*/
+.watchlist-container:hover {
+  opacity: 1;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+.community-chat-sendbutton:hover {
+  cursor: pointer;
 }

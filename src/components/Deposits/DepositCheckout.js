@@ -23,11 +23,13 @@ export default function DeopsitCheckout(props) {
   };
 
   const onToken = (amount, description) => async (token) => {
+    console.log(amount, typeof amount);
+    console.log(props);
     const response = await axios.post(`${BACKEND_URL}/payment`, {
       description,
       source: token.id,
       currency: CURRENCY,
-      amount: amountInDollars(amount),
+      amount: amountInDollars(props.amount),
     });
     // console.log(response);
     console.log(response.status);
@@ -39,10 +41,12 @@ export default function DeopsitCheckout(props) {
           payerId: user._id,
           receiverId: props.listing.userId,
           chargeId: response.data.success.id,
-          amount: amountInDollars(amount),
+          amount: amountInDollars(props.amount),
         }
       );
       console.log(payment.data);
+      props.updatePaymentStatus();
+      props.refresh();
       return paymentSuccess();
     } else return paymentError();
   };
@@ -71,12 +75,15 @@ export default function DeopsitCheckout(props) {
         token={onToken(amount, description)}
         currency={CURRENCY}
         stripeKey={process.env.REACT_APP_STRIPE_PUBLIC_KEY}
-        email
         allowRememberMe
         key={process.env.REACT_APP_STRIPE_PUBLIC_KEY}
         panelLabel="Submit Deposit"
       >
-        <Button variant="dark" radius={"md"}>
+        <Button
+          variant="dark"
+          radius={"md"}
+          disabled={props.status === "Deposit Paid"}
+        >
           Submit Deposit
         </Button>
       </StripeCheckout>

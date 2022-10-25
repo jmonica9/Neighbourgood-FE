@@ -190,8 +190,10 @@ export default function Listing(props) {
 
   return (
     <Modal
-      // overflow="inside"
-      size={"90%"}
+      centered
+      closeOnClickOutside
+      withCloseButton={false}
+      size={"80%"}
       opened={props.openModal}
       onClose={() => {
         setOpened(false);
@@ -200,80 +202,190 @@ export default function Listing(props) {
     >
       {listingDetails ? (
         <Container fluid className="SideBar-Content-body" px="xs">
-          <Grid grow align="center">
-            <Grid.Col span={6}>
-              <Card radius="md" mr={3}>
+          <Grid grow align="start">
+            <Grid.Col span={6} m={0} p={1}>
+              <Card radius="xl" mr={3}>
                 <Card.Section mt="sm">
                   <Image
                     src={listingDetails.cloudimg?.url}
-                    height="50vh"
+                    height="56vh"
                     alt="photo display"
-                    fit="contain"
+                    sx={{ width: "100%" }}
                   />
                 </Card.Section>
+
+                <Grid.Col span={6} m={0} p={0}>
+                  <Group position="center" mt="md" mb="xs">
+                    {/* User has not yet requested + user is not the owner of the listing*/}
+                    {!listingDetails.requestorIds.includes(userData._id) &&
+                      !(userData._id === listingDetails.userId) && (
+                        <div>
+                          <Button
+                            variant="dark"
+                            radius="md"
+                            onClick={sendRequest}
+                          >
+                            Request
+                          </Button>
+                          {/* <DeopsitCheckout
+                              listing={listingDetails}
+                              name={listingDetails.title}
+                              description={listingDetails.description}
+                              amount={5000.0}
+                            />
+                            <ReturnDeposit
+                              listing={listingDetails}
+                              name={listingDetails.title}
+                              description={listingDetails.description}
+                              amount={4.99}
+                            /> */}
+                        </div>
+                      )}
+
+                    {/* User has requested already + user is not the owner of the listing */}
+                    {listingDetails.requestorIds.includes(userData._id) &&
+                      !(userData._id === listingDetails.userId) && (
+                        <div>
+                          <div style={{ textAlign: "right" }}>
+                            You have already sent in a request <br />
+                            <br />
+                            <span
+                              onClick={sendToChatroom}
+                              className="listing-modal-button"
+                              style={{
+                                color: "green",
+                              }}
+                            >
+                              Go to chatroom
+                            </span>
+                            <span
+                              className="listing-modal-button"
+                              onClick={withdrawRequest}
+                              style={{
+                                color: "red",
+                                marginLeft: "1rem",
+                              }}
+                            >
+                              Withdraw
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                    {/* If i own this listing */}
+                    {userData._id === listingDetails.userId ? (
+                      <div>
+                        <Button
+                          variant="dark"
+                          radius="md"
+                          mr={"0.5rem"}
+                          onClick={() => setOpenEditModal(true)}
+                        >
+                          Edit Listing
+                        </Button>
+                        <EditListing
+                          opened={openEditModal}
+                          closed={() => closeEditModal()}
+                          listing={listingDetails}
+                          update={() => getListingDetails(props.listing._id)}
+                        />
+                        <Button
+                          variant="dark"
+                          radius="md"
+                          onClick={deleteListing}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    ) : null}
+                  </Group>
+                </Grid.Col>
               </Card>
             </Grid.Col>
 
             <Card
+              m={0}
               sx={{
                 width: "50%",
                 // width: "100%",
                 backgroundColor: themeColor,
                 height: "100%",
-                // minHeight: "50vh",
+
                 borderRadius: 25,
               }}
             >
               <Card.Section>
-                <ScrollArea style={{ height: "50vh" }}>
-                  <Grid.Col span={6}>
-                    <br />
-                    <Grid>
-                      <Grid.Col span={8}>
-                        <Text size={28} weight={500} mb={4}>
-                          {listingDetails.title}
-                        </Text>
-                        <Text size={20} color="dimmed" mb={4}>
-                          Posted by: {listingDetails.username}
-                        </Text>
-                      </Grid.Col>
-                      <Grid.Col span={4}>
-                        <Text mb={"1rem"}>
-                          <DiscIcon /> {listingDetails.location}
-                        </Text>
-                        <Text>{dateDistance(listingDetails)} Ago</Text>
-                        <Stack>
-                          <ProfileMenu userId={listingDetails.userId} />
-                        </Stack>
-                      </Grid.Col>
-                    </Grid>
+                <Grid.Col span={6} p={0} px={"xs"}>
+                  <br />
+                  <Grid>
+                    <Grid.Col span={8}>
+                      <Text size={28} weight={500} mb={4} inline>
+                        {listingDetails.title}
+                      </Text>
+                      <br />
+                      <Text size={20} color="dimmed" mb={4}>
+                        Posted by: {listingDetails.username}
+                      </Text>
+                      {/* <ScrollArea style={{ height: "5vh" }}> */}
+                      <ProfileMenu userId={listingDetails.userId} />
+                      {/* </ScrollArea> */}
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <Text mb={"1rem"}>
+                        <DiscIcon /> {listingDetails.location}
+                      </Text>
+                      <Text>{dateDistance(listingDetails)} Ago</Text>
+                      <br />
+                      <Group>
+                        <>
+                          {listingDetails.usersLiked.includes(userData._id) ? (
+                            <HeartFilledIcon
+                              onClick={() => {
+                                updateLikes(listingDetails);
+                              }}
+                              sx={{ cursor: "pointer" }}
+                            />
+                          ) : (
+                            <HeartIcon
+                              onClick={() => {
+                                updateLikes(listingDetails);
+                              }}
+                            />
+                          )}
+                          <Text>{listingDetails.usersLiked.length}</Text>
+                        </>
+                      </Group>
+                      <Stack>
+                        {/* <ProfileMenu userId={listingDetails.userId} /> */}
+                      </Stack>
+                    </Grid.Col>
+                  </Grid>
+                  <br />
+                  {/* <Group>
+                    <>
+                      {listingDetails.usersLiked.includes(userData._id) ? (
+                        <HeartFilledIcon
+                          onClick={() => {
+                            updateLikes(listingDetails);
+                          }}
+                        />
+                      ) : (
+                        <HeartIcon
+                          onClick={() => {
+                            updateLikes(listingDetails);
+                          }}
+                        />
+                      )}
+                      <Text>{listingDetails.usersLiked.length}</Text>
+                    </>
+                  </Group> */}
 
-                    <Group>
-                      <>
-                        {listingDetails.usersLiked.includes(userData._id) ? (
-                          <HeartFilledIcon
-                            onClick={() => {
-                              updateLikes(listingDetails);
-                            }}
-                          />
-                        ) : (
-                          <HeartIcon
-                            onClick={() => {
-                              updateLikes(listingDetails);
-                            }}
-                          />
-                        )}
-                        <Text>{listingDetails.usersLiked.length}</Text>
-                      </>
-                    </Group>
-
-                    <Text size={18} color="dimmed">
-                      {listingDetails.description}
-                    </Text>
-                    <ClaimDeposit />
-                    <br />
-                  </Grid.Col>
-                </ScrollArea>
+                  <Text size={18} color="dimmed">
+                    {listingDetails.description}
+                  </Text>
+                  {/* <ClaimDeposit /> */}
+                  <br />
+                </Grid.Col>
               </Card.Section>
               <Card.Section>
                 <ListingComments
@@ -282,84 +394,6 @@ export default function Listing(props) {
                 />
               </Card.Section>
             </Card>
-            <Grid.Col span={6}>
-              <Group position="right" mt="md" mb="xs">
-                {/* User has not yet requested + user is not the owner of the listing*/}
-                {!listingDetails.requestorIds.includes(userData._id) &&
-                  !(userData._id === listingDetails.userId) && (
-                    <div>
-                      <Button variant="dark" radius="md" onClick={sendRequest}>
-                        Request
-                      </Button>
-                      <DeopsitCheckout
-                        listing={listingDetails}
-                        name={listingDetails.title}
-                        description={listingDetails.description}
-                        amount={5000.0}
-                      />
-                      <ReturnDeposit
-                        listing={listingDetails}
-                        name={listingDetails.title}
-                        description={listingDetails.description}
-                        amount={4.99}
-                      />
-                    </div>
-                  )}
-
-                {/* User has requested already + user is not the owner of the listing */}
-                {listingDetails.requestorIds.includes(userData._id) &&
-                  !(userData._id === listingDetails.userId) && (
-                    <div>
-                      <div style={{ textAlign: "right" }}>
-                        You have already sent in a request <br />
-                        <br />
-                        <span
-                          onClick={sendToChatroom}
-                          className="listing-modal-button"
-                          style={{
-                            color: "green",
-                          }}
-                        >
-                          Go to chatroom
-                        </span>
-                        <span
-                          className="listing-modal-button"
-                          onClick={withdrawRequest}
-                          style={{
-                            color: "red",
-                            marginLeft: "1rem",
-                          }}
-                        >
-                          Withdraw
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                {/* If i own this listing */}
-                {userData._id === listingDetails.userId ? (
-                  <div>
-                    <Button
-                      variant="dark"
-                      radius="md"
-                      mr={"0.5rem"}
-                      onClick={() => setOpenEditModal(true)}
-                    >
-                      Edit Listing
-                    </Button>
-                    <EditListing
-                      opened={openEditModal}
-                      closed={() => closeEditModal()}
-                      listing={listingDetails}
-                      update={() => getListingDetails(props.listing._id)}
-                    />
-                    <Button variant="dark" radius="md" onClick={deleteListing}>
-                      Delete
-                    </Button>
-                  </div>
-                ) : null}
-              </Group>
-            </Grid.Col>
           </Grid>
         </Container>
       ) : (

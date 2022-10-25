@@ -18,6 +18,9 @@ import { Select } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
 import "../../App.css";
 import LendingTermsAndConditions from "./LendingTermsConditionsModal";
+import DeopsitCheckout from "../Deposits/DepositCheckout";
+import ReturnDeposit from "../Deposits/ReturnDeposit";
+import ClaimDeposit from "../Deposits/ClaimDeposit";
 // import { socket } from ".././App";
 // import { io } from "socket.io-client";
 // const socket = io("http://localhost:3000");
@@ -41,7 +44,8 @@ function Chatroom(props) {
   const [proposedTime, setProposedTime] = useState(new Date());
   const [appointment, setAppointment] = useState();
   const [appointmentProposed, setAppointmentProposed] = useState();
-  const [confirmedTransactioNDate, setConfirmedTransactionDate] = useState("");
+  const [confirmedTransactionDate, setConfirmedTransactionDate] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
   const templatedConfirmedMessage = `We've left this chatroom open for you to work out any additional details.`;
   const bottomRef = useRef(null);
 
@@ -52,11 +56,21 @@ function Chatroom(props) {
     props.socket.emit("join_room", { room: `${chatroomId}` });
   }, [chatroomId]);
 
+  const paymentStatusChange = (status) => {
+    setPaymentStatus(status);
+  };
+
   //when socket says to refresh, chatroom should re-get the following things:
   //messages, appointment, listing
+  const refreshChatroom = () => {
+    props.socket.emit("refresh_chatroom_trigger", { room: `${chatroomId}` });
+    console.log("refresh");
+  };
   useEffect(() => {
     props.socket.on("refresh_chatroom", (data) => {
-      getChatroomInfo();
+      if (chatroomId) {
+        getChatroomInfo();
+      }
     });
   }, [props.socket]);
 
@@ -64,12 +78,12 @@ function Chatroom(props) {
 
   /* if user came from a lending "request", then show etiquette modala */
   useEffect(() => {
-    if (state.fromRequestPage && listing) {
-      if (listing.type === "lending") {
+    if (state.fromRequestPage && listing && allMessages) {
+      if (listing.type === "lending" && allMessages.length === 0) {
         setOpened(true);
       }
     }
-  }, [listing]);
+  }, [allMessages]);
 
   /* once userData is in, get chatroom info --> listingId, ownerId, requestorId */
   useEffect(() => {
@@ -89,7 +103,6 @@ function Chatroom(props) {
           setListing(res.data);
         });
     });
-    console.log("getchatroominfo ran");
   };
 
   /* once listing details and users IDs are gotten, get full users info + all chat messages and check on status of appointment */
@@ -107,10 +120,6 @@ function Chatroom(props) {
     } else setAppointmentProposed(false);
   }, [appointment]);
 
-  useEffect(() => {
-    console.log("appointment proposed?", appointmentProposed);
-  }, [appointmentProposed]);
-
   const getUsersInfo = () => {
     axios.get(`${BACKEND_URL}/users/${ownerId}`).then((res) => {
       setOwner(res.data);
@@ -118,7 +127,6 @@ function Chatroom(props) {
         setRequestor(res.data);
       });
     });
-    console.log("getusersinfo ran");
   };
 
   /* when user selects a month, update the days to be the number of days in that month */
@@ -144,7 +152,6 @@ function Chatroom(props) {
     axios.get(`${BACKEND_URL}/messages/${chatroomId}`).then((res) => {
       setAllMessages(res.data);
     });
-    console.log("getmessages ran");
   };
 
   const getAppointmentInfo = () => {
@@ -157,28 +164,25 @@ function Chatroom(props) {
       .then((res) => {
         if (res.data) {
           if (res.data.confirmed) {
-            setConfirmedTransactionDate(
-              `${proposedDay} of ${proposedMonth} at ${proposedTime.toLocaleTimeString(
-                [],
-                {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }
-              )} hrs`
-            );
+            axios.get(`${BACKEND_URL}/chatroom/${chatroomId}`).then((res) => {
+              axios
+                .get(`${BACKEND_URL}/chatroom/listing/${res.data.listingId}`)
+                .then((res) => {
+                  setConfirmedTransactionDate(res.data.dateOfTransaction);
+                });
+            });
           }
 
           setAppointment(res.data);
         }
       });
-    console.log("getappointmentinfo ran");
   };
 
   const deleteChatroom = () => {
     //delete the chatroom, navigate to dashboard
     axios.post(`${BACKEND_URL}/listing/withdraw`, {
       listing: listing,
-      userId: userData._id,
+      userId: requestorId,
     });
     axios.delete(
       `${BACKEND_URL}/chatroom/delete/${listing._id}/${userData._id}`
@@ -193,7 +197,6 @@ function Chatroom(props) {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    console.log("button fired off");
     axios
       .post(`${BACKEND_URL}/messages/${chatroomId}/${userData._id}`, {
         messageText: message,
@@ -202,7 +205,6 @@ function Chatroom(props) {
       .then((res) => {
         setMessage("");
       });
-    console.log("post received");
     props.socket.emit("refresh_chatroom_trigger", { room: `${chatroomId}` });
   };
 
@@ -213,8 +215,9 @@ function Chatroom(props) {
 
   /*------------------------------ appointment functions ----------------------------------*/
 
-  const acceptAppointment = () => {
+  const acceptAppointment = (message) => {
     //set appointment to true
+    setConfirmedTransactionDate(message.proposedDate);
     axios
       .put(`${BACKEND_URL}/appointment`, {
         listingId: listing._id,
@@ -245,6 +248,7 @@ function Chatroom(props) {
       .put(`${BACKEND_URL}/listing/reserve`, {
         listingId: listing._id,
         requestorId: requestorId,
+        dateOfTransaction: message.proposedDate,
       })
       .then((res) => {
         console.log(res.data);
@@ -344,10 +348,6 @@ function Chatroom(props) {
         )}`,
       })
       .then((res) => {
-        props.socket.emit("refresh_chatroom_trigger", {
-          room: `${chatroomId}`,
-        });
-
         axios
           .post(
             `${BACKEND_URL}/messages/appointment/${chatroomId}/${userData._id}`,
@@ -398,24 +398,52 @@ function Chatroom(props) {
         {listing && requestor && owner && (
           <>
             <Box className="chatroom-postedby-container">
-              <Text size="lg">
-                <b>Title: {listing.title}</b>
-                <Text size="xs"> Listing type: {listing.type}</Text>
-              </Text>
-              <Text size="lg" sx={{ textAlign: "center" }}>
-                <b>
-                  <u>
-                    {requestor.username} & {owner.username}
-                  </u>
-                </b>
-                <Text size="xs" sx={{ textAlign: "center" }}>
+              <Grid
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-around",
+                }}
+              >
+                <Grid.Col span={4}>
                   {" "}
-                  Posted: {`${time_ago(new Date(listing.createdAt))}`}
-                </Text>
-              </Text>
-              <button className="chatroom-end-button" onClick={deleteChatroom}>
-                End Chat
-              </button>
+                  <Text size="lg">
+                    <b>Title: {listing.title}</b>
+                    <Text size="xs"> Listing type: {listing.type}</Text>
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  {" "}
+                  <Text size="lg" sx={{ textAlign: "center" }}>
+                    <b>
+                      <u>
+                        {requestor.username} & {owner.username}
+                      </u>
+                    </b>
+                    <Text size="xs" sx={{ textAlign: "center" }}>
+                      {" "}
+                      Posted: {`${time_ago(new Date(listing.createdAt))}`}
+                    </Text>
+                  </Text>
+                </Grid.Col>
+                <Grid.Col
+                  span={4}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}
+                  pr="0"
+                >
+                  {" "}
+                  <button
+                    className="chatroom-end-button"
+                    onClick={deleteChatroom}
+                  >
+                    End Chat
+                  </button>
+                </Grid.Col>
+              </Grid>
             </Box>
           </>
         )}
@@ -423,7 +451,7 @@ function Chatroom(props) {
           <Box className="chatroom-listingimage-container">
             <img
               style={{ maxHeight: "90%", maxWidth: "90%" }}
-              src={listing.image}
+              src={listing.cloudimg?.url}
               alt={listing.title}
             />
           </Box>
@@ -431,11 +459,65 @@ function Chatroom(props) {
             {listing.reservedBy && requestor ? (
               <span>
                 <Grid>
-                  <Grid.Col span={9}>
+                  <Grid.Col span={10}>
                     <Text size="xl">
                       Description: <br />
                       <Text size="md">{listing.description}</Text>
                     </Text>
+                    {listing.type === "lending" && requestorId == userData._id && (
+                      <>
+                        <DeopsitCheckout
+                          listing={listing}
+                          name={listing.title}
+                          description={listing.description}
+                          amount={listing.depositAmount} //  to change!!!
+                          status={paymentStatus}
+                          updatePaymentStatus={() =>
+                            paymentStatusChange("Deposit Paid")
+                          }
+                          refresh={refreshChatroom}
+                        />
+                        {paymentStatus === "Deposit Paid" ? (
+                          <Text size="sm">Deposit has been Submitted.</Text>
+                        ) : null}
+                      </>
+                    )}
+                    {listing.type === "lending" && ownerId == userData._id && (
+                      // listing.completed &&
+                      <Grid>
+                        <Grid.Col span={4}>
+                          {" "}
+                          <ReturnDeposit
+                            listing={listing}
+                            name={listing.title}
+                            description={listing.description}
+                            amount={listing.depositAmount}
+                            status={paymentStatus}
+                            updatePaymentStatus={() =>
+                              paymentStatusChange("Deposit Returned")
+                            }
+                            refresh={refreshChatroom}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={8}>
+                          <ClaimDeposit
+                            amount={listing.depositAmount}
+                            listing={listing}
+                            status={paymentStatus}
+                            updatePaymentStatus={() =>
+                              paymentStatusChange("Deposit Claimed")
+                            }
+                            refresh={refreshChatroom}
+                          />
+                        </Grid.Col>
+                        {paymentStatus === "Deposit Paid" ? (
+                          <Text size="sm">Deposit has been Returned.</Text>
+                        ) : null}
+                        {paymentStatus === "Deposit Claimed" ? (
+                          <Text size="sm">Deposit has been Claimed.</Text>
+                        ) : null}
+                      </Grid>
+                    )}
                   </Grid.Col>
                   <span>
                     <Grid.Col
@@ -449,7 +531,7 @@ function Chatroom(props) {
                               size="md"
                               className="chatroom-description-appointment confirmed"
                             >
-                              {`${requestor.username} has agreed to help you on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                              {`${requestor.username} has agreed to help you on ${confirmedTransactionDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           </>
                         ) : (
@@ -458,7 +540,7 @@ function Chatroom(props) {
                               size="md"
                               className="chatroom-description-appointment confirmed"
                             >
-                              {`You have agreed to pass this item to ${requestor.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                              {`You have agreed to pass this item to ${requestor.username} on ${confirmedTransactionDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           </>
                         )
@@ -469,7 +551,7 @@ function Chatroom(props) {
                               size="md"
                               className="chatroom-description-appointment confirmed"
                             >
-                              {`You have agreed to help ${owner.username} on ${confirmedTransactioNDate}!
+                              {`You have agreed to help ${owner.username} on ${confirmedTransactionDate}!
                               ${templatedConfirmedMessage}`}
                             </Text>
                           ) : (
@@ -488,7 +570,7 @@ function Chatroom(props) {
                               size="md"
                               className="chatroom-description-appointment confirmed"
                             >
-                              {`You have agreed to pick up this item from ${owner.username} on ${confirmedTransactioNDate}! ${templatedConfirmedMessage}`}
+                              {`You have agreed to pick up this item from ${owner.username} on ${confirmedTransactionDate}! ${templatedConfirmedMessage}`}
                             </Text>
                           ) : (
                             <Text

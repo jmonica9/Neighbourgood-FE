@@ -31,21 +31,26 @@ export default function ReturnDeposit(props) {
     const response = await axios.get(
       `${BACKEND_URL}/payment/${props.listing._id}`
     );
-    // console.log(response.data);
+    console.log(response.data);
     setChargeId(response.data.chargeId);
   };
 
   const getRefund = async () => {
     const response = await axios.post(`${BACKEND_URL}/payment/refund`, {
       charge: chargeId,
-      amount: amountInDollars(amount),
+      amount: amountInDollars(props.amount),
     });
     console.log(response);
-    if (response.status === 200) {
+    console.log(response.status, typeof response.status);
+    if (response.status == 200) {
+      console.log("running");
       const payment = await axios.put(
-        `${BACKEND_URL}/payment/${props.listing._id}`
+        `${BACKEND_URL}/payment/${props.listing._id}`,
+        { status: "Deposit Returned" }
       );
       console.log(payment);
+      props.updatePaymentStatus();
+      props.refresh();
       return paymentSuccess();
     } else {
       return paymentError();
@@ -55,9 +60,9 @@ export default function ReturnDeposit(props) {
   const onToken = (amount, description) => async (token) => {
     const response = await axios.post(`${BACKEND_URL}/payment/refund`, {
       charge: chargeId,
-      amount: amountInDollars(amount),
+      amount: amountInDollars(props.amount),
     });
-    console.log(response);
+    //console.log(response);
     console.log(response.status);
     if (response.status === 200) {
       const payment = await axios.post(
@@ -65,7 +70,7 @@ export default function ReturnDeposit(props) {
         {
           payerId: user._id,
           receiverId: props.listing.userId,
-          amount: amountInDollars(amount),
+          amount: amountInDollars(props.amount),
         }
       );
       console.log(payment.data);
@@ -73,26 +78,11 @@ export default function ReturnDeposit(props) {
     } else return paymentError();
   };
 
-  const Checkout = ({ name, description, amount }) => {
-    return (
-      <StripeCheckout
-        name={name}
-        description={description}
-        amount={amountInDollars(amount)}
-        token={onToken(amount, description)}
-        currency={CURRENCY}
-        stripeKey={process.env.STRIPE_PUBLIC_KEY}
-        zipCode
-        email
-        allowRememberMe
-      />
-    );
-  };
   return (
     <div>
       <Button
         variant="dark"
-        radius={"md"}
+        radius={"xl"}
         onClick={() => {
           getRefund();
         }}

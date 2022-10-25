@@ -51,7 +51,8 @@ const GeoAPI = (props) => {
   return (
     <GeoapifyContext apiKey={`${process.env.REACT_APP_GEO_APIKEY}`}>
       <GeoapifyGeocoderAutocomplete
-        placeholder="Enter postalcode here"
+        className="geoapifytest"
+        placeholder="Enter your postal code"
         type={"postcode"}
         lang="en"
         // countryCodes={"singapore"}
