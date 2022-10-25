@@ -396,6 +396,7 @@ export function Authentication(props) {
             ) : null}
             <TextInput
               type="password"
+              value={loginPassword}
               label="Password"
               placeholder="Your password"
               onChange={(e) => {
