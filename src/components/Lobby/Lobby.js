@@ -276,7 +276,6 @@ export default function Lobby(props) {
       });
     console.log({ locationCategories });
   };
-
   const closeNewModal = () => {
     setOpenNewModal(false);
     setRefresh(!refresh);
@@ -539,7 +538,6 @@ export default function Lobby(props) {
         </Card>
       </Grid.Col>
     ));
-
   return (
     <div
       style={{
@@ -550,7 +548,13 @@ export default function Lobby(props) {
     >
       {/* <Text color="black">{props.title}</Text> */}
       <div>
-        <div style={{ width: "100vh", position: "relative" }}>
+        <div
+          style={{
+            marginLeft: "4vw",
+            width: props.drawerOpen ? "74vw" : "90vw",
+            position: "relative",
+          }}
+        >
           <LoadingOverlay
             visible={loading}
             overlayOpacity={0.3}
@@ -647,13 +651,15 @@ export default function Lobby(props) {
             </Group>
           </ScrollArea> */}
 
-          <Group>
+          <Group sx={{ width: "90vw" }}>
             <Card
+              m={0}
               grey
               light
               sx={{
-                width: props.drawerOpen ? "70vw" : "90vw",
+                width: props.drawerOpen ? "74vw" : "90vw",
                 backgroundColor: themeColor,
+                minHeight: "15em",
                 height: "100%",
                 display: "block",
                 borderRadius: 25,

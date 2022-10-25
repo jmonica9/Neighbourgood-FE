@@ -193,7 +193,11 @@ export default function CommunityPosts() {
         {showPosts()}
       </ScrollArea>
 
-      <Button radius={"xl"} onClick={() => setAddPostOpen(true)}>
+      <Button
+        radius={"xl"}
+        sx={{ backgroundColor: neighbourgoodTheme.colors.darkGray }}
+        onClick={() => setAddPostOpen(true)}
+      >
         Add Post
       </Button>
       <AddPost opened={addPostOpen} closed={addPostClosed} />
