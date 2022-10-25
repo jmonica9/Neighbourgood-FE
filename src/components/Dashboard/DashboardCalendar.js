@@ -176,10 +176,10 @@ export default function DashboardCalendar(props) {
     );
   };
   useEffect(() => {
-    if (window.innerHeight < 830) {
+    if (window.innerHeight < "5rem") {
       setSchedulerHeight(window.innerHeight * 0.45);
       setScrollAreaHeight(window.innerHeight * 0.45);
-    } else if (window.innerHeight >= 830 && window.innerHeight < 1000) {
+    } else if (window.innerHeight >= "5rem" && window.innerHeight < "6.5rem") {
       setSchedulerHeight(window.innerHeight * 0.5);
       setScrollAreaHeight(window.innerHeight * 0.5);
     } else {
@@ -191,34 +191,26 @@ export default function DashboardCalendar(props) {
   return (
     <ThemeProvider theme={theme}>
       {/* <Paper sx={{ overflow: "auto", overflowY: true }}> */}
-      <ScrollArea
-        style={{ height: schedulerHeight, padding: 0 }}
-        // style={{ height: "20rem", padding: 0 }}
-        offsetScrollbars
-      >
-        <Scheduler height={schedulerHeight} data={appointmentsDataInfo}>
-          <ViewState />
+      <Scheduler height={schedulerHeight} data={appointmentsDataInfo}>
+        <ViewState />
 
-          <WeekView startDayHour={6} endDayHour={24} cellDuration={30} />
-          <Appointments appointmentComponent={calendarAppointment} />
+        <WeekView startDayHour={6} endDayHour={24} cellDuration={30} />
+        <Appointments appointmentComponent={calendarAppointment} />
 
-          {/* <AllDayPanel /> */}
-          <Toolbar />
-          <DateNavigator />
-          <TodayButton
-            buttonComponent={todayButton}
-            messages={{ today: <CalendarIcon /> }}
-          />
-          <AppointmentModal
-            data={chosenAppointment}
-            open={openAppointmentModal}
-            close={() => setOpenAppointmentModal(false)}
-          />
-        </Scheduler>
-      </ScrollArea>
-      <Text align="left" size={"xl"} ml={"2vh"} mb={"1vh"}>
-        Calendar
-      </Text>
+        {/* <AllDayPanel /> */}
+        <Toolbar />
+        <DateNavigator />
+        <TodayButton
+          buttonComponent={todayButton}
+          messages={{ today: <CalendarIcon /> }}
+        />
+        <AppointmentModal
+          data={chosenAppointment}
+          open={openAppointmentModal}
+          close={() => setOpenAppointmentModal(false)}
+        />
+      </Scheduler>
+      <hr style={{ margin: "0 0 1rem" }} />
     </ThemeProvider>
   );
 }
