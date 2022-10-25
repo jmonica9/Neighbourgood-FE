@@ -29,7 +29,7 @@ export default function DashboardFriendsListings(props) {
         });
       }
     }
-  }, [user, refresh, openListingModal]);
+  }, [user, refresh, openListingModal, searchField]);
 
   useEffect(() => {
     console.log(props.drawerOpen);
@@ -38,7 +38,10 @@ export default function DashboardFriendsListings(props) {
   const getFriendsListings = async (id) => {
     const response = await axios.get(`${BACKEND_URL}/listing/user/${id}`);
     // console.log(response.data);
-    return response.data;
+    setFriendsListings(response.data);
+    if (searchField !== "") {
+      searchListings();
+    }
   };
 
   const friendsListingsSorted = friendsListings.sort((a, b) => {
@@ -75,10 +78,10 @@ export default function DashboardFriendsListings(props) {
     const filteredList = friendsListings.filter(
       (listing) =>
         listing.title.toLowerCase().includes(searchField.toLowerCase()) ||
-        listing.username.toLowerCase.includes(searchField.toLowerCase())
+        listing.username.toLowerCase().includes(searchField.toLowerCase())
     );
-    console.log(filteredList);
     setFriendsListings(filteredList);
+    console.log(filteredList.length);
   };
 
   const displayFriendsListings = friendsListingsSorted.map((listing, index) => {
