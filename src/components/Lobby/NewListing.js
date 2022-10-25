@@ -9,14 +9,24 @@ import {
   MultiSelect,
   Textarea,
   FileInput,
+  Text,
   NumberInput,
 } from "@mantine/core";
 import { BACKEND_URL } from "../../constants";
-import { useParams, useLocation } from "react-router-dom";
-
+import {
+  useParams,
+  useLocation,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+import { useStyles } from "../../Authentication";
 import { toast, ToastContainer } from "react-toastify";
 import { UploadIcon } from "@radix-ui/react-icons";
 export default function NewListing(props) {
+  const { classes } = useStyles();
+  const [titleError, setTitleError] = useState();
+  //  const [categoriesError,set]=useState();
+  const [descriptionError, setDescriptionError] = useState();
   const [userData, setUserData] = useState(props.user);
   const [opened, setOpened] = useState(false);
   const [title, setTitle] = useState("");
@@ -29,7 +39,8 @@ export default function NewListing(props) {
   const [depositAmount, setDepositAmount] = useState(1);
   const [listingCategories, setListingCategories] = useState([]);
   const location = useLocation();
-
+  const [inputError, set] = useState();
+  const navigate = useNavigate();
   useEffect(() => {
     setOpened(props.openModal);
     setUserData(props.user);
@@ -46,10 +57,10 @@ export default function NewListing(props) {
         setImageString(convertedImage);
       } else {
         toast.error(
-          "Error! The file is not in format of image/jpeg or image/png",
+          "Error! Please choose a file that is in the format of image/jpeg or image/png",
           {
             position: "top-right",
-            autoClose: 4500,
+            autoClose: 3000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: false,
@@ -58,9 +69,25 @@ export default function NewListing(props) {
           }
         );
         console.log("The file is not in format of image/jpeg or image/png");
+        navigate(-1);
+        return;
       }
     } catch (error) {
       console.warn(error.message);
+      toast.error(
+        "Error! Please choose a file that is in the format of image/jpeg or image/png",
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: false,
+          progress: undefined,
+        }
+      );
+      navigate(-1);
+      return;
     }
   };
 
@@ -74,6 +101,21 @@ export default function NewListing(props) {
   const submitListing = async (e) => {
     e.preventDefault();
     await convertImage(e);
+    // if (imageFile === null) {
+    //   toast.error(
+    //     "Error! Please choose a file that is in the format of image/jpeg or image/png",
+    //     {
+    //       position: "top-right",
+    //       autoClose: 3000,
+    //       hideProgressBar: false,
+    //       closeOnClick: true,
+    //       pauseOnHover: false,
+    //       draggable: false,
+    //       progress: undefined,
+    //     }
+    //   );
+    //   navigate(-1);
+    // }
     props.setLoading(true);
     console.log(userData, "userData");
     console.log(imageData, "imageData from submit");
@@ -127,7 +169,11 @@ export default function NewListing(props) {
             label="Title"
             onChange={(e) => setTitle(e.target.value)}
             required
+            // error={titleError ? "Invalid Title" : null}
           />
+          {titleError ? (
+            <Text className={classes.icon}>Invalid Title </Text>
+          ) : null}
           {/* <FileInput
             label="Upload Image"
             icon={<UploadIcon />}
@@ -142,15 +188,6 @@ export default function NewListing(props) {
             type="file"
             onChange={(e) => setImageFile(e.target.files[0])}
           />
-          {/* <input
-            value={imageName}
-            onChange={(e) => setImageName(e.target.value)}
-          />
-          <input
-            type="file"
-            value={imageFile}
-            onChange={(e) => setImageFile(e.target.files[0])}
-          /> */}
 
           <MultiSelect
             data={props.categoriess}
@@ -165,7 +202,9 @@ export default function NewListing(props) {
             required
             onChange={(e) => setDescription(e.target.value)}
           />
-
+          {descriptionError ? (
+            <Text className={classes.icon}>Invalid Description </Text>
+          ) : null}
           {type == "lending" ? (
             <NumberInput
               label="Deposit Amount ($SGD)"
@@ -174,7 +213,12 @@ export default function NewListing(props) {
             />
           ) : null}
 
-          <Button type="submit" radius={"xl"} mt={"xs"}>
+          <Button
+            disabled={imageFile === null}
+            type="submit"
+            radius={"xl"}
+            mt={"xs"}
+          >
             Submit
           </Button>
         </form>

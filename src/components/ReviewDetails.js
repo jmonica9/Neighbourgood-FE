@@ -1,4 +1,15 @@
-import { createStyles, Text, Avatar, Group } from "@mantine/core";
+import {
+  createStyles,
+  Text,
+  Avatar,
+  Group,
+  Container,
+  Grid,
+  Card,
+  CardSection,
+  ScrollArea,
+  Image,
+} from "@mantine/core";
 import { UserContext } from "../App";
 
 import React, { useEffect, useState, useContext } from "react";
@@ -19,6 +30,7 @@ const useStyles = createStyles((theme) => ({
 export default function ReviewDetails(props) {
   const { classes } = useStyles();
   const userData = useContext(UserContext);
+
   useEffect(() => {
     console.log(props.review);
   }, [props]);
@@ -30,12 +42,14 @@ export default function ReviewDetails(props) {
           marginLeft: props.drawerOpen ? "26vw" : "6vw",
           marginRight: "4vw",
           marginTop: "0.5vw",
+          color: "black",
+          // height: "100%",
         }}
       >
-        <Text size="xl" weight={500} color="black" align="center" mb={50}>
+        {/* <Text size="xl" weight={500} color="black" align="center" mb={50}>
           {props.review.listingTitle}
-        </Text>
-        <Group>
+        </Text> */}
+        <Grid grow align="center" width="100%">
           <Avatar
             src={props.review.user.cloudimg?.url}
             alt={"img"}
@@ -44,13 +58,37 @@ export default function ReviewDetails(props) {
           <div>
             <Text size="sm">{props.review.user.username}</Text>
             <Text size="xs" color="dimmed">
-              {props.review.createdAt}
+              {new Date(props.review.createdAt).toLocaleString(undefined, {
+                dateStyle: "short",
+              })}
+              {/* {props.review.createdAt.toISOString()} */}
             </Text>
           </div>
-        </Group>
-        <Text className={classes.body} size="sm" color="black">
-          {props.review.reviewText}
-        </Text>
+
+          <Text className={classes.body} size="sm" color="black" mb={"1.5rem"}>
+            {props.review.reviewText}
+          </Text>
+        </Grid>
+        {/* <Grid grow align="center" width="100%">
+          <Avatar
+            src={props.review.user.cloudimg?.url}
+            alt={"img"}
+            radius="xl"
+          />
+          <div>
+            <Text size="sm">{props.review.user.username}</Text>
+            <Text size="xs" color="dimmed">
+              {new Date(props.review.createdAt).toLocaleString(undefined, {
+                dateStyle: "short",
+              })}
+            
+            </Text>
+          </div>
+
+          <Text className={classes.body} size="sm" color="black" mb={"1.5rem"}>
+            {props.review.reviewText}
+          </Text>
+        </Grid> */}
         {/* <Group mt={30}>
           <Avatar
             src={"https://www.w3schools.com/howto/img_avatar.png"}
