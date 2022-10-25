@@ -557,7 +557,8 @@ export default function Lobby(props) {
         >
           <LoadingOverlay
             visible={loading}
-            overlayBlur={2}
+            overlayOpacity={0.3}
+            overlayBlur={1}
             // loaderProps={{ size: "lg" }}
           />
           <Group position="center" grow spacing={"xs"} mb={"xs"}>
