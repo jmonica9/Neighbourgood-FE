@@ -295,8 +295,13 @@ main::-webkit-scrollbar-thumb {
   display: grid;
 }
 
+/*------------------------------ darren misc styling --------------------------*/
 .watchlist-container:hover {
   opacity: 1;
   transition: 0.5s;
+  cursor: pointer;
+}
+
+.community-chat-sendbutton:hover {
   cursor: pointer;
 }
