@@ -78,7 +78,7 @@ export default function Dashboard(props) {
                   }}
                   p={0}
                 >
-                  <DashboardCalendar user={userData} />
+                  <DashboardCalendar user={userData} drawerOpen={drawerOpen} />
                 </Card>
               </Grid.Col>
             </Grid>

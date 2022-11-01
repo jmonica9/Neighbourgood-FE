@@ -27,21 +27,6 @@ export function OverallChats(props) {
   const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
   const [listChat, setListChat] = useState([]);
-  // const getChatroomInfo = () => {
-  //   axios.get(`${BACKEND_URL}/chatroom/${chatroomId}`).then((res) => {
-  //     setRequestorId(res.data.requestorId);
-  //     setOwnerId(res.data.ownerId);
-  //   });
-
-  //   axios.get(`${BACKEND_URL}/chatroom/${chatroomId}`).then((res) => {
-  //     axios
-  //       .get(`${BACKEND_URL}/chatroom/listing/${res.data.listingId}`)
-  //       .then((res) => {
-  //         setListing(res.data);
-  //       });
-  //   });
-  //   console.log("getchatroominfo ran");
-  // };
 
   const chatDetails = [];
   const getChatsDetails = async (chats) => {
@@ -157,9 +142,20 @@ export function OverallChats(props) {
               }}
               pl={"2rem"}
             >
-              <Badge color={"black"} variant="filled">
-                {item.type}
-              </Badge>
+              <Button
+                radius={"xl"}
+                sx={{
+                  backgroundColor:
+                    item.type == "sharing"
+                      ? neighbourgoodTheme.colors.lightTeal
+                      : item.type == "helping"
+                      ? neighbourgoodTheme.colors.lightPurple
+                      : neighbourgoodTheme.colors.lightBrown,
+                }}
+                onClick={() => navigate(`/${item.type}`)}
+              >
+                {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+              </Button>
             </Grid.Col>
             <Grid.Col span={2} sx={{ display: "flex" }}>
               <Group maxWidth={15}>
@@ -172,13 +168,28 @@ export function OverallChats(props) {
               <Group maxWidth={15}>
                 <Text size="sm" color="black" pl={"2rem"}>
                   {/* STATUS */}
-                  {item.completed === false ? "Open" : "Completed"}
+                  {item.completed === false ? (
+                    <Button
+                      radius={"xl"}
+                      sx={{ pointerEvents: "none", backgroundColor: "#3cb043" }}
+                    >
+                      Open
+                    </Button>
+                  ) : (
+                    <Button
+                      radius={"xl"}
+                      sx={{ pointerEvents: "none", backgroundColor: "gray" }}
+                    >
+                      Completed
+                    </Button>
+                  )}
                 </Text>
               </Group>
             </Grid.Col>
             <Grid.Col span={"auto"} sx={{ display: "flex" }}>
               <Group pl={"2rem"}>
                 <Button
+                  radius={"xl"}
                   sx={{ background: neighbourgoodTheme.colors.darkGray }}
                   onClick={() => {
                     navigate(`/chatroom/${item.chatId}`, {
@@ -190,6 +201,7 @@ export function OverallChats(props) {
                 </Button>
                 {item.username === userData.username && !item.completed ? (
                   <Button
+                    radius={"xl"}
                     onClick={(e) => markComplete(item.listingId)}
                     sx={{ background: neighbourgoodTheme.colors.darkGray }}
                   >
@@ -198,6 +210,7 @@ export function OverallChats(props) {
                 ) : null}
                 {item.completed ? (
                   <Button
+                    radius={"xl"}
                     span={1}
                     sx={{ background: neighbourgoodTheme.colors.darkGray }}
                     onClick={() => navigate(`/individualReview/${item._id}`)}

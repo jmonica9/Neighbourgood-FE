@@ -174,20 +174,22 @@ export default function NewListing(props) {
           {titleError ? (
             <Text className={classes.icon}>Invalid Title </Text>
           ) : null}
-          {/* <FileInput
+
+          <FileInput
             label="Upload Image"
             icon={<UploadIcon />}
-            onClick={(e) => console.log("try upload")}
+            // onClick={(e) => console.log("try upload")}
             onChange={(e) => {
-              console.log("try");
-              setFileInputValue(e.name);
-              setFileInputFile(e);
+              setImageFile(e);
+            }}
+          />
+          {/* <input
+            type="file"
+            onChange={(e) => {
+              console.log(e.target.files[0]);
+              setImageFile(e.target.files[0]);
             }}
           /> */}
-          <input
-            type="file"
-            onChange={(e) => setImageFile(e.target.files[0])}
-          />
 
           <MultiSelect
             data={props.categoriess}

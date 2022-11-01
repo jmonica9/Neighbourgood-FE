@@ -91,7 +91,7 @@ export default function AddPost(props) {
         }}
       />
       <FileInput
-        label="Upload Profile Picture"
+        label="Upload Image"
         icon={<UploadIcon />}
         required
         onChange={(e) => {

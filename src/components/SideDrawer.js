@@ -37,6 +37,9 @@ export default function SideDrawer(props) {
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
   const [chats, setChats] = useState();
   const [chatsInfo, setChatsInfo] = useState();
+  const [sharingWLLength, setSharingWLLength] = useState();
+  const [helpingWLLength, setHelpingWLLength] = useState();
+  const [lendingWLLength, setLendingWLLength] = useState();
 
   const navigate = useNavigate();
   const { classes } = useStyles();
@@ -59,7 +62,7 @@ export default function SideDrawer(props) {
 
   useEffect(() => {
     if (chats) {
-      console.log(chats);
+      // console.log(chats);
       getChatsInfo();
     }
   }, [chats]);
@@ -87,6 +90,24 @@ export default function SideDrawer(props) {
       });
     }
   };
+
+  const getWatchlistLength = async (type) => {
+    try {
+      const watchList = await axios.get(
+        `${BACKEND_URL}/listing/${type}/${userData._id}/watchlist`
+      );
+      console.log(watchList);
+      return watchList.data.length;
+    } catch (err) {
+      return 0;
+    }
+  };
+
+  useEffect(() => {
+    getWatchlistLength("sharing").then((length) => setSharingWLLength(length));
+    getWatchlistLength("helping").then((length) => setHelpingWLLength(length));
+    getWatchlistLength("lending").then((length) => setLendingWLLength(length));
+  }, [opened]);
 
   return (
     <>
@@ -233,9 +254,25 @@ export default function SideDrawer(props) {
                 props.closeDrawer();
               }}
             >
-              <Text align="left" size={"25px"}>
-                Sharing
-              </Text>
+              <Grid sx={{ width: "100%" }}>
+                <Grid.Col span={8}>
+                  <Text align="left" size={"25px"}>
+                    Sharing
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  {sharingWLLength > 0 ? (
+                    <Avatar
+                      variant="filled"
+                      mx={"1.5em"}
+                      radius={"xl"}
+                      color="dark"
+                    >
+                      {sharingWLLength}
+                    </Avatar>
+                  ) : null}
+                </Grid.Col>
+              </Grid>
             </Button>
             <Button
               sx={{
@@ -250,9 +287,28 @@ export default function SideDrawer(props) {
                 props.closeDrawer();
               }}
             >
-              <Text align="left" size={"25px"}>
-                Helping
-              </Text>
+              <Grid sx={{ width: "100%" }}>
+                <Grid.Col span={8}>
+                  <Text align="left" size={"25px"}>
+                    Helping
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  {helpingWLLength > 0 ? (
+                    <Avatar
+                      mx={"1.5em"}
+                      radius={"xl"}
+                      color="dark"
+                      variant="filled"
+                      sx={{
+                        backgroundColor: neighbourgoodTheme.colors.darkGray,
+                      }}
+                    >
+                      {helpingWLLength}
+                    </Avatar>
+                  ) : null}
+                </Grid.Col>
+              </Grid>
             </Button>
             <Button
               sx={{
@@ -267,9 +323,25 @@ export default function SideDrawer(props) {
                 props.closeDrawer();
               }}
             >
-              <Text align="left" size={"25px"}>
-                Lending
-              </Text>
+              <Grid sx={{ width: "100%" }}>
+                <Grid.Col span={8}>
+                  <Text align="left" size={"25px"}>
+                    Lending
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  {lendingWLLength > 0 ? (
+                    <Avatar
+                      mx={"1.5em"}
+                      radius={"xl"}
+                      color="dark"
+                      variant="filled"
+                    >
+                      {lendingWLLength}
+                    </Avatar>
+                  ) : null}
+                </Grid.Col>
+              </Grid>
             </Button>
 
             <Card

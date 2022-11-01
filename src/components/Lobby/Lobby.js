@@ -584,7 +584,7 @@ export default function Lobby(props) {
                     borderRadius: "1rem",
                   }}
                 >
-                  <ScrollArea style={{ height: "12rem", width: "100%" }}>
+                  <ScrollArea style={{ height: "20rem", width: "100%" }}>
                     <Group>
                       {/* map out the listings here */}
                       {myWatchlist && myWatchlist.length > 0 ? (
@@ -622,7 +622,7 @@ export default function Lobby(props) {
                     borderRadius: "1rem",
                   }}
                 >
-                  <ScrollArea style={{ height: "12rem", width: "100%" }}>
+                  <ScrollArea style={{ height: "20rem", width: "100%" }}>
                     <Group>
                       {/* map out the listings here */}
                       {myListings && myListings.length > 0 ? (
@@ -718,7 +718,11 @@ export default function Lobby(props) {
                   pl={0}
                   sx={{ display: "flex", justifyContent: "center" }}
                 >
-                  <Button radius={"xl"} onClick={() => setOpenNewModal(true)}>
+                  <Button
+                    sx={{ backgroundColor: neighbourgoodTheme.colors.darkGray }}
+                    radius={"xl"}
+                    onClick={() => setOpenNewModal(true)}
+                  >
                     Add a Listing
                   </Button>
                 </Grid.Col>
